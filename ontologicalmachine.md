@@ -17,11 +17,11 @@ Let $\mathcal{C}$ be a well-powered category equipped with a well-behaved subobj
 To execute the extraction algorithm, the target environment must supply the following structure on the subobject lattice $\text{Sub}(U_0)$, which we assume to be a bounded lattice (e.g., a Heyting or Orthomodular algebra).
 
 **The Interface Requirements:**
-1. **Ambient Object** ($U_0 \in \text{Ob}(\mathcal{C})$): The initial object of study. Operations are defined over its poset of subobjects, $\text{Sub}(U_0)$.
-2. **Closure Operator** ($c : \text{Sub}(U_0) \to \text{Sub}(U_0)$): A monotonic, extensive ($X \le c(X)$), and idempotent ($c(c(X)) = c(X)$) operator defining the deductive or generative closure within the space.
-3. **Supremum** ($\vee$): The categorical join in the subobject lattice.
-4. **Relative Pseudocomplement** ($\neg$): The operator defining disjointness. For a subobject $C$, $\neg C$ represents the maximal subobject perfectly disjoint from $C$. 
-5. **Choice Function on Atoms** ($\Phi$): A function that selects an atomic subobject (a non-initial object with no non-trivial subobjects) from a given non-initial subobject. The lattice must satisfy the Artinian Condition (be atomic) for this to be well-defined.
+1. **Ambient Object** $U_0 \in \text{Ob}(\mathcal{C})$: The initial object of study. Operations are defined over its poset of subobjects, $\text{Sub}(U_0)$.
+2. **Closure Operator** $c : \text{Sub}(U_0) \to \text{Sub}(U_0)$: A monotonic, extensive, where $X \le c(X)$, and idempotent, where $c(c(X)) = c(X)$, operator defining the deductive or generative closure within the space.
+3. **Supremum** $\vee$: The categorical join in the subobject lattice.
+4. **Relative Pseudocomplement** $\neg$: The operator defining disjointness. For a subobject $C$, $\neg C$ represents the maximal subobject perfectly disjoint from $C$. 
+5. **Choice Function on Atoms** $\Phi$: A function that selects an atomic subobject (a non-initial object with no non-trivial subobjects) from a given non-initial subobject. The lattice must satisfy the Artinian Condition (be atomic) for this to be well-defined.
 
 ---
 
@@ -29,16 +29,16 @@ To execute the extraction algorithm, the target environment must supply the foll
 
 To process arbitrary posets, the algorithm utilizes transfinite induction over ordinals $\alpha$. 
 
-(Initialization: $C_0 = \bot$, the initial subobject, and $S_0 = U_0$).
+Initialization begins with $C_0 = \bot$, the initial subobject, and $S_0 = U_0$.
 
 The sequence proceeds as follows:
 
-### A. Successor Steps ($\alpha \to \alpha+1$)
+### A. Successor Steps for $\alpha \to \alpha+1$
 1. **Atom Selection:** From the remaining space $S_\alpha$, select an atom: $p_{\alpha+1} = \Phi(S_\alpha)$.
 2. **Closure and Join:** Apply the closure operator to the new atom and join it with the existing composite subobject: $C_{\alpha+1} = C_\alpha \vee c(p_{\alpha+1})$.
 3. **Complement Isolation:** Isolate the relative pseudocomplement of the new composite: $S_{\alpha+1} = \neg C_{\alpha+1}$.
 
-### B. Limit Steps ($\lambda$)
+### B. Limit Steps for $\lambda$
 For a limit ordinal $\lambda$, the colimit of the sequence is taken:
 * $C_\lambda = \bigvee_{\alpha < \lambda} C_\alpha$
 * $S_\lambda = \neg C_\lambda$
@@ -50,7 +50,7 @@ The algorithm halts at an ordinal $\Omega$ such that $S_\Omega = \bot$.
 ## III. The Limit and the Extracted Basis
 
 The algorithm yields a well-ordered ascending sequence of subobjects:
-$$C_1 \le C_2 \dots \le C_\omega \dots \le C_\Omega$$
+$$C_1 \le C_2 \cdots \le C_\omega \cdots \le C_\Omega$$
 
 The total generated closure is defined as the filtered colimit (supremum) of this sequence:
 $$C_\Omega = \bigvee_{\alpha < \Omega} C_\alpha$$
@@ -75,9 +75,9 @@ The algorithm trivially guarantees **Orthogonality**: every selected atom $p_\al
 ### 2. Testing for Generative Density
 
 The algorithm does not assume that $c(B) = U_0$. Once halting at $\Omega$, the completeness of the basis is evaluated by computing $c(B)$:
-* **Dense/Complete** ($c(B) \cong U_0$): The extracted basis perfectly generates the original space.
-* **Incomplete** ($c(B) \subset U_0$): The space contains elements not reachable from the atomic basis (e.g., topological boundary points, or Gödelian incompleteness).
-* **Over-Generated** ($c(B) \supset U_0$): The closure rules generate structures outside the original space.
+* **Dense/Complete**, where $c(B) \cong U_0$: The extracted basis perfectly generates the original space.
+* **Incomplete**, where $c(B) < U_0$: The space contains elements not reachable from the atomic basis (e.g., topological boundary points, or Gödelian incompleteness).
+* **Over-Generated**, where $c(B) > U_0$: The closure rules generate structures outside the original space.
 
 ---
 
@@ -85,24 +85,24 @@ The algorithm does not assume that $c(B) = U_0$. Once halting at $\Omega$, the c
 
 This specification abstracts familiar extraction processes across various domains:
 
-### 1. Arithmetic ($\mathbf{Poset}$ under Divisibility)
-* **Base** ($U_0$): Integers ordered by divisibility. Atoms are prime numbers.
-* **Closure** ($c(p)$): The principal ideal of multiples.
-* **Complement** ($\neg C$): Set theoretic difference of multiples.
+### 1. Arithmetic: $\mathbf{Poset}$ under Divisibility
+* **Base** $U_0$: Integers ordered by divisibility. Atoms are prime numbers.
+* **Closure** $c(p)$: The principal ideal of multiples.
+* **Complement** $\neg C$: Set theoretic difference of multiples.
 * **Basis Output:** The prime factorization basis.
 
-### 2. Quantum Mechanics ($\mathbf{Hilb}$)
-* **Base** ($U_0$): The orthomodular lattice of closed subspaces of a Hilbert space.
-* **Closure** ($c(p)$): Linear span of states.
-* **Complement** ($\neg C$): The orthogonal complement ($C^\perp$).
+### 2. Quantum Mechanics: $\mathbf{Hilb}$
+* **Base** $U_0$: The orthomodular lattice of closed subspaces of a Hilbert space.
+* **Closure** $c(p)$: Linear span of states.
+* **Complement** $\neg C$: The orthogonal complement ($C^\perp$).
 * **Basis Output:** An orthogonal basis of ground states.
 
-### 3. Formal Logic (Lindenbaum-Tarski Algebras)
-* **Base** ($U_0$): A Heyting Algebra representing internal intuitionistic logic.
-* **Closure** ($c(p)$): Deductive closure (provable lemmas).
-* **Complement** ($\neg C$): Intuitionistic negation.
+### 3. Formal Logic: Lindenbaum-Tarski Algebras
+* **Base** $U_0$: A Heyting Algebra representing internal intuitionistic logic.
+* **Closure** $c(p)$: Deductive closure (provable lemmas).
+* **Complement** $\neg C$: Intuitionistic negation.
 * **Basis Output:** An independent set of axioms.
 
-### 4. Continuous Spaces (Edge Case)
-* **Base** ($U_0$): The continuous high-dimensional vector space of a Large Language Model (Semantic Latent Space).
+### 4. Continuous Spaces: Edge Case
+* **Base** $U_0$: The continuous high-dimensional vector space of a Large Language Model (Semantic Latent Space).
 * **Constraint Failure:** Unless a discrete orthogonal basis is arbitrarily imposed, continuous spaces lack atomic subobjects. The space fails the Artinian condition, and the choice function $\Phi$ is undefined, rendering the algorithm non-executable.
