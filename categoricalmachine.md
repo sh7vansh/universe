@@ -11,42 +11,42 @@ The construction takes place in a Grothendieck category $\mathcal{A}$, which is 
 In $\mathcal{A}$, every monomorphism is a kernel and every epimorphism is a cokernel:
 
 $$
-m = \ker(\operatorname{coker} m), \quad e = \operatorname{coker}(\ker e)
+m = \ker(\mathrm{coker} m), \quad e = \mathrm{coker}(\ker e)
 $$
 
 Every morphism $f: X \to Y$ factors through an exact sequence:
 
 $$
-0 \to \ker(f) \to X \twoheadrightarrow \operatorname{im}(f) \hookrightarrow Y \to \operatorname{coker}(f) \to 0
+0 \to \ker(f) \to X \twoheadrightarrow \mathrm{im}(f) \hookrightarrow Y \to \mathrm{coker}(f) \to 0
 $$
 
-with $\operatorname{coim}(f) \cong \operatorname{im}(f)$.
+with $\mathrm{coim}(f) \cong \mathrm{im}(f)$.
 
 Because filtered colimits commute with finite limits (axiom AB5), the filtered colimit of an ascending chain of monomorphisms $m_\alpha: C_\alpha \hookrightarrow U_0$ is a monomorphism $\varinjlim C_\alpha \hookrightarrow U_0$. The colimit can therefore be identified with a subobject of $U_0$.
 
 ### Ambient objects and residual cokernels
 
-Fix an ambient object $U_0 \in \operatorname{Ob}(\mathcal{A})$. A subobject of $U_0$ is an equivalence class of monomorphisms $m: C \hookrightarrow U_0$.
+Fix an ambient object $U_0 \in \mathrm{Ob}(\mathcal{A})$. A subobject of $U_0$ is an equivalence class of monomorphisms $m: C \hookrightarrow U_0$.
 
 For any subobject $C \hookrightarrow U_0$, the residual object is the canonical cokernel:
 
 $$
-0 \to C \xrightarrow{m} U_0 \xrightarrow{q_C} S_C \to 0, \quad S_C = \operatorname{coker}(m)
+0 \to C \xrightarrow{m} U_0 \xrightarrow{q_C} S_C \to 0, \quad S_C = \mathrm{coker}(m)
 $$
 
 When $C \cong U_0$, the quotient is zero: $S_{U_0} \cong 0$.
 
 ### The semi-Artinian condition
 
-An object $a \in \operatorname{Ob}(\mathcal{A})$ is simple if $a \not\cong 0$ and its only subobjects are $0$ and $a$. The socle of an object $X$, written $\operatorname{Soc}(X)$, is the sum of all simple subobjects of $X$.
+An object $a \in \mathrm{Ob}(\mathcal{A})$ is simple if $a \not\cong 0$ and its only subobjects are $0$ and $a$. The socle of an object $X$, written $\mathrm{Soc}(X)$, is the sum of all simple subobjects of $X$.
 
 We assume that $U_0$ is semi-Artinian (also called a Loewy object). Every non-zero quotient object $S$ of $U_0$ has an essential socle:
 
 $$
-S \not\cong 0 \implies \operatorname{Soc}(S) \neq 0
+S \not\cong 0 \implies \mathrm{Soc}(S) \neq 0
 $$
 
-If $\operatorname{Soc}(S) = 0$, as occurs with $\mathbb{Z}$ in $\mathbf{Ab}$ or $\mathcal{O}_X$ in $\operatorname{Coh}(X)$ when $\dim X \ge 1$, the quotient has no simple subobjects and the construction cannot proceed. The semi-Artinian condition is necessary and sufficient to ensure that non-zero residual quotients always contain simple subobjects. For objects with zero socle, one instead uses the dual filtration by simple quotients $S \twoheadrightarrow a$ and radical co-filtrations.
+If $\mathrm{Soc}(S) = 0$, as occurs with $\mathbb{Z}$ in $\mathbf{Ab}$ or $\mathcal{O}_X$ in $\mathrm{Coh}(X)$ when $\dim X \ge 1$, the quotient has no simple subobjects and the construction cannot proceed. The semi-Artinian condition is necessary and sufficient to ensure that non-zero residual quotients always contain simple subobjects. For objects with zero socle, one instead uses the dual filtration by simple quotients $S \twoheadrightarrow a$ and radical co-filtrations.
 
 ---
 
@@ -72,13 +72,13 @@ Rather than choosing points from a set, each step extracts a simple subobject fr
 
 ### The selection map
 
-Let $\operatorname{Res}(U_0) = \{S_C \mid C \hookrightarrow U_0, S_C \not\cong 0\}$ be the set of non-zero quotients. A selection map $\Phi$ assigns to each residual quotient $S_C$ a simple subobject:
+Let $\mathrm{Res}(U_0) = \{S_C \mid C \hookrightarrow U_0, S_C \not\cong 0\}$ be the set of non-zero quotients. A selection map $\Phi$ assigns to each residual quotient $S_C$ a simple subobject:
 
 $$
 \Phi(S_C) = (a \xrightarrow{i_a} S_C), \quad a \text{ simple in } \mathcal{A}
 $$
 
-Because $U_0$ is semi-Artinian, $\operatorname{Soc}(S_C) \neq 0$, so $\Phi(S_C)$ is always well-defined.
+Because $U_0$ is semi-Artinian, $\mathrm{Soc}(S_C) \neq 0$, so $\Phi(S_C)$ is always well-defined.
 
 ### Pullback expansion and short exact sequences
 
@@ -158,7 +158,7 @@ The filtration proceeds by transfinite recursion over the ordinals.
    Set $\alpha = 0$, $C_0 = 0$, $\mathcal{A}_0 = \emptyset$ (the sequence of simple layers), and $\Xi_0 = \emptyset$ (the sequence of extension classes).
 
 2. **Successor step ($\alpha \to \alpha + 1$).**
-   Form $S_\alpha = \operatorname{coker}(C_\alpha \hookrightarrow U_0)$.
+   Form $S_\alpha = \mathrm{coker}(C_\alpha \hookrightarrow U_0)$.
    If $S_\alpha \cong 0$, the ambient object is exhausted. Set $\Omega = \alpha$ and stop.
    Otherwise:
    * Select a simple subobject $i_{\alpha+1}: a_{\alpha+1} \hookrightarrow S_\alpha$ via $\Phi(S_\alpha)$.
@@ -171,7 +171,7 @@ The filtration proceeds by transfinite recursion over the ordinals.
    * Record the classifying Yoneda extension class:
 
      $$
-     \xi_{\alpha+1} \in \operatorname{Ext}^1_{\mathcal{A}}(a_{\alpha+1}, C_\alpha)
+     \xi_{\alpha+1} \in \mathrm{Ext}^1_{\mathcal{A}}(a_{\alpha+1}, C_\alpha)
      $$
 
    * Update the sequences: $\mathcal{A}_{\alpha+1} = \mathcal{A}_\alpha \cup \{a_{\alpha+1}\}$ and $\Xi_{\alpha+1} = \Xi_\alpha \cup \{\xi_{\alpha+1}\}$.
@@ -191,13 +191,13 @@ The filtration proceeds by transfinite recursion over the ordinals.
 
 ### Convergence theorems
 
-> **Theorem 1 (Convergence for finite-length objects).** Let $U_0 \in \operatorname{Ob}(\mathcal{A})$ have finite length (both Artinian and Noetherian). The recursion terminates at a finite ordinal $\Omega < \omega$ with $C_\Omega \cong U_0$. The integer $\Omega = \ell(U_0)$ equals the Jordan-Hölder length of $U_0$.
+> **Theorem 1 (Convergence for finite-length objects).** Let $U_0 \in \mathrm{Ob}(\mathcal{A})$ have finite length (both Artinian and Noetherian). The recursion terminates at a finite ordinal $\Omega < \omega$ with $C_\Omega \cong U_0$. The integer $\Omega = \ell(U_0)$ equals the Jordan-Hölder length of $U_0$.
 
 *Proof.* In an object of finite length, every strictly ascending chain of subobjects terminates in finitely many steps $\Omega \le \ell(U_0) < \omega$. Because $a_{\alpha+1}$ is simple, $a_{\alpha+1} \not\cong 0$, so each inclusion $C_\alpha \subsetneq C_{\alpha+1}$ is strict. Every quotient of a finite-length object has a non-zero socle, so the construction cannot stall before $S_\Omega = 0$. Thus $C_\Omega \cong U_0$. $\blacksquare$
 
-> **Theorem 2 (Transfinite convergence for semi-Artinian objects).** Let $U_0$ be a semi-Artinian object. The recursion terminates at an ordinal $\Omega \le \operatorname{loewy}(U_0) \cdot |U_0|^+$ with $C_\Omega \cong U_0$.
+> **Theorem 2 (Transfinite convergence for semi-Artinian objects).** Let $U_0$ be a semi-Artinian object. The recursion terminates at an ordinal $\Omega \le \mathrm{loewy}(U_0) \cdot |U_0|^+$ with $C_\Omega \cong U_0$.
 
-*Proof.* By the semi-Artinian hypothesis, whenever $C_\alpha \subsetneq U_0$, the quotient $S_\alpha = U_0 / C_\alpha$ has $\operatorname{Soc}(S_\alpha) \neq 0$. The selection map $\Phi(S_\alpha)$ is always non-empty, so $\{C_\alpha\}$ is strictly increasing. In a Grothendieck category, the subobjects of $U_0$ form a small complete lattice. A strictly increasing transfinite chain cannot exceed the successor cardinal of this lattice, so it must stabilize at some ordinal $\Omega$ where $S_\Omega \cong 0$, forcing $C_\Omega \cong U_0$. $\blacksquare$
+*Proof.* By the semi-Artinian hypothesis, whenever $C_\alpha \subsetneq U_0$, the quotient $S_\alpha = U_0 / C_\alpha$ has $\mathrm{Soc}(S_\alpha) \neq 0$. The selection map $\Phi(S_\alpha)$ is always non-empty, so $\{C_\alpha\}$ is strictly increasing. In a Grothendieck category, the subobjects of $U_0$ form a small complete lattice. A strictly increasing transfinite chain cannot exceed the successor cardinal of this lattice, so it must stabilize at some ordinal $\Omega$ where $S_\Omega \cong 0$, forcing $C_\Omega \cong U_0$. $\blacksquare$
 
 ### Vanishing of the residual colimit
 
@@ -210,13 +210,13 @@ The filtration proceeds by transfinite recursion over the ordinals.
 *Proof.* Colimits commute with colimits. Because cokernels are colimits:
 
 $$
-\varinjlim_{\alpha < \Omega} S_\alpha \cong \varinjlim_{\alpha < \Omega} \operatorname{coker}(C_\alpha \hookrightarrow U_0) \cong \operatorname{coker}\left(\varinjlim_{\alpha < \Omega} C_\alpha \hookrightarrow U_0\right)
+\varinjlim_{\alpha < \Omega} S_\alpha \cong \varinjlim_{\alpha < \Omega} \mathrm{coker}(C_\alpha \hookrightarrow U_0) \cong \mathrm{coker}\left(\varinjlim_{\alpha < \Omega} C_\alpha \hookrightarrow U_0\right)
 $$
 
 By axiom AB5, the filtered colimit of the monomorphisms $C_\alpha \hookrightarrow U_0$ is a monomorphism $\varinjlim C_\alpha \hookrightarrow U_0$. By Theorems 1 and 2, $\varinjlim_{\alpha < \Omega} C_\alpha \cong C_\Omega \cong U_0$. Therefore:
 
 $$
-\varinjlim_{\alpha < \Omega} S_\alpha \cong \operatorname{coker}(\operatorname{id}_{U_0}: U_0 \to U_0) \cong 0
+\varinjlim_{\alpha < \Omega} S_\alpha \cong \mathrm{coker}(\mathrm{id}_{U_0}: U_0 \to U_0) \cong 0
 $$
 
 $\blacksquare$
@@ -235,7 +235,7 @@ Rebuilding $U_0$ from the simple layers $\{a_\alpha\}$ depends on whether extens
 
 ### Semisimple categories
 
-When $\mathcal{A}$ is semisimple (for instance, finite group representations over $\mathbb{C}$ or vector spaces), all short exact sequences split, so $\operatorname{Ext}^1(a, C) = 0$.
+When $\mathcal{A}$ is semisimple (for instance, finite group representations over $\mathbb{C}$ or vector spaces), all short exact sequences split, so $\mathrm{Ext}^1(a, C) = 0$.
 
 Every step splits:
 
@@ -251,7 +251,7 @@ $$
 
 ### Categories with non-trivial extensions
 
-When $\operatorname{Ext}^1 \neq 0$, an object cannot be determined from its composition factors alone. For example, $\mathbb{Z}/p^2\mathbb{Z}$ and $\mathbb{Z}/p\mathbb{Z} \oplus \mathbb{Z}/p\mathbb{Z}$ share identical simple factors but are not isomorphic.
+When $\mathrm{Ext}^1 \neq 0$, an object cannot be determined from its composition factors alone. For example, $\mathbb{Z}/p^2\mathbb{Z}$ and $\mathbb{Z}/p\mathbb{Z} \oplus \mathbb{Z}/p\mathbb{Z}$ share identical simple factors but are not isomorphic.
 
 Here, $U_0$ is reconstructed from the recorded sequence of simple layers and extension classes $(\mathcal{A}_\Omega, \Xi_\Omega)$:
 1. Set $C_0 = 0$.
@@ -261,7 +261,7 @@ Here, $U_0$ is reconstructed from the recorded sequence of simple layers and ext
    0 \to C_\alpha \to C_{\alpha+1} \to a_{\alpha+1} \to 0
    $$
 
-   classified by $\xi_{\alpha+1} \in \operatorname{Ext}^1_{\mathcal{A}}(a_{\alpha+1}, C_\alpha)$.
+   classified by $\xi_{\alpha+1} \in \mathrm{Ext}^1_{\mathcal{A}}(a_{\alpha+1}, C_\alpha)$.
 3. For limit ordinals, $C_\lambda = \varinjlim_{\beta < \lambda} C_\beta$.
 4. $U_0 \cong C_\Omega$.
 
@@ -309,19 +309,19 @@ In the category $\mathbf{Ab} = \mathbb{Z}\text{-}\mathbf{Mod}$, let $U_0$ be a f
 
 The simple objects are cyclic groups of prime order $\mathbb{Z}/p\mathbb{Z}$. Each quotient $S_\alpha = U_0 / C_\alpha$ has a non-zero socle containing prime-order cyclic submodules. The construction extracts the prime composition series.
 
-For torsion-free groups such as $\mathbb{Z}$, $\operatorname{Soc}(\mathbb{Z}) = 0$. The subobject filtration cannot run on $\mathbb{Z}$ directly; such objects require the dual filtration using simple quotients $\mathbb{Z} \twoheadrightarrow \mathbb{Z}/p\mathbb{Z}$.
+For torsion-free groups such as $\mathbb{Z}$, $\mathrm{Soc}(\mathbb{Z}) = 0$. The subobject filtration cannot run on $\mathbb{Z}$ directly; such objects require the dual filtration using simple quotients $\mathbb{Z} \twoheadrightarrow \mathbb{Z}/p\mathbb{Z}$.
 
 ### Representations of acyclic quivers
 
-Let $\operatorname{Rep}_k(Q)$ be the category of representations of a finite acyclic quiver $Q$ over a field $k$, and let $V$ be a finite-dimensional representation.
+Let $\mathrm{Rep}_k(Q)$ be the category of representations of a finite acyclic quiver $Q$ over a field $k$, and let $V$ be a finite-dimensional representation.
 
-The simple objects are one-dimensional representations $S_i$ at each vertex $i \in Q_0$. In an acyclic quiver, every non-zero finite-dimensional representation has a non-zero socle of vertex simples. The construction extracts these vertex simples, and the recorded classes $\xi_\alpha \in \operatorname{Ext}^1(S_i, C_\alpha)$ reconstruct the indecomposable components of the representation.
+The simple objects are one-dimensional representations $S_i$ at each vertex $i \in Q_0$. In an acyclic quiver, every non-zero finite-dimensional representation has a non-zero socle of vertex simples. The construction extracts these vertex simples, and the recorded classes $\xi_\alpha \in \mathrm{Ext}^1(S_i, C_\alpha)$ reconstruct the indecomposable components of the representation.
 
 ### Representations of finite groups
 
 Let $\mathcal{A} = \mathbb{C}[G]\text{-}\mathbf{Mod}$ for a finite group $G$, with $U_0 = \mathbb{C}[G]$ the regular representation.
 
-The simple objects are the irreducible representations $V_\lambda$. By Maschke's theorem, $\mathbb{C}[G]$ is semisimple, so all short exact sequences split ($\operatorname{Ext}^1 = 0$). The filtration decomposes the regular representation directly into a direct sum of irreps:
+The simple objects are the irreducible representations $V_\lambda$. By Maschke's theorem, $\mathbb{C}[G]$ is semisimple, so all short exact sequences split ($\mathrm{Ext}^1 = 0$). The filtration decomposes the regular representation directly into a direct sum of irreps:
 
 $$
 \mathbb{C}[G] \cong \bigoplus_{\lambda \in \widehat{G}} V_\lambda^{\oplus \dim V_\lambda}
@@ -329,11 +329,11 @@ $$
 
 ### Zero-dimensional coherent sheaves
 
-Let $\operatorname{QCoh}(X)$ be the category of quasi-coherent sheaves on an algebraic variety $X$. Let $\mathcal{F} \in \operatorname{Coh}_0(X)$ be a coherent torsion sheaf supported on a finite zero-dimensional subscheme.
+Let $\mathrm{QCoh}(X)$ be the category of quasi-coherent sheaves on an algebraic variety $X$. Let $\mathcal{F} \in \mathrm{Coh}_0(X)$ be a coherent torsion sheaf supported on a finite zero-dimensional subscheme.
 
 The simple objects are skyscraper sheaves $k(x)$ supported at closed points $x \in X$. Every non-zero zero-dimensional sheaf has an essential socle of skyscraper sheaves. The construction extracts the points of support sequentially.
 
-The dimension of global sections $\dim_k H^0(X, \mathcal{F})$ is an additive invariant on $K_0(\operatorname{Coh}_0(X))$, tracking the length at each step. By contrast, positive-dimensional sheaves such as $\mathcal{O}_X$ have $\operatorname{Soc}(\mathcal{O}_X) = 0$, requiring the dual quotient filtration.
+The dimension of global sections $\dim_k H^0(X, \mathcal{F})$ is an additive invariant on $K_0(\mathrm{Coh}_0(X))$, tracking the length at each step. By contrast, positive-dimensional sheaves such as $\mathcal{O}_X$ have $\mathrm{Soc}(\mathcal{O}_X) = 0$, requiring the dual quotient filtration.
 
 ---
 
@@ -342,10 +342,10 @@ The dimension of global sections $\dim_k H^0(X, \mathcal{F})$ is an additive inv
 | Component | Categorical specification |
 | :--- | :--- |
 | Ambient category | Grothendieck category $\mathcal{A}$ (abelian, AB5) |
-| Regularity condition | Semi-Artinian object $U_0$: $\operatorname{Soc}(U_0 / C) \neq 0$ for all $C \subsetneq U_0$ |
+| Regularity condition | Semi-Artinian object $U_0$: $\mathrm{Soc}(U_0 / C) \neq 0$ for all $C \subsetneq U_0$ |
 | Residual map | Cokernel: $0 \to C_\alpha \to U_0 \xrightarrow{q_\alpha} S_\alpha \to 0$ |
-| Generator choice | Simple subobject: $i_{\alpha+1}: a_{\alpha+1} \hookrightarrow S_\alpha$ from $\operatorname{Soc}(S_\alpha)$ |
+| Generator choice | Simple subobject: $i_{\alpha+1}: a_{\alpha+1} \hookrightarrow S_\alpha$ from $\mathrm{Soc}(S_\alpha)$ |
 | Stage expansion | Pullback $C_{\alpha+1} = U_0 \times_{S_\alpha} a_{\alpha+1}$, yielding $0 \to C_\alpha \to C_{\alpha+1} \to a_{\alpha+1} \to 0$ |
-| Termination | Vanishing colimit: $\varinjlim S_\alpha \cong \operatorname{coker}(\varinjlim C_\alpha \to U_0) \cong 0$ |
-| Reconstruction | Colimit $U_0 \cong \varinjlim C_\alpha$ via extension data $(\mathcal{A}_\Omega, \Xi_\Omega)$ with $\xi \in \operatorname{Ext}^1$ |
+| Termination | Vanishing colimit: $\varinjlim S_\alpha \cong \mathrm{coker}(\varinjlim C_\alpha \to U_0) \cong 0$ |
+| Reconstruction | Colimit $U_0 \cong \varinjlim C_\alpha$ via extension data $(\mathcal{A}_\Omega, \Xi_\Omega)$ with $\xi \in \mathrm{Ext}^1$ |
 | Additive invariants | On $\mathcal{A}_{\text{fl}}$: Grothendieck group $K_0(\mathcal{A}_{\text{fl}})$, Jordan-Hölder factors, length $\Delta V = V(a) > 0$ |

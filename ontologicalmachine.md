@@ -2,7 +2,7 @@
 
 ## The construction
 
-Take a set $U$ and a closure operator $\operatorname{cl}: \mathcal{P}(U) \to \mathcal{P}(U)$ that is extensive ($X \subseteq \operatorname{cl}(X)$), monotonic ($X \subseteq Y \implies \operatorname{cl}(X) \subseteq \operatorname{cl}(Y)$), and idempotent ($\operatorname{cl}(\operatorname{cl}(X)) = \operatorname{cl}(X)$).
+Take a set $U$ and a closure operator $\mathrm{cl}: \mathcal{P}(U) \to \mathcal{P}(U)$ that is extensive ($X \subseteq \mathrm{cl}(X)$), monotonic ($X \subseteq Y \implies \mathrm{cl}(X) \subseteq \mathrm{cl}(Y)$), and idempotent ($\mathrm{cl}(\mathrm{cl}(X)) = \mathrm{cl}(X)$).
 
 To pull a generating set out of $U$, we need a choice rule. Fix a total well-order $\prec$ on $U$. This well-order can come from a priority function or pre-order, with ties broken arbitrarily.
 
@@ -13,25 +13,25 @@ $$
 $$
 
 The extraction runs by transfinite induction:
-1. Start with $B_0 = \emptyset$ and $C_0 = \operatorname{cl}(\emptyset)$.
-2. At step $\alpha + 1$, if $U \subseteq C_\alpha$, stop and set $\Omega = \alpha$. Otherwise, pick $p_{\alpha+1} = \Phi(C_\alpha)$, set $B_{\alpha+1} = B_\alpha \cup \{p_{\alpha+1}\}$, and close it: $C_{\alpha+1} = \operatorname{cl}(B_{\alpha+1})$.
-3. At limit ordinals $\lambda$, set $B_\lambda = \bigcup_{\beta < \lambda} B_\beta$ and $C_\lambda = \operatorname{cl}(B_\lambda)$.
+1. Start with $B_0 = \emptyset$ and $C_0 = \mathrm{cl}(\emptyset)$.
+2. At step $\alpha + 1$, if $U \subseteq C_\alpha$, stop and set $\Omega = \alpha$. Otherwise, pick $p_{\alpha+1} = \Phi(C_\alpha)$, set $B_{\alpha+1} = B_\alpha \cup \{p_{\alpha+1}\}$, and close it: $C_{\alpha+1} = \mathrm{cl}(B_{\alpha+1})$.
+3. At limit ordinals $\lambda$, set $B_\lambda = \bigcup_{\beta < \lambda} B_\beta$ and $C_\lambda = \mathrm{cl}(B_\lambda)$.
 
-Because each step adds an element outside the current closure, the chain of closed sets strictly grows until it covers $U$. The process halts at an ordinal $\Omega < |U|^+$, leaving $C_\Omega = \operatorname{cl}(U)$ and generating family $B_\Omega$.
+Because each step adds an element outside the current closure, the chain of closed sets strictly grows until it covers $U$. The process halts at an ordinal $\Omega < |U|^+$, leaving $C_\Omega = \mathrm{cl}(U)$ and generating family $B_\Omega$.
 
 ## Independence and failure modes
 
 Every element chosen by $\Phi$ is outside the closure of earlier elements:
 
 $$
-p_{\alpha+1} \notin \operatorname{cl}(\{p_\beta \mid \beta \le \alpha\})
+p_{\alpha+1} \notin \mathrm{cl}(\{p_\beta \mid \beta \le \alpha\})
 $$
 
 This stagewise independence does not guarantee that the final set $B_\Omega$ is minimal or independent.
 
 ### Matroids
 
-If $\operatorname{cl}$ has finite character and satisfies the Steinitz exchange property ($y \in \operatorname{cl}(X \cup \{x\}) \setminus \operatorname{cl}(X) \implies x \in \operatorname{cl}(X \cup \{y\})$), $(U, \operatorname{cl})$ is a matroid. Here, greedy selection works cleanly. Every maximal independent set has the same cardinality, and $B_\Omega$ is an independent basis. The order $\prec$ changes which basis you find, but not its size.
+If $\mathrm{cl}$ has finite character and satisfies the Steinitz exchange property ($y \in \mathrm{cl}(X \cup \{x\}) \setminus \mathrm{cl}(X) \implies x \in \mathrm{cl}(X \cup \{y\})$), $(U, \mathrm{cl})$ is a matroid. Here, greedy selection works cleanly. Every maximal independent set has the same cardinality, and $B_\Omega$ is an independent basis. The order $\prec$ changes which basis you find, but not its size.
 
 ### Non-matroidal spaces
 
@@ -57,19 +57,19 @@ The construction behaves differently depending on how well the well-order aligns
 
 ### Quantum states
 
-Let $U$ be a Hilbert space, $\operatorname{cl}$ the closed linear span, and order states by energy level. Because linear span satisfies the exchange property, the closure system is a matroid. Greedily taking the lowest-energy state outside the current span produces an orthonormal eigenbasis with zero discarded selections ($W = 0$).
+Let $U$ be a Hilbert space, $\mathrm{cl}$ the closed linear span, and order states by energy level. Because linear span satisfies the exchange property, the closure system is a matroid. Greedily taking the lowest-energy state outside the current span produces an orthonormal eigenbasis with zero discarded selections ($W = 0$).
 
 ### Formal logic
 
-Let $U$ be the set of well-formed formulas, $\operatorname{cl}$ deductive closure, and order formulas by character length. Deductive closure fails the exchange property ($A \vdash B$ does not imply $B \vdash A$). The sieve tests thousands of short tautologies that are already implied by earlier selections. The discard rate is near 1, and the resulting axiom set depends heavily on the syntactic tie-breaking rule.
+Let $U$ be the set of well-formed formulas, $\mathrm{cl}$ deductive closure, and order formulas by character length. Deductive closure fails the exchange property ($A \vdash B$ does not imply $B \vdash A$). The sieve tests thousands of short tautologies that are already implied by earlier selections. The discard rate is near 1, and the resulting axiom set depends heavily on the syntactic tie-breaking rule.
 
 ### Continuous geometry
 
-Let $U = \mathbb{R}^n$, and let $\operatorname{cl}(X)$ be the orbit of $X$ under a continuous Lie group action. The orbits are dense and uncountable. A point-by-point well-order requires the Axiom of Choice to break ties, which decomposes the space into non-measurable sets instead of carving out a clean fundamental domain. To get a usable fundamental domain in continuous geometry, you have to work with open regions and quotient topologies rather than point-wise greedy selection.
+Let $U = \mathbb{R}^n$, and let $\mathrm{cl}(X)$ be the orbit of $X$ under a continuous Lie group action. The orbits are dense and uncountable. A point-by-point well-order requires the Axiom of Choice to break ties, which decomposes the space into non-measurable sets instead of carving out a clean fundamental domain. To get a usable fundamental domain in continuous geometry, you have to work with open regions and quotient topologies rather than point-wise greedy selection.
 
 ### Arithmetic
 
-Let $U = \mathbb{Z}_{\ge 2}$, and let closure be upward divisibility ($x \in \operatorname{cl}(S)$ if some $s \in S$ divides $x$). Ordering integers by standard magnitude ($2, 3, 4, \dots$) recovers the sieve of Eratosthenes. The primes emerge as the generating family, but the discard rate approaches 1 because composites vastly outnumber primes. The work happens because an additive order is being used to discover multiplicative structure. Ordering by divisibility directly turns primes into completely prime filters of the poset, eliminating the search waste.
+Let $U = \mathbb{Z}_{\ge 2}$, and let closure be upward divisibility ($x \in \mathrm{cl}(S)$ if some $s \in S$ divides $x$). Ordering integers by standard magnitude ($2, 3, 4, \dots$) recovers the sieve of Eratosthenes. The primes emerge as the generating family, but the discard rate approaches 1 because composites vastly outnumber primes. The work happens because an additive order is being used to discover multiplicative structure. Ordering by divisibility directly turns primes into completely prime filters of the poset, eliminating the search waste.
 
 ## References
 
