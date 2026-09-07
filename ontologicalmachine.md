@@ -133,10 +133,14 @@ Let $E$ be an ambient ground set of elements, and let $U \subseteq E$ be the spe
  Assume $B_\Omega$ is countable, the windows $P_m$ are nested and exhaustive, and the graph weights are consistent. Let $V_\infty=\bigcup_m V_m$ and define the corresponding infinite graph on this finite-generated configuration space. If its weighted Laplacian defines a densely defined symmetric operator on a specified $\ell^2(V_\infty,\mu)$, one may ask whether it is essentially self-adjoint. If so, its closure is self-adjoint and has real spectrum.
  
  Independently of this operator question, assume that the Möbius profile $\widehat G$ is defined on $V_\infty$ (for example, $V_\infty$ is locally finite), and choose a height function $h:V_\infty\to[0, \infty)$. If there exists $\sigma_0\in\mathbb R$ such that
+ 
  $$ \sum_{C\in V_\infty}|\widehat G(C)|e^{-\sigma h(C)}<\infty \quad\text{for every }\sigma>\sigma_0, $$
+ 
  then
+ 
  $$ Z(s)=\sum_{C\in V_\infty}\widehat G(C)e^{-s h(C)} $$
- converges absolutely and defines a holomorphic function for $\operatorname{Re}(s)>\sigma_0$. Any meromorphic continuation, poles, zeros, or critical-line statement requires a separate domain-specific proof.
+ 
+ converges absolutely and defines a holomorphic function for $\mathrm{Re}(s)>\sigma_0$. Any meromorphic continuation, poles, zeros, or critical-line statement requires a separate domain-specific proof.
  
  **Interpretative Hierarchy:**
  * **The Sieve** asks: *"Which generators were selected?"*
