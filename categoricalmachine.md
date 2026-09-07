@@ -9,9 +9,17 @@ This note specifies a transfinite cellular filtration for objects in Grothendiec
 The construction takes place in a Grothendieck category $\mathcal{A}$, which is an abelian category satisfying Grothendieck's AB5 axiom (cocomplete, with a generator and exact filtered colimits).
 
 In $\mathcal{A}$, every monomorphism is a kernel and every epimorphism is a cokernel:
-$$m = \ker(\operatorname{coker} m), \quad e = \operatorname{coker}(\ker e)$$
+
+$$
+m = \ker(\operatorname{coker} m), \quad e = \operatorname{coker}(\ker e)
+$$
+
 Every morphism $f: X \to Y$ factors through an exact sequence:
-$$0 \to \ker(f) \to X \twoheadrightarrow \operatorname{im}(f) \hookrightarrow Y \to \operatorname{coker}(f) \to 0$$
+
+$$
+0 \to \ker(f) \to X \twoheadrightarrow \operatorname{im}(f) \hookrightarrow Y \to \operatorname{coker}(f) \to 0
+$$
+
 with $\operatorname{coim}(f) \cong \operatorname{im}(f)$.
 
 Because filtered colimits commute with finite limits (axiom AB5), the filtered colimit of an ascending chain of monomorphisms $m_\alpha: C_\alpha \hookrightarrow U_0$ is a monomorphism $\varinjlim C_\alpha \hookrightarrow U_0$. The colimit can therefore be identified with a subobject of $U_0$.
@@ -21,7 +29,11 @@ Because filtered colimits commute with finite limits (axiom AB5), the filtered c
 Fix an ambient object $U_0 \in \operatorname{Ob}(\mathcal{A})$. A subobject of $U_0$ is an equivalence class of monomorphisms $m: C \hookrightarrow U_0$.
 
 For any subobject $C \hookrightarrow U_0$, the residual object is the canonical cokernel:
-$$0 \to C \xrightarrow{m} U_0 \xrightarrow{q_C} S_C \to 0, \quad S_C = \operatorname{coker}(m)$$
+
+$$
+0 \to C \xrightarrow{m} U_0 \xrightarrow{q_C} S_C \to 0, \quad S_C = \operatorname{coker}(m)
+$$
+
 When $C \cong U_0$, the quotient is zero: $S_{U_0} \cong 0$.
 
 ### The semi-Artinian condition
@@ -29,7 +41,10 @@ When $C \cong U_0$, the quotient is zero: $S_{U_0} \cong 0$.
 An object $a \in \operatorname{Ob}(\mathcal{A})$ is simple if $a \not\cong 0$ and its only subobjects are $0$ and $a$. The socle of an object $X$, written $\operatorname{Soc}(X)$, is the sum of all simple subobjects of $X$.
 
 We assume that $U_0$ is semi-Artinian (also called a Loewy object). Every non-zero quotient object $S$ of $U_0$ has an essential socle:
-$$S \not\cong 0 \implies \operatorname{Soc}(S) \neq 0$$
+
+$$
+S \not\cong 0 \implies \operatorname{Soc}(S) \neq 0
+$$
 
 If $\operatorname{Soc}(S) = 0$, as occurs with $\mathbb{Z}$ in $\mathbf{Ab}$ or $\mathcal{O}_X$ in $\operatorname{Coh}(X)$ when $\dim X \ge 1$, the quotient has no simple subobjects and the construction cannot proceed. The semi-Artinian condition is necessary and sufficient to ensure that non-zero residual quotients always contain simple subobjects. For objects with zero socle, one instead uses the dual filtration by simple quotients $S \twoheadrightarrow a$ and radical co-filtrations.
 
@@ -58,7 +73,11 @@ Rather than choosing points from a set, each step extracts a simple subobject fr
 ### The selection map
 
 Let $\operatorname{Res}(U_0) = \{S_C \mid C \hookrightarrow U_0, S_C \not\cong 0\}$ be the set of non-zero quotients. A selection map $\Phi$ assigns to each residual quotient $S_C$ a simple subobject:
-$$\Phi(S_C) = (a \xrightarrow{i_a} S_C), \quad a \text{ simple in } \mathcal{A}$$
+
+$$
+\Phi(S_C) = (a \xrightarrow{i_a} S_C), \quad a \text{ simple in } \mathcal{A}
+$$
+
 Because $U_0$ is semi-Artinian, $\operatorname{Soc}(S_C) \neq 0$, so $\Phi(S_C)$ is always well-defined.
 
 ### Pullback expansion and short exact sequences
@@ -66,19 +85,30 @@ Because $U_0$ is semi-Artinian, $\operatorname{Soc}(S_C) \neq 0$, so $\Phi(S_C)$
 Given the stage subobject $C_\alpha \hookrightarrow U_0$ with projection $q_\alpha: U_0 \twoheadrightarrow S_\alpha$, let $i_{\alpha+1}: a_{\alpha+1} \hookrightarrow S_\alpha$ be the simple subobject chosen by $\Phi(S_\alpha)$.
 
 The next stage $C_{\alpha+1} \hookrightarrow U_0$ is the pullback in $\mathcal{A}$ of $i_{\alpha+1}$ along $q_\alpha$:
-$$\begin{array}{ccc}
+
+$$
+\begin{array}{ccc}
 C_{\alpha+1} & \xrightarrow{m_{\alpha+1}} & U_0 \\
 \pi_{\alpha+1} \Big\downarrow & & \Big\downarrow q_\alpha \\
 a_{\alpha+1} & \xrightarrow{i_{\alpha+1}} & S_\alpha
-\end{array}$$
+\end{array}
+$$
 
 In an abelian category, pullbacks preserve several exact properties:
 1. Monomorphisms pull back to monomorphisms, so $m_{\alpha+1}: C_{\alpha+1} \hookrightarrow U_0$ is monic.
 2. Epimorphisms pull back to epimorphisms, so $\pi_{\alpha+1}: C_{\alpha+1} \twoheadrightarrow a_{\alpha+1}$ is epic.
 3. For any arrow $x: X \to C_{\alpha+1}$, $\pi_{\alpha+1} \circ x = 0$ if and only if $q_\alpha \circ (m_{\alpha+1} \circ x) = 0$. By the universal property of kernels, this factors uniquely through $\ker(q_\alpha) \cong C_\alpha$. Thus:
-   $$\ker(\pi_{\alpha+1}) \cong C_\alpha$$
+
+   $$
+   \ker(\pi_{\alpha+1}) \cong C_\alpha
+   $$
+
 4. Every epimorphism in $\mathcal{A}$ is the cokernel of its kernel, giving the exact sequence:
-   $$0 \to C_\alpha \hookrightarrow C_{\alpha+1} \xrightarrow{\pi_{\alpha+1}} a_{\alpha+1} \to 0$$
+
+   $$
+   0 \to C_\alpha \hookrightarrow C_{\alpha+1} \xrightarrow{\pi_{\alpha+1}} a_{\alpha+1} \to 0
+   $$
+
    This establishes that $C_{\alpha+1} / C_\alpha \cong a_{\alpha+1}$.
 
 ---
@@ -133,14 +163,26 @@ The filtration proceeds by transfinite recursion over the ordinals.
    Otherwise:
    * Select a simple subobject $i_{\alpha+1}: a_{\alpha+1} \hookrightarrow S_\alpha$ via $\Phi(S_\alpha)$.
    * Form the pullback $C_{\alpha+1} = U_0 \times_{S_\alpha} a_{\alpha+1}$, which yields:
-     $$0 \to C_\alpha \to C_{\alpha+1} \to a_{\alpha+1} \to 0$$
+
+     $$
+     0 \to C_\alpha \to C_{\alpha+1} \to a_{\alpha+1} \to 0
+     $$
+
    * Record the classifying Yoneda extension class:
-     $$\xi_{\alpha+1} \in \operatorname{Ext}^1_{\mathcal{A}}(a_{\alpha+1}, C_\alpha)$$
+
+     $$
+     \xi_{\alpha+1} \in \operatorname{Ext}^1_{\mathcal{A}}(a_{\alpha+1}, C_\alpha)
+     $$
+
    * Update the sequences: $\mathcal{A}_{\alpha+1} = \mathcal{A}_\alpha \cup \{a_{\alpha+1}\}$ and $\Xi_{\alpha+1} = \Xi_\alpha \cup \{\xi_{\alpha+1}\}$.
 
 3. **Limit step ($\lambda$ a limit ordinal).**
    Take the directed colimit of the chain in $\mathcal{A}$:
-   $$C_\lambda = \varinjlim_{\beta < \lambda} C_\beta, \quad \mathcal{A}_\lambda = \bigcup_{\beta < \lambda} \mathcal{A}_\beta, \quad \Xi_\lambda = \bigcup_{\beta < \lambda} \Xi_\beta$$
+
+   $$
+   C_\lambda = \varinjlim_{\beta < \lambda} C_\beta, \quad \mathcal{A}_\lambda = \bigcup_{\beta < \lambda} \mathcal{A}_\beta, \quad \Xi_\lambda = \bigcup_{\beta < \lambda} \Xi_\beta
+   $$
+
    By axiom AB5, the canonical arrow $C_\lambda \hookrightarrow U_0$ is a monomorphism.
 
 ---
@@ -160,12 +202,23 @@ The filtration proceeds by transfinite recursion over the ordinals.
 ### Vanishing of the residual colimit
 
 > **Theorem 3 (Vanishing of the residual colimit).** Let $\{S_\alpha\}_{\alpha < \Omega}$ be the diagram of residual cokernels with canonical projections $q_{\beta, \alpha}: S_\alpha \twoheadrightarrow S_\beta$ for $\alpha \le \beta$. The directed colimit of this diagram vanishes:
-> $$\varinjlim_{\alpha < \Omega} S_\alpha \cong 0$$
+>
+> $$
+> \varinjlim_{\alpha < \Omega} S_\alpha \cong 0
+> $$
 
 *Proof.* Colimits commute with colimits. Because cokernels are colimits:
-$$\varinjlim_{\alpha < \Omega} S_\alpha \cong \varinjlim_{\alpha < \Omega} \operatorname{coker}(C_\alpha \hookrightarrow U_0) \cong \operatorname{coker}\left(\varinjlim_{\alpha < \Omega} C_\alpha \hookrightarrow U_0\right)$$
+
+$$
+\varinjlim_{\alpha < \Omega} S_\alpha \cong \varinjlim_{\alpha < \Omega} \operatorname{coker}(C_\alpha \hookrightarrow U_0) \cong \operatorname{coker}\left(\varinjlim_{\alpha < \Omega} C_\alpha \hookrightarrow U_0\right)
+$$
+
 By axiom AB5, the filtered colimit of the monomorphisms $C_\alpha \hookrightarrow U_0$ is a monomorphism $\varinjlim C_\alpha \hookrightarrow U_0$. By Theorems 1 and 2, $\varinjlim_{\alpha < \Omega} C_\alpha \cong C_\Omega \cong U_0$. Therefore:
-$$\varinjlim_{\alpha < \Omega} S_\alpha \cong \operatorname{coker}(\operatorname{id}_{U_0}: U_0 \to U_0) \cong 0$$
+
+$$
+\varinjlim_{\alpha < \Omega} S_\alpha \cong \operatorname{coker}(\operatorname{id}_{U_0}: U_0 \to U_0) \cong 0
+$$
+
 $\blacksquare$
 
 ---
@@ -173,7 +226,10 @@ $\blacksquare$
 ## 5. Reconstruction
 
 The ambient object $U_0$ is recovered as the directed colimit of its stages:
-$$U_0 \cong \varinjlim_{\alpha < \Omega} C_\alpha$$
+
+$$
+U_0 \cong \varinjlim_{\alpha < \Omega} C_\alpha
+$$
 
 Rebuilding $U_0$ from the simple layers $\{a_\alpha\}$ depends on whether extensions split in $\mathcal{A}$.
 
@@ -182,9 +238,16 @@ Rebuilding $U_0$ from the simple layers $\{a_\alpha\}$ depends on whether extens
 When $\mathcal{A}$ is semisimple (for instance, finite group representations over $\mathbb{C}$ or vector spaces), all short exact sequences split, so $\operatorname{Ext}^1(a, C) = 0$.
 
 Every step splits:
-$$C_{\alpha+1} \cong C_\alpha \oplus a_{\alpha+1}$$
+
+$$
+C_{\alpha+1} \cong C_\alpha \oplus a_{\alpha+1}
+$$
+
 Because colimits commute with coproducts, $U_0$ is the direct sum of its simple layers:
-$$U_0 \cong \bigoplus_{\alpha < \Omega} a_{\alpha+1}$$
+
+$$
+U_0 \cong \bigoplus_{\alpha < \Omega} a_{\alpha+1}
+$$
 
 ### Categories with non-trivial extensions
 
@@ -193,7 +256,11 @@ When $\operatorname{Ext}^1 \neq 0$, an object cannot be determined from its comp
 Here, $U_0$ is reconstructed from the recorded sequence of simple layers and extension classes $(\mathcal{A}_\Omega, \Xi_\Omega)$:
 1. Set $C_0 = 0$.
 2. For each successor ordinal, $C_{\alpha+1}$ is the extension:
-   $$0 \to C_\alpha \to C_{\alpha+1} \to a_{\alpha+1} \to 0$$
+
+   $$
+   0 \to C_\alpha \to C_{\alpha+1} \to a_{\alpha+1} \to 0
+   $$
+
    classified by $\xi_{\alpha+1} \in \operatorname{Ext}^1_{\mathcal{A}}(a_{\alpha+1}, C_\alpha)$.
 3. For limit ordinals, $C_\lambda = \varinjlim_{\beta < \lambda} C_\beta$.
 4. $U_0 \cong C_\Omega$.
@@ -211,16 +278,26 @@ To obtain non-trivial invariants, we restrict to the Serre subcategory of finite
 The Grothendieck group $K_0(\mathcal{A}_{\text{fl}})$ is the free abelian group on isomorphism classes $[X]$ of finite-length objects, modulo $[B] = [A] + [C]$ for each short exact sequence $0 \to A \to B \to C \to 0$.
 
 Because each step forms a short exact sequence $0 \to C_\alpha \to C_{\alpha+1} \to a_{\alpha+1} \to 0$, the classes satisfy:
-$$[C_{\alpha+1}] = [C_\alpha] + [a_{\alpha+1}]$$
+
+$$
+[C_{\alpha+1}] = [C_\alpha] + [a_{\alpha+1}]
+$$
+
 When $U_0$ has finite length, the termination ordinal is finite ($\Omega < \omega$), and the class of $U_0$ decomposes as:
-$$[U_0] = \sum_{\alpha=0}^{\Omega-1} [a_{\alpha+1}]$$
+
+$$
+[U_0] = \sum_{\alpha=0}^{\Omega-1} [a_{\alpha+1}]
+$$
 
 ### Jordan-Hölder invariance
 
 By the Jordan-Hölder theorem in $\mathcal{A}_{\text{fl}}$, the multiset of simple composition factors $\{a_1, \dots, a_\Omega\}$ is an invariant of $U_0$, independent of the choice map $\Phi$.
 
 Any additive invariant, such as module length $\ell$ or vector space dimension, factors through $K_0(\mathcal{A}_{\text{fl}})$ as a homomorphism $V: K_0(\mathcal{A}_{\text{fl}}) \to \mathbb{R}$. The step-wise difference is strictly positive:
-$$\Delta V_\alpha = V(C_{\alpha+1}) - V(C_\alpha) = V(a_{\alpha+1}) > 0$$
+
+$$
+\Delta V_\alpha = V(C_{\alpha+1}) - V(C_\alpha) = V(a_{\alpha+1}) > 0
+$$
 
 ---
 
@@ -245,7 +322,10 @@ The simple objects are one-dimensional representations $S_i$ at each vertex $i \
 Let $\mathcal{A} = \mathbb{C}[G]\text{-}\mathbf{Mod}$ for a finite group $G$, with $U_0 = \mathbb{C}[G]$ the regular representation.
 
 The simple objects are the irreducible representations $V_\lambda$. By Maschke's theorem, $\mathbb{C}[G]$ is semisimple, so all short exact sequences split ($\operatorname{Ext}^1 = 0$). The filtration decomposes the regular representation directly into a direct sum of irreps:
-$$\mathbb{C}[G] \cong \bigoplus_{\lambda \in \widehat{G}} V_\lambda^{\oplus \dim V_\lambda}$$
+
+$$
+\mathbb{C}[G] \cong \bigoplus_{\lambda \in \widehat{G}} V_\lambda^{\oplus \dim V_\lambda}
+$$
 
 ### Zero-dimensional coherent sheaves
 

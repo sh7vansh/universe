@@ -7,7 +7,10 @@ Take a set $U$ and a closure operator $\operatorname{cl}: \mathcal{P}(U) \to \ma
 To pull a generating set out of $U$, we need a choice rule. Fix a total well-order $\prec$ on $U$. This well-order can come from a priority function or pre-order, with ties broken arbitrarily.
 
 Define the discovery operator $\Phi$ on closed subsets $C \subsetneq U$:
-$$\Phi(C) = \min_\prec(U \setminus C)$$
+
+$$
+\Phi(C) = \min_{\prec}(U \setminus C)
+$$
 
 The extraction runs by transfinite induction:
 1. Start with $B_0 = \emptyset$ and $C_0 = \operatorname{cl}(\emptyset)$.
@@ -19,7 +22,10 @@ Because each step adds an element outside the current closure, the chain of clos
 ## Independence and failure modes
 
 Every element chosen by $\Phi$ is outside the closure of earlier elements:
-$$p_{\alpha+1} \notin \operatorname{cl}(\{p_\beta \mid \beta \le \alpha\})$$
+
+$$
+p_{\alpha+1} \notin \operatorname{cl}(\{p_\beta \mid \beta \le \alpha\})
+$$
 
 This stagewise independence does not guarantee that the final set $B_\Omega$ is minimal or independent.
 
@@ -32,13 +38,16 @@ If $\operatorname{cl}$ has finite character and satisfies the Steinitz exchange 
 Without the exchange property, greedy selection with a fixed order is brittle. An adversary can arrange $\prec$ so that the algorithm picks many redundant elements before hitting a single element that generates the entire space.
 
 This creates two distinct penalties:
-* Cardinality bloat: $|B_\Omega| / |B_{OPT}|$ can grow as large as $|U|$.
+* Cardinality bloat: $|B_\Omega| / |B_{\mathrm{OPT}}|$ can grow as large as $|U|$.
 * Search waste: If the algorithm evaluates $k$ candidates to pick $|B_\Omega|$ generators, the discard rate $W = (k - |B_\Omega|) / k$ approaches 1 whenever the priority order puts strong generators at the end.
 
 ### Tracking novelty with Möbius inversion
 
 When the poset of closed subsets is locally finite, you can measure how much new structure each generator introduces. For an observable $G$ defined on the lattice of closed sets, the Möbius inversion gives a layer-by-layer delta:
-$$\widehat{G}(X) = \sum_{Y \subseteq X} \mu(Y, X) G(Y)$$
+
+$$
+\widehat{G}(X) = \sum_{Y \subseteq X} \mu(Y, X) G(Y)
+$$
 
 In the divisibility lattice of integers, applying this inversion to $G(n) = \log n$ recovers the von Mangoldt function $\Lambda(n)$, which is non-zero only on prime powers.
 
