@@ -167,7 +167,7 @@ Let $E$ be an ambient ground set of elements, and let $U \subseteq E$ be the spe
  * **Sieve Output:** The Prime Numbers. 
    *(Note 1: The full closure poset is not locally finite. However, on the separate locally finite divisibility poset $\mathcal{D} = (\mathbb{N}_{\ge 1}, \mid)$, where $1$ acts as the formal bottom element, the incidence Möbius function beautifully recovers the classical number-theoretic Möbius function: $\mu_{\mathcal{D}}(a,b) = \mu_{\mathbb{N}}(b/a)$ when $a \mid b$, and $0$ otherwise).*
    
-   *(Note 2: By projecting the additive Priority Gradient $\nabla$ as an observable onto the spectral graph of the multiplicative closure configurations, the Sieve's Laplacian diagnostic directly measures the friction between integer addition and multiplication. The asymptotic decay of these spectral coefficients would structurally parallel the error bounds of the Prime Number Theorem, framing the Riemann Hypothesis not as a mystery of primes, but as a rigid structural claim about the spectral "white noise" limit of the Discovery Operator's friction).*
+   *(Note 2: By projecting the additive Priority Gradient ∇ as an observable onto the spectral graph of the multiplicative closure configurations, the Sieve utilizes its Laplacian diagnostic to directly quantify the systemic friction between the geometry of integer addition and the geometry of integer multiplication).*
   
  ### 2. Quantum Mechanics: $\mathbf{Hilb}$
  * **Ground Set** $E$: All vectors in a Hilbert space. Target $U$: The full vector space.
