@@ -1,95 +1,69 @@
-# The Abstract Ontological Sieve: A Generalized Structural Specification
+# The ontological sieve: greedy generator extraction in closure systems
 
-## Introduction
+## The construction
 
-Across formal domains, extracting a generating family from a space is a recurring challenge. Whether finding prime numbers, quantum ground states, or fundamental axioms, the operation is identical. You isolate a family that spans the universe under a specific closure rule.
+Take a set $U$ and a closure operator $\operatorname{cl}: \mathcal{P}(U) \to \mathcal{P}(U)$ that is extensive ($X \subseteq \operatorname{cl}(X)$), monotonic ($X \subseteq Y \implies \operatorname{cl}(X) \subseteq \operatorname{cl}(Y)$), and idempotent ($\operatorname{cl}(\operatorname{cl}(X)) = \operatorname{cl}(X)$).
 
-This paper abstracts the extraction process. Using Order Theory, we define the "Ontological Sieve", a domain-agnostic spanning construction for closure systems.
+To pull a generating set out of $U$, we need a choice rule. Fix a total well-order $\prec$ on $U$. This well-order can come from a priority function or pre-order, with ties broken arbitrarily.
 
-The Sieve strips away requirements like atoms or complements. It needs only a closure operator and a discovery mechanism. It uses transfinite induction to isolate a generating family. The resulting configuration lattice acts as a formal substrate for deep diagnostics. It reveals if the family is independent or over-generative, maps structural novelty using Möbius inversion, and quantifies the operational friction of discovery.
+Define the discovery operator $\Phi$ on closed subsets $C \subsetneq U$:
+$$\Phi(C) = \min_\prec(U \setminus C)$$
 
----
+The extraction runs by transfinite induction:
+1. Start with $B_0 = \emptyset$ and $C_0 = \operatorname{cl}(\emptyset)$.
+2. At step $\alpha + 1$, if $U \subseteq C_\alpha$, stop and set $\Omega = \alpha$. Otherwise, pick $p_{\alpha+1} = \Phi(C_\alpha)$, set $B_{\alpha+1} = B_\alpha \cup \{p_{\alpha+1}\}$, and close it: $C_{\alpha+1} = \operatorname{cl}(B_{\alpha+1})$.
+3. At limit ordinals $\lambda$, set $B_\lambda = \bigcup_{\beta < \lambda} B_\beta$ and $C_\lambda = \operatorname{cl}(B_\lambda)$.
 
-## I. Mathematical Structure
+Because each step adds an element outside the current closure, the chain of closed sets strictly grows until it covers $U$. The process halts at an ordinal $\Omega < |U|^+$, leaving $C_\Omega = \operatorname{cl}(U)$ and generating family $B_\Omega$.
 
-To execute the construction, the environment must supply:
+## Independence and failure modes
 
-1. **Closure Operator ($\text{cl}$):** An extensive, monotonic, and idempotent operator representing generative rules.
-2. **Well-Founded Priority ($\nabla$):** A gradient assigning internal gravity to elements.
-3. **Total Well-Order ($\prec$):** A fixed ordering that refines the priority gradient.
-4. **Discovery Operator ($\Phi$):** A choice function $\Phi(C) = \min_\prec(U \setminus C)$ that isolates the ungenerated element with the lowest priority.
+Every element chosen by $\Phi$ is outside the closure of earlier elements:
+$$p_{\alpha+1} \notin \operatorname{cl}(\{p_\beta \mid \beta \le \alpha\})$$
 
----
+This stagewise independence does not guarantee that the final set $B_\Omega$ is minimal or independent.
 
-## II. Transfinite Construction
+### Matroids
 
-Initialization begins with an empty generating family $B_0 = \emptyset$ and its closure $C_0 = \text{cl}(\emptyset)$.
+If $\operatorname{cl}$ has finite character and satisfies the Steinitz exchange property ($y \in \operatorname{cl}(X \cup \{x\}) \setminus \operatorname{cl}(X) \implies x \in \operatorname{cl}(X \cup \{y\})$), $(U, \operatorname{cl})$ is a matroid. Here, greedy selection works cleanly. Every maximal independent set has the same cardinality, and $B_\Omega$ is an independent basis. The order $\prec$ changes which basis you find, but not its size.
 
-At any ordinal $\alpha$, if the target universe $U \subseteq C_\alpha$, the construction halts. Otherwise, the operator selects the next generator $p_{\alpha+1} = \Phi(C_\alpha)$.
-The space updates to $B_{\alpha+1} = B_\alpha \cup \{p_{\alpha+1}\}$ and $C_{\alpha+1} = \text{cl}(B_{\alpha+1})$. Limit ordinals accumulate all prior steps.
+### Non-matroidal spaces
 
-> **Main Theorem.** *For any extensive, monotonic, idempotent closure operator on a set, this construction halts at some ordinal $\Omega < |U|^+$ with $C_\Omega = \text{cl}(U)$. If the space is finitary and satisfies the Mac Lane-Steinitz Exchange property, the extracted family $B_\Omega$ is strictly independent.*
+Without the exchange property, greedy selection with a fixed order is brittle. An adversary can arrange $\prec$ so that the algorithm picks many redundant elements before hitting a single element that generates the entire space.
 
----
+This creates two distinct penalties:
+* Cardinality bloat: $|B_\Omega| / |B_{OPT}|$ can grow as large as $|U|$.
+* Search waste: If the algorithm evaluates $k$ candidates to pick $|B_\Omega|$ generators, the discard rate $W = (k - |B_\Omega|) / k$ approaches 1 whenever the priority order puts strong generators at the end.
 
-## III. Conditional Properties
+### Tracking novelty with Möbius inversion
 
-The structural properties of the output $B_\Omega$ depend on the ambient geometry.
+When the poset of closed subsets is locally finite, you can measure how much new structure each generator introduces. For an observable $G$ defined on the lattice of closed sets, the Möbius inversion gives a layer-by-layer delta:
+$$\widehat{G}(X) = \sum_{Y \subseteq X} \mu(Y, X) G(Y)$$
 
-### 1. Stagewise Non-Generation vs. Final Independence
-Every selected generator is strictly outside the closure of preceding generators. Final independence depends on the space.
-* **Matroidal Spaces:** If $\text{cl}$ satisfies finite character and the Exchange property, stagewise non-generation guarantees final independence. The dimension is invariant.
-* **Non-Matroidal Spaces:** Spaces like integer divisibility fail exchange. Absolute invariance is not guaranteed. A bad priority induces redundancy.
+In the divisibility lattice of integers, applying this inversion to $G(n) = \log n$ recovers the von Mangoldt function $\Lambda(n)$, which is non-zero only on prime powers.
 
-### 2. Generative Density
-The extraction density is statically determined by the boundary of $U$.
-* **Perfect Density:** $\text{cl}(U) = U$.
-* **Closure Spillover:** $\text{cl}(U) \supsetneq U$. This indicates an over-generated mismatch.
+## Behavior across domains
 
-### 3. Möbius Inversion and Novelty Profiles
-For locally finite closure posets, Rota's Möbius function isolates structural novelty. Decomposing a cumulative observable $G$ across the generated lattice yields a novelty profile $\widehat{G}$. In the arithmetic divisibility poset, decomposing $G(n) = \log n$ recovers exactly the von Mangoldt function $\Lambda(n)$. This isolates prime-power novelty from the composite structure perfectly.
+The construction behaves differently depending on how well the well-order aligns with the closure rules.
 
-### 4. Algorithmic Friction
-Because the Sieve uses a monotonic scan, friction is defined by Information Starvation.
-Let $k$ be the total elements evaluated before halting. The **Discard Rate** is $W = \frac{k - |B_\Omega|}{k}$. 
-A flawless priority yields a Discard Rate approaching $0$. An adversarial gradient starves the algorithm, yielding $W \to 1$.
+### Quantum states
 
----
+Let $U$ be a Hilbert space, $\operatorname{cl}$ the closed linear span, and order states by energy level. Because linear span satisfies the exchange property, the closure system is a matroid. Greedily taking the lowest-energy state outside the current span produces an orthonormal eigenbasis with zero discarded selections ($W = 0$).
 
-## IV. Domain Instantiations
+### Formal logic
 
-### 1. Quantum Mechanics
-* **Closure:** Closed linear span of states.
-* **Priority:** Spectral-level rank.
-* **Output:** The full energy eigenbasis.
-The priority front-loads the orthogonal basis. The Sieve subsumes the space with zero wasted selections ($W = 0$).
+Let $U$ be the set of well-formed formulas, $\operatorname{cl}$ deductive closure, and order formulas by character length. Deductive closure fails the exchange property ($A \vdash B$ does not imply $B \vdash A$). The sieve tests thousands of short tautologies that are already implied by earlier selections. The discard rate is near 1, and the resulting axiom set depends heavily on the syntactic tie-breaking rule.
 
-### 2. Formal Logic
-* **Closure:** Deductive closure of well-formed formulas.
-* **Priority:** Syntactic length.
-* **Output:** A generating presentation of axioms.
-The Sieve evaluates and discards thousands of short tautologies already in the closure. This massive discard rate illustrates information starvation.
+### Continuous geometry
 
-### 3. Continuous Geometry
-* **Closure:** The orbit of a symmetry group acting on $\mathbb{R}^n$.
-* **Priority:** Euclidean distance from the origin.
-* **Output:** The interior of a fundamental domain.
-Point-by-point extraction fails in continuous spaces. Because continuous symmetries generate dense orbits, a discrete well-ordering forces the Sieve to invoke the Axiom of Choice to break uncountably many distance ties. This shatters the geometry into non-measurable Vitali sets. 
+Let $U = \mathbb{R}^n$, and let $\operatorname{cl}(X)$ be the orbit of $X$ under a continuous Lie group action. The orbits are dense and uncountable. A point-by-point well-order requires the Axiom of Choice to break ties, which decomposes the space into non-measurable sets instead of carving out a clean fundamental domain. To get a usable fundamental domain in continuous geometry, you have to work with open regions and quotient topologies rather than point-wise greedy selection.
 
-The structural fix requires shifting the ontology from additive points to multiplicative regions (Locales). Bypassing points eliminates transfinite induction entirely, cleanly yielding a fundamental domain.
+### Arithmetic
 
-### 4. Arithmetic and the $\mathbb{F}_1$ Geometry of Primes
-* **Closure:** Upward closure under divisibility.
-* **Priority:** Additive numerical magnitude ($1, 2, 3 \dots$).
-* **Output:** The Prime Numbers.
-When run on the integers, the Discard Rate asymptotically approaches 1. This massive friction is the algorithmic mirror of a Choice anomaly. We are forcing an additive well-ordering across a multiplicative closure. 
+Let $U = \mathbb{Z}_{\ge 2}$, and let closure be upward divisibility ($x \in \operatorname{cl}(S)$ if some $s \in S$ divides $x$). Ordering integers by standard magnitude ($2, 3, 4, \dots$) recovers the sieve of Eratosthenes. The primes emerge as the generating family, but the discard rate approaches 1 because composites vastly outnumber primes. The work happens because an additive order is being used to discover multiplicative structure. Ordering by divisibility directly turns primes into completely prime filters of the poset, eliminating the search waste.
 
-We apply the Locale fix directly to the integers. Shifting from additive points to multiplicative regions yields the lattice of principal ideals ($n\mathbb{Z}$). This purely multiplicative monoid defines the heuristic $\mathbb{F}_1$ (Field with One Element) geometry.
+## References
 
-Over $\mathbb{F}_1$, the algorithmic friction vanishes. Without an additive well-ordering, the primes are not computational outputs. They pre-exist natively as the completely prime filters of the localic geometry.
-
----
-
-## V. Related Work
 * Mac Lane, S. (1936). "Some Interpretations of Abstract Linear Dependence."
 * Rota, G.-C. (1964). "Theory of Möbius Functions."
+* Borodin, A., Nielsen, M. N., & Rackoff, C. (2003). (For the fixed-priority algorithm framework).
