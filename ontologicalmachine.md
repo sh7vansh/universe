@@ -112,9 +112,3 @@ This universal specification successfully extracts bases across radically differ
 * **Closure** $c(X)$: Deductive closure (all provable theorems from $X$).
 * **Discovery** $\Phi(C_\alpha)$: Selects a valid proposition that cannot be proven from $C_\alpha$.
 * **Basis Output:** An independent set of Axioms.
-
-### 4. Continuous Spaces: The LLM Latent Space
-* **Multiverse** $\mathcal{W}$: The uncountably infinite, non-atomic continuous vector space of semantics.
-* **Closure** $c(X)$: Topological closure and linear combinations.
-* **Discovery** $\Phi(C_\alpha)$: Descends along the gradient $\nabla$ (representing semantic primacy or feature sparsity) to select the most fundamental, highly-activated semantic concept $v$ outside the currently generated hyperplane $C_\alpha$.
-* **Basis Output:** A topologically grounded basis for the semantic space. The Sieve no longer crashes on continuous spaces; it merely executes transfinitely until the continuum is spanned.
