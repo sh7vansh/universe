@@ -127,6 +127,9 @@ Let $E$ be an ambient ground set of elements, and let $U \subseteq E$ be the spe
  $$\widetilde{G}(k) = \sum_{C \in V_m} G(C)\psi_k(C)$$
  
  Low-$\lambda_k$ coefficients describe variation that is smooth across nearby generated configurations; high-$\lambda_k$ coefficients describe rapid variation across the configuration graph. This diagnostic can be applied directly to the cumulative observable $G$, or to its Möbius-derived novelty profile $\widehat{G}$ (provided $\widehat{G}$ is real-valued).
+
+ **Diagnosing the Friction of Discovery:**
+ A particularly powerful application of this spectral diagnostic arises when measuring the resonance between the internal physics of the space ($\text{cl}$) and its imposed order ($\nabla$). By projecting the wait-times or gradient density of the Discovery Operator $\Phi$ as the observable $G$, the Sieve mathematically diagnoses the systemic friction between these two potentially incompatible geometries. The decay of the resulting spectral coefficients $\widetilde{G}(k)$ explicitly bounds the asymptotic "stutter" or efficiency of the extraction process.
  
  ### 6. Asymptotic Geometry and the Infinite-Window Laplacian
  
@@ -161,7 +164,10 @@ Let $E$ be an ambient ground set of elements, and let $U \subseteq E$ be the spe
  * **Closure** $\text{cl}(X)$: The upward closure under divisibility, $\{n \ge 1 : \exists x \in X,\ x \mid n\}$. (Note: this covers elements via factorization rather than synthesizing them by multiplication; $\text{cl}(\emptyset) = \emptyset$ is the bottom of the closure lattice, while $\text{cl}(\{1\}) = E$ is the top).
  * **Priority** $\nabla$: Numerical magnitude.
  * **Discovery** $\Phi(C_\alpha)$: Selects the integer with minimal magnitude in $U \setminus C_\alpha$.
- * **Sieve Output:** The Prime Numbers. *(Note: The full closure poset is not locally finite. However, on the separate locally finite divisibility poset $\mathcal{D} = (\mathbb{N}_{\ge 1}, \mid)$, where $1$ acts as the formal bottom element, the incidence Möbius function beautifully recovers the classical number-theoretic Möbius function: $\mu_{\mathcal{D}}(a,b) = \mu_{\mathbb{N}}(b/a)$ when $a \mid b$, and $0$ otherwise).*
+ * **Sieve Output:** The Prime Numbers. 
+   *(Note 1: The full closure poset is not locally finite. However, on the separate locally finite divisibility poset $\mathcal{D} = (\mathbb{N}_{\ge 1}, \mid)$, where $1$ acts as the formal bottom element, the incidence Möbius function beautifully recovers the classical number-theoretic Möbius function: $\mu_{\mathcal{D}}(a,b) = \mu_{\mathbb{N}}(b/a)$ when $a \mid b$, and $0$ otherwise).*
+   
+   *(Note 2: By projecting the additive Priority Gradient $\nabla$ as an observable onto the spectral graph of the multiplicative closure configurations, the Sieve's Laplacian diagnostic directly measures the friction between integer addition and multiplication. The asymptotic decay of these spectral coefficients would structurally parallel the error bounds of the Prime Number Theorem, framing the Riemann Hypothesis not as a mystery of primes, but as a rigid structural claim about the spectral "white noise" limit of the Discovery Operator's friction).*
   
  ### 2. Quantum Mechanics: $\mathbf{Hilb}$
  * **Ground Set** $E$: All vectors in a Hilbert space. Target $U$: The full vector space.
