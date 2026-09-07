@@ -128,10 +128,15 @@ Let $E$ be an ambient ground set of elements, and let $U \subseteq E$ be the spe
  
  Low-$\lambda_k$ coefficients describe variation that is smooth across nearby generated configurations; high-$\lambda_k$ coefficients describe rapid variation across the configuration graph. This diagnostic can be applied directly to the cumulative observable $G$, or to its Möbius-derived novelty profile $\widehat{G}$ (provided $\widehat{G}$ is real-valued).
  
+ ### 6. Asymptotic Geometry and the Infinite-Window Laplacian
+ 
+ Assume $B_\Omega$ is countable, the windows $P_m$ are nested and exhaustive, and the graph weights are consistent. Let $V_\infty=\bigcup_m V_m$ and define the corresponding infinite graph on this finite-generated configuration space. If its weighted Laplacian defines a densely defined symmetric operator on a specified $\ell^2(V_\infty,\mu)$, one may ask whether it is essentially self-adjoint. If so, its closure is self-adjoint and has real spectrum.
+ 
  **Interpretative Hierarchy:**
  * **The Sieve** asks: *"Which generators were selected?"*
  * **Möbius Inversion** asks: *"What novelty remains after inclusion-exclusion?"*
  * **Spectral Analysis** asks: *"Is that novelty globally smooth or rapidly varying across the configuration graph?"*
+ * **Asymptotic Geometry** asks: *"Does the chosen infinite-window graph model admit an essentially self-adjoint Laplacian?"*
  
  *(Caveat: The spectral geometry is strictly relative to the chosen diagnostic window $P_m$, edge rule, and weights. These choices define the geometry and are not canonical consequences of the closure operator alone.)*
  
