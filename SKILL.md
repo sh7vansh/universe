@@ -1,9 +1,9 @@
 ---
-name: conjecture-sieve
+name: conjecture-diagnosis
 description: Diagnose any mathematical conjecture by mapping it through the Ontological Sieve, Categorical Machine, and algorithmic Friction limits.
 ---
 
-# Conjecture Sieve Diagnostic
+# Conjecture Diagnosis
 
 ## Overview
 This skill acts as a structural diagnostic tool for mathematical conjectures. It maps the conjecture into the failure modes of algorithmic extraction to determine if the conjecture is structurally aligned, mathematically paradoxical, or prone to Geometry Shattering.
@@ -17,7 +17,7 @@ Before diagnosing the conjecture, you **MUST** read the foundational documents t
 2. `view_file` on `https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/ontologicalmachine.md`
 3. `view_file` on `https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/friction.md`
 
-## The Five-Step Diagnostic
+## The Six-Step Diagnostic
 
 Execute the following sequence to evaluate the conjecture.
 
@@ -28,6 +28,8 @@ Define the components of the conjecture and map them to the correct machine. If 
 * **Ambient Set ($U$)**: What is the target space? Is it continuous or discrete?
 * **Closure Operator ($\mathrm{cl}$)**: What is the extensive, monotonic, idempotent operator combining the generators (e.g., linear span, divisibility)?
 * **Well-Order ($\prec$)**: What priority gradient is used to select generators (e.g., numerical magnitude, polynomial degree)?
+* **Möbius Inversion**: Does the closure lattice support Möbius inversion to automatically filter redundant generators?
+* **Adaptive Gradients**: Does the conjecture permit a dynamic, adaptive priority gradient, or does it rely on a fixed priority algorithm?
 
 **For the Categorical Machine (Abelian/Structural):**
 * **Ambient Category ($\mathcal{A}$)**: Is the setting a Grothendieck category (abelian with exact filtered colimits)?
@@ -39,6 +41,7 @@ Evaluate the theoretical runtime and limits of the extraction machine on the pro
 * **Can it start?** If the Categorical target object has a zero socle (like $\mathcal{O}_X$ for $\dim X \ge 1$), the machine is invalid and halts at step zero.
 * **If it runs, does it finish?** Is the target space a finite-dimensional matroid (where cardinality bloat $c = 1$), meaning it halts after a finite number of successful steps? 
 * **Does it starve or loop forever?** Does the extraction require uncountably many transfinite steps (Axiom of Choice)? Does it suffer from extreme information starvation where the discard rate $W \to 1$?
+* **Quantitative Friction Bounds**: Estimate and state the asymptotic bounds for Cardinality Bloat ($c$) and Search Work ($W$).
 
 ### 3. The Alignment Diagnostic
 Classify the fundamental structural alignment between the generators and the target reality:
@@ -49,10 +52,16 @@ Classify the fundamental structural alignment between the generators and the tar
 ### 4. The Structural Verdict
 Deliver a conclusive mechanical verdict based on the alignment diagnostic:
 * **Geometry Shattering (Ill-Posed)**: Forcing Discrete Logic onto a Continuous Reality requires point-by-point selection. This invokes the Axiom of Choice, breaking the space into non-measurable sets. The geometry physically shatters, rendering the conjecture structurally ill-posed.
-* **The Paradox (Infinite Waste)**: Forcing a Continuous Gradient onto a Discrete Reality generates apparent chaos. The machine evaluates an expanding ocean of redundant structures to find discrete truths. The algorithm survives, but the discard rate $W \to 1$. It demands infinite continuous work to extract finite discrete truth.
+* **Paradox (Infinite Waste)**: Forcing a Continuous Gradient onto a Discrete Reality generates apparent chaos. The machine evaluates an expanding ocean of redundant structures to find discrete truths. The algorithm survives, but the discard rate $W \to 1$. It demands infinite continuous work to extract finite discrete truth.
 
 ### 5. The Resolution
 Define the exact mathematical mechanism required to resolve the structural failure:
 * **To prevent Geometry Shattering**: Abandon point-wise extraction. Use quotient topologies and open continuous regions.
 * **To break the Zero-Socle Barrier**: Abandon bottom-up subobject extraction. Use top-down dual quotient filtration.
 * **To dismantle the Paradox**: Realign the priority gradient to the native structural topology (e.g., order by divisibility instead of magnitude).
+
+### 6. "Why" Translation
+Translate the verdict into standard mathematics rigorously. Do not use internal terms like "sieve" or "categorical machine". Explain the failure using standard proofs.
+* **Geometry Shattering**: Show that selecting discrete points in a continuous space requires the Axiom of Choice. Explain how this creates non-measurable sets and breaks the topology.
+* **Zero-Socle Barrier**: Prove the target object has no simple submodules (like a torsion-free module). Conclude that it has no base components to extract.
+* **Infinite Waste Paradox**: Show that the space lacks the exchange property. Prove that the chosen well-order forces an infinite search to find a basis.
