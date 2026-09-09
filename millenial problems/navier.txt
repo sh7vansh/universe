@@ -1,0 +1,45 @@
+  ### 1. Setup & Mapping
+  The Navier-Stokes conjecture attempts to map to the Categorical Machine but fails its pre-conditions.
+
+  • Ambient Category: Topological vector spaces of fluid velocity fields.
+  • Target Object (U₀): The global smooth solution v(x, t) over $\mathbb{R}^3 \times [0, \infty)$.
+  • Semi-Artinian Condition: Fails. The space of continuous functions on ℝ³ behaves like 𝒪_X for dim X ≥ 1. It has a zero socle (Soc(U₀) = 0). A fluid continuum contains no simple, indivisible subobjects. The
+  machine halts at step zero.
+
+  The conjecture maps to the Ontological Sieve:
+
+  • Ambient Set (U): The continuous spatial domain ℝ³ and the continuum of velocity and vorticity values.
+  • Closure Operator (cl): The non-linear time-evolution operator of the Navier-Stokes equations.
+  • Well-Order (≺): Magnitude of vorticity |ω(x, t)| or fixed energy gradients.
+  • Möbius Inversion: Fails. The non-linear advection term (v · ∇)v mixes all scales and destroys locally finite poset structures.
+  • Adaptive Gradients: Fails. Analytical bounds use fixed Sobolev gradients to evaluate a dynamically adaptive flow.
+
+  ### 2. Execution Limits
+
+  • Can it start? In the categorical framework, it halts at step zero due to the zero-socle barrier.
+  • If it runs, does it finish? In the set-theoretic sieve, tracking point-wise singularities requires uncountably many transfinite steps across a continuum. It never finishes.
+  • Does it starve or loop forever? It starves. The non-linear term cascades energy infinitely to microscopic scales.
+  • Quantitative Friction Bounds: Cardinality bloat c → ∞. Search work W → 1.
+
+  ### 3. The Alignment Diagnostic
+
+  Forcing Discrete Logic onto a Continuous Reality. The conjecture demands strict point-wise regularity across a fluid space. Isolating specific discrete coordinates of maximum vorticity to bound the flow
+  forces rigid discrete logic onto a continuous dynamic reality.
+
+  ### 4. The Structural Verdict
+
+  Geometry Shattering. Forcing discrete point-wise evaluation onto a continuous fluid reality requires point-by-point selection. This invokes the Axiom of Choice and breaks the space into non-measurable sets.
+  The geometry physically shatters. The strict point-wise approach is structurally ill-posed.
+
+  ### 5. The Resolution
+
+  • To break the Zero-Socle Barrier: Abandon bottom-up subobject extraction. Use top-down dual quotient filtration via weak solutions integrated over test regions.
+  • To prevent Geometry Shattering: Abandon point-wise extraction. Use quotient topologies and open continuous regions.
+
+  ### 6. "Why" Translation
+
+  The space of continuous vector fields on ℝ³ contains no simple submodules. A fluid continuum is infinitely divisible. Proving global strong regularity by isolating specific spatial points of maximum
+  vorticity requires picking precise points out of a continuum. Executing this point-by-point selection over a continuous flow requires the Axiom of Choice. This constructs non-measurable sets and breaks the
+  underlying topology. The non-linear advection term continuously smears the fluid, so specific points lose their discrete identity as energy cascades. Because the space lacks indivisible base components,
+  point-wise bounds fail. To evaluate the fluid without shattering the geometry, mathematics must abandon point-wise extraction and use integration over open continuous regions.
+
