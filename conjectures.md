@@ -1,5 +1,7 @@
 Forcing Discrete Logic onto a Continuous Reality : Shatters [Impossibility Proof]
+
 Forcing a Continuous Gradient onto a Discrete/Multiplicative Reality : loops [paradox]
+
 Clean Structural Alignment : Halts [Constructive Solution]
 
 | Domain / Problem | Input / Reality Type | Sieve Outcome | Classification | Structural Mechanism |
