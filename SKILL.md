@@ -13,9 +13,9 @@ Activate this skill whenever the user asks to analyze, diagnose, or run the "sie
 
 ## Prerequisite Reading
 Before diagnosing the conjecture, you **MUST** read the foundational documents to load the mechanical framework into your context:
-1. `view_file` on `/home/shivansh/ontologicalmachine.md`
-2. `view_file` on `/home/shivansh/categoricalmachine.md`
-3. `view_file` on `/home/shivansh/friction.md`
+1. `view_file` on `https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/categoricalmachine.md`
+2. `view_file` on `https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/ontologicalmachine.md`
+3. `view_file` on `https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/friction.md`
 
 ## The Five-Step Diagnostic
 
