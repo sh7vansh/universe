@@ -1,0 +1,7 @@
+1. [bsd.txt](https://raw.githubusercontent.com/sh7vansh/universe/main/millenial-problems/bsd.txt)
+2. [hodge.txt](https://raw.githubusercontent.com/sh7vansh/universe/main/millenial-problems/hodge.txt)
+3. [navier.txt](https://raw.githubusercontent.com/sh7vansh/universe/main/millenial-problems/navier.txt)
+4. [pandnp.txt](https://raw.githubusercontent.com/sh7vansh/universe/main/millenial-problems/pandnp.txt)
+5. [poincare.txt](https://raw.githubusercontent.com/sh7vansh/universe/main/millenial-problems/poincare.txt)
+6. [riemann.txt](https://raw.githubusercontent.com/sh7vansh/universe/main/millenial-problems/riemann.txt)
+7. [yangmills.txt](https://raw.githubusercontent.com/sh7vansh/universe/main/millenial-problems/yangmills.txt)
