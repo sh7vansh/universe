@@ -106,6 +106,8 @@ noncomputable def searchWork (k : ℕ) (sieve_output : Set U) : ℚ :=
 
 end OntologicalFriction
 ```
+[See full proof in OntologicalFriction.lean](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/OntologicalFriction.lean)
+
 
 ### Full Proofs and Bounds
 

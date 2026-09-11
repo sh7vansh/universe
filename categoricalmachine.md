@@ -420,6 +420,29 @@ end CategoricalMachine
 
 The heavy transfinite limit proofs and convergence mappings are modeled over filtered ordinal categories in their own dedicated module:
 
+**Transfinite Recursion Functors and Convergence**
+
+The exact functors mapping the ordinal recursion to colimits in $\mathcal{A}$:
+```lean
+noncomputable def transfiniteRecursionStep (C : Subobject U₀) (h_semi : IsSemiArtinian U₀) : Subobject U₀ :=
+  if h : IsZero (residual U₀ C) then
+    C
+  else
+    let a := (h_semi C h).choose
+    let i := (h_semi C h).choose_spec.choose
+    haveI : Mono i := (h_semi C h).choose_spec.choose_spec.2
+    cellularSubobject U₀ C a i
+
+noncomputable def residualDiagramMap (F : J ⥤ Subobject U₀) (j k : J) (f : j ⟶ k) : 
+    cokernel (F.obj j).arrow ⟶ cokernel (F.obj k).arrow
+
+noncomputable def residualDiagram (F : J ⥤ Subobject U₀) : J ⥤ A
+
+def Convergence (F : J ⥤ Subobject U₀) : Prop :=
+  ∃ (Ω : J), F.obj Ω = ⊤
+```
+[See full proof in CategoricalColimits.lean](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/CategoricalColimits.lean)
+
 **Theorem 3: Vanishing Residual Colimit**
 If the transfinite recursion converges to the top subobject $U_0$ at some limit ordinal $\Omega$, then the directed colimit of the residual diagram maps exactly to the zero object:
 ```lean
@@ -428,3 +451,4 @@ theorem residual_colimit_vanishes (F : J ⥤ Subobject U₀) [IsFiltered J]
     IsZero (colimit (residualDiagram U₀ F))
 ```
 [See full proof in CategoricalColimits.lean](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/CategoricalColimits.lean)
+

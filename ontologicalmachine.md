@@ -110,4 +110,4 @@ theorem novelty_of_phi (C : Set U) (h : C ⊂ Set.univ) :
 end OntologicalMachine
 ```
 
-[See full compiling module in OntologicalMachine.lean](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/OntologicalMachine.lean)
+[See full proof in OntologicalMachine.lean](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/OntologicalMachine.lean)
