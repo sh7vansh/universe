@@ -71,3 +71,62 @@ The **Discard Rate** is $W = \frac{k - |B_\Omega|}{k}$.
 ## Conclusion
 
 Algorithmic friction is the algebraic failure of the Exchange property combined with a priority gradient that places generative elements too late in the well-order.
+
+## Lean 4 Formalization
+
+We can represent the concepts of cardinality bloat and search work by measuring the discrepancy between the greedy Sieve and an optimal generator.
+
+```lean
+import Mathlib.Data.Set.Finite.Basic
+import Mathlib.Data.Fintype.Basic
+import Mathlib.Data.Rat.Defs
+
+namespace OntologicalFriction
+
+variable {U : Type} [Fintype U]
+variable (cl : Set U → Set U)
+
+/-- A set is a generating set if its closure covers the universe. -/
+def IsGeneratingSet (S : Set U) : Prop :=
+  cl S = Set.univ
+
+/-- An optimal generating set minimizes cardinality. -/
+def IsOptimalGenerator (S : Set U) : Prop :=
+  IsGeneratingSet cl S ∧ ∀ T, IsGeneratingSet cl T → S.toFinite.toFinset.card ≤ T.toFinite.toFinset.card
+
+/-- The approximation ratio (Friction 1) compares the sieve's output to the optimal size. -/
+noncomputable def cardinalityBloat (sieve_output : Set U) (opt : Set U) 
+    (h_opt : IsOptimalGenerator cl opt) : ℚ :=
+  (sieve_output.toFinite.toFinset.card : ℚ) / (opt.toFinite.toFinset.card : ℚ)
+
+/-- Search Work (Friction 2) represents the discard rate W. -/
+noncomputable def searchWork (k : ℕ) (sieve_output : Set U) : ℚ :=
+  let b_omega := sieve_output.toFinite.toFinset.card
+  if k = 0 then (0 : ℚ) else ((k - b_omega : ℕ) : ℚ) / (k : ℚ)
+
+end OntologicalFriction
+```
+
+### Full Proofs and Bounds
+
+The advanced combinatorial proofs for cardinality friction are formalized in their own dedicated Mathlib4 modules:
+
+1. **The Adversarial Trap (`cardinalityBloat` = $\Theta(|E|)$)**
+   The explicit adversarial closure operator that maximizes cardinality bloat by hiding the optimal generator:
+   ```lean
+   theorem optimal_e_star [Fintype U] :
+       IsOptimalGenerator (advCl e_star) {e_star}
+   ```
+   [See full proof in AdversarialTrap.lean](file:///home/shivansh/math_project/MathProject/AdversarialTrap.lean)
+
+2. **The Matroid Optimality Bound ($c = 1$)**
+   Under the Mac Lane-Steinitz exchange property, the greedy Sieve outputs an independent generating set of optimal size:
+   ```lean
+   theorem matroid_optimality_bound [Fintype U] [DecidableEq U]
+       (M : Matroid U) [UnivMatroid M] (h_cl : cl = M.closure)
+       (sieve_output : Set U) (h_sieve : IsGreedySieveOutput cl sieve_output)
+       (opt : Set U) (h_opt : IsOptimalGenerator cl opt)
+       (h_nz : opt.toFinite.toFinset.card ≠ 0) :
+       cardinalityBloat cl sieve_output opt h_opt = 1
+   ```
+   [See full proof in MatroidFriction.lean](file:///home/shivansh/math_project/MathProject/MatroidFriction.lean)

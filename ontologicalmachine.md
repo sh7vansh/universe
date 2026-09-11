@@ -76,3 +76,38 @@ Let $U = \mathbb{Z}_{\ge 2}$, and let closure be upward divisibility ($x \in \ma
 * Mac Lane, S. (1936). "Some Interpretations of Abstract Linear Dependence."
 * Rota, G.-C. (1964). "Theory of Möbius Functions."
 * Borodin, A., Nielsen, M. N., & Rackoff, C. (2003). (For the fixed-priority algorithm framework).
+
+## Lean 4 Formalization
+
+The basic structures of the ontological sieve can be expressed in Lean 4 as follows:
+
+```lean
+import Mathlib.Order.Closure
+import Mathlib.Order.WellFounded
+
+namespace OntologicalMachine
+
+variable {U : Type}
+
+/-- A closure operator satisfies extensivity, monotonicity, and idempotence. -/
+class ClosureSystem (cl : Set U → Set U) where
+  extensive : ∀ X, X ⊆ cl X
+  monotone : ∀ X Y, X ⊆ Y → cl X ⊆ cl Y
+  idempotent : ∀ X, cl (cl X) = cl X
+
+variable [LinearOrder U] [WellFoundedLT U]
+
+noncomputable def Phi (C : Set U) (h : C ⊂ Set.univ) : U :=
+  let compl : Set U := Cᶜ
+  have h_nonempty : compl.Nonempty := Set.nonempty_compl.mpr h.ne
+  WellFounded.min wellFounded_lt compl h_nonempty
+
+theorem novelty_of_phi (C : Set U) (h : C ⊂ Set.univ) :
+    Phi C h ∉ C := by
+  have h1 := WellFounded.min_mem wellFounded_lt Cᶜ (Set.nonempty_compl.mpr h.ne)
+  exact h1
+
+end OntologicalMachine
+```
+
+[See full compiling module in OntologicalMachine.lean](file:///home/shivansh/math_project/MathProject/OntologicalMachine.lean)

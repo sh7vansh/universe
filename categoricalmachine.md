@@ -349,3 +349,82 @@ The dimension of global sections $\dim_k H^0(X, \mathcal{F})$ is an additive inv
 | Termination | Vanishing colimit: $\varinjlim S_\alpha \cong \mathrm{coker}(\varinjlim C_\alpha \to U_0) \cong 0$ |
 | Reconstruction | Colimit $U_0 \cong \varinjlim C_\alpha$ via extension data $(\mathcal{A}_\Omega, \Xi_\Omega)$ with $\xi \in \mathrm{Ext}^1$ |
 | Additive invariants | On $\mathcal{A}_{\text{fl}}$: Grothendieck group $K_0(\mathcal{A}_{\text{fl}})$, Jordan-Hölder factors, length $\Delta V = V(a) > 0$ |
+
+## Lean 4 Formalization
+
+The structural properties of the categorical sieve, such as exact sequences and subobjects in an abelian category, can be formalized using Mathlib's category theory library.
+
+```lean
+import Mathlib.CategoryTheory.Abelian.Basic
+import Mathlib.CategoryTheory.Subobject.Basic
+import Mathlib.CategoryTheory.Limits.Shapes.Pullback.HasPullback
+import Mathlib.CategoryTheory.Limits.Shapes.ZeroMorphisms
+import Mathlib.CategoryTheory.Subobject.Lattice
+
+namespace CategoricalMachine
+
+open CategoryTheory
+open CategoryTheory.Limits
+
+-- Let A be an abelian category
+variable {A : Type*} [Category A] [Abelian A]
+
+/-- A simple object has exactly two subobjects: 0 and itself. -/
+def IsSimple (X : A) : Prop :=
+  ¬ IsZero X ∧ ∀ (Y : Subobject X), Y = ⊥ ∨ Y = ⊤
+
+variable (U₀ : A)
+
+/-- The residual object is the cokernel of a subobject inclusion. -/
+noncomputable def residual (C : Subobject U₀) : A :=
+  cokernel C.arrow
+
+/-- The semi-Artinian condition: every non-zero quotient has a simple subobject. -/
+def IsSemiArtinian (U₀ : A) : Prop :=
+  ∀ (C : Subobject U₀), ¬ IsZero (residual U₀ C) → 
+    ∃ (a : A) (i : a ⟶ residual U₀ C), IsSimple a ∧ Mono i
+
+/-- The cellular step forms a pullback of the simple subobject along the quotient map. -/
+noncomputable def cellularStep 
+    (C : Subobject U₀) 
+    (a : A) 
+    (i : a ⟶ residual U₀ C) [Mono i] : A :=
+  pullback i (cokernel.π C.arrow)
+
+/-- The canonical morphism from the cellular step into the ambient object. -/
+noncomputable def cellularStepArrow
+    (C : Subobject U₀) 
+    (a : A) 
+    (i : a ⟶ residual U₀ C) [Mono i] : cellularStep U₀ C a i ⟶ U₀ :=
+  pullback.snd i (cokernel.π C.arrow)
+
+/-- Because pullbacks preserve monomorphisms, the new cellular step is a valid subobject of U₀. -/
+instance cellularStep_is_mono 
+    (C : Subobject U₀) 
+    (a : A) 
+    (i : a ⟶ residual U₀ C) [Mono i] : Mono (cellularStepArrow U₀ C a i) := by
+  dsimp [cellularStepArrow]
+  exact pullback.snd_of_mono
+
+/-- The subobject corresponding to the cellular step. -/
+noncomputable def cellularSubobject
+    (C : Subobject U₀) 
+    (a : A) 
+    (i : a ⟶ residual U₀ C) [Mono i] : Subobject U₀ :=
+  Subobject.mk (cellularStepArrow U₀ C a i)
+
+end CategoricalMachine
+```
+
+### Transfinite Colimits and Convergence
+
+The heavy transfinite limit proofs and convergence mappings are modeled over filtered ordinal categories in their own dedicated module:
+
+**Theorem 3: Vanishing Residual Colimit**
+If the transfinite recursion converges to the top subobject $U_0$ at some limit ordinal $\Omega$, then the directed colimit of the residual diagram maps exactly to the zero object:
+```lean
+theorem residual_colimit_vanishes (F : J ⥤ Subobject U₀) [IsFiltered J] 
+    (h_conv : Convergence U₀ F) :
+    IsZero (colimit (residualDiagram U₀ F))
+```
+[See full proof in CategoricalColimits.lean](file:///home/shivansh/math_project/MathProject/CategoricalColimits.lean)
