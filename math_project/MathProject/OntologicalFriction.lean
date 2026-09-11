@@ -6,6 +6,8 @@ Authors: MathProject Authors
 import Mathlib.Data.Set.Finite.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Rat.Defs
+import Mathlib.Order.Filter.Basic
+import Mathlib.Topology.Instances.Rat
 
 /-!
 # OntologicalFriction
@@ -19,6 +21,8 @@ set_option linter.style.openClassical false
 set_option linter.style.whitespace false
 set_option linter.unusedVariables false
 set_option linter.unusedDecidableInType false
+
+open Filter Topology
 
 namespace OntologicalFriction
 
@@ -42,5 +46,18 @@ noncomputable def cardinalityBloat (sieve_output : Set U) (opt : Set U)
 noncomputable def searchWork (k : ℕ) (sieve_output : Set U) : ℚ :=
   let b_omega := sieve_output.toFinite.toFinset.card
   if k = 0 then (0 : ℚ) else ((k - b_omega : ℕ) : ℚ) / (k : ℚ)
+
+theorem searchWork_perfect_alignment (k : ℕ) (sieve_output : Set U)
+    (h : sieve_output.toFinite.toFinset.card = k) :
+    searchWork k sieve_output = 0 := by
+  dsimp [searchWork]
+  rw [h]
+  split_ifs with hk
+  · rfl
+  · rw [Nat.sub_self, Nat.cast_zero, zero_div]
+
+theorem searchWork_limit (sieve_output : Set U) :
+    Tendsto (fun (k : ℕ) => searchWork k sieve_output) atTop (𝓝 1) := by
+  sorry
 
 end OntologicalFriction

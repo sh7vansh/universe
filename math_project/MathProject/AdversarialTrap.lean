@@ -7,6 +7,8 @@ import Mathlib.Data.Set.Finite.Basic
 import Mathlib.Data.Fintype.Basic
 import MathProject.OntologicalMachine
 import MathProject.OntologicalFriction
+import Mathlib.Order.Filter.Basic
+import Mathlib.Topology.Instances.Rat
 
 /-!
 # AdversarialTrap
@@ -21,10 +23,10 @@ set_option linter.style.whitespace false
 set_option linter.unusedVariables false
 set_option linter.unusedDecidableInType false
 
-
 open Classical
 open OntologicalMachine
 open OntologicalFriction
+open Filter Topology
 
 namespace AdversarialTrap
 
@@ -78,5 +80,11 @@ theorem optimal_e_star [Fintype U] :
     · have hNonEmpty : T.Nonempty := Set.nonempty_iff_ne_empty.mpr hEmpty
       have hFinsetNonEmpty : T.toFinite.toFinset.Nonempty := by simp [hNonEmpty]
       exact Finset.card_pos.mpr hFinsetNonEmpty
+
+variable [Fintype U]
+
+theorem searchWork_adv_trap_limit :
+    Tendsto (fun k => searchWork k ({e_star} : Set U)) atTop (𝓝 1) := by
+  exact OntologicalFriction.searchWork_limit {e_star}
 
 end AdversarialTrap

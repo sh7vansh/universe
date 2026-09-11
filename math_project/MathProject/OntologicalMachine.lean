@@ -5,6 +5,7 @@ Authors: MathProject Authors
 -/
 import Mathlib.Order.Closure
 import Mathlib.Order.WellFounded
+import Mathlib.SetTheory.Ordinal.Arithmetic
 
 /-!
 # OntologicalMachine
@@ -40,5 +41,16 @@ theorem novelty_of_phi (C : Set U) (h : C ⊂ Set.univ) :
     Phi C h ∉ C := by
   have h1 := WellFounded.min_mem wellFounded_lt Cᶜ (Set.nonempty_compl.mpr h.ne)
   exact h1
+
+open Classical
+
+noncomputable def B_seq (cl : Set U → Set U) (o : Ordinal) : Set U :=
+  Ordinal.limitRecOn o
+    (∅ : Set U)
+    (fun _ B => if h : cl B ⊂ Set.univ then B ∪ {Phi (cl B) h} else B)
+    (fun a _ f => ⋃ (b : Ordinal) (hb : b < a), f b hb)
+
+noncomputable def sieve_output (cl : Set U → Set U) : Set U :=
+  ⋃ o : Ordinal.{0}, B_seq cl o
 
 end OntologicalMachine

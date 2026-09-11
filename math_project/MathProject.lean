@@ -5,3 +5,4 @@ import MathProject.CategoricalMachine
 import MathProject.AdversarialTrap
 import MathProject.CategoricalColimits
 import MathProject.MatroidFriction
+import MathProject.SubmodularFriction
