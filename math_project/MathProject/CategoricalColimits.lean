@@ -25,6 +25,7 @@ set_option linter.style.openClassical false
 set_option linter.style.whitespace false
 set_option linter.unusedVariables false
 set_option linter.unusedDecidableInType false
+set_option linter.unusedSectionVars false
 
 namespace CategoricalMachine
 
@@ -50,8 +51,69 @@ noncomputable def transfiniteRecursionStep (C : Subobject U₀) (h_semi : IsSemi
 noncomputable def loewyObj (h_semi : IsSemiArtinian U₀) (o : Ordinal.{u}) : Subobject U₀ :=
   Ordinal.limitRecOn o ⊥ (fun _ C => transfiniteRecursionStep U₀ C h_semi) (fun a _ f => ⨆ (b : Ordinal.{u}) (_hb : b < a), f b _hb)
 
-axiom loewyFunctor_map_mono (U₀ : A) (h_semi : IsSemiArtinian U₀) (o₁ o₂ : Ordinal.{u}) (h_le : o₁ ≤ o₂) : 
-  loewyObj U₀ h_semi o₁ ≤ loewyObj U₀ h_semi o₂
+lemma le_cellularSubobject (C : Subobject U₀) (a : A) (i : a ⟶ residual U₀ C) [Mono i] :
+    C ≤ cellularSubobject U₀ C a i := by
+  have h_comm : (0 : (C : A) ⟶ a) ≫ i = C.arrow ≫ (cokernel.π C.arrow : U₀ ⟶ residual U₀ C) := by
+    rw [Limits.zero_comp, cokernel.condition]
+    rfl
+  let g : (C : A) ⟶ cellularStep U₀ C a i := pullback.lift 0 C.arrow h_comm
+  have hg : g ≫ cellularStepArrow U₀ C a i = C.arrow := by
+    exact pullback.lift_snd 0 C.arrow h_comm
+  exact Subobject.le_mk_of_comm g hg
+
+lemma le_transfiniteRecursionStep (C : Subobject U₀) (h_semi : IsSemiArtinian U₀) :
+    C ≤ transfiniteRecursionStep U₀ C h_semi := by
+  dsimp [transfiniteRecursionStep]
+  split_ifs with h
+  · exact le_rfl
+  · have : Mono (h_semi C h).choose_spec.choose := (h_semi C h).choose_spec.choose_spec.2
+    exact le_cellularSubobject U₀ C _ _
+
+lemma le_iSup_subobject {ι : Sort*} (f : ι → Subobject U₀) (i : ι) :
+    f i ≤ ⨆ j, f j :=
+  le_sSup ⟨i, rfl⟩
+
+lemma le_biSup_subobject (o : Ordinal.{u}) (o₁ : Ordinal.{u}) (h : o₁ < o)
+    (f : (b : Ordinal.{u}) → b < o → Subobject U₀) :
+    f o₁ h ≤ ⨆ (b : Ordinal.{u}) (hb : b < o), f b hb := by
+  have h1 : f o₁ h ≤ ⨆ (hb : o₁ < o), f o₁ hb :=
+    le_iSup_subobject U₀ (fun (hb : o₁ < o) => f o₁ hb) h
+  have h2 : (⨆ (hb : o₁ < o), f o₁ hb) ≤ ⨆ (b : Ordinal.{u}) (hb : b < o), f b hb :=
+    le_iSup_subobject U₀ (fun b => ⨆ (hb : b < o), f b hb) o₁
+  exact h1.trans h2
+
+lemma loewyObj_limit (h_semi : IsSemiArtinian U₀) (o : Ordinal.{u}) (ho : Order.IsSuccLimit o) :
+    loewyObj U₀ h_semi o = ⨆ (b : Ordinal.{u}) (_hb : b < o), loewyObj U₀ h_semi b := by
+  dsimp [loewyObj]
+  exact Ordinal.limitRecOn_limit o _ _ _ ho
+
+theorem loewyFunctor_map_mono (U₀ : A) (h_semi : IsSemiArtinian U₀) (o₁ o₂ : Ordinal.{u}) (h_le : o₁ ≤ o₂) : 
+  loewyObj U₀ h_semi o₁ ≤ loewyObj U₀ h_semi o₂ := by
+  revert o₁
+  induction o₂ using Ordinal.limitRecOn with
+  | zero =>
+    intro o₁ h₁
+    have : o₁ = 0 := le_zero_iff.mp h₁
+    subst this
+    exact le_rfl
+  | add_one o₂ ih =>
+    intro o₁ h₁
+    rcases eq_or_lt_of_le h₁ with rfl | hlt
+    · exact le_rfl
+    · have h_le_o₂ : o₁ ≤ o₂ := by
+        rwa [← Order.succ_eq_add_one, Order.lt_succ_iff] at hlt
+      have ih_le := ih o₁ h_le_o₂
+      have step_le : loewyObj U₀ h_semi o₂ ≤ loewyObj U₀ h_semi (o₂ + 1) := by
+        dsimp [loewyObj]
+        rw [Ordinal.limitRecOn_add_one]
+        exact le_transfiniteRecursionStep U₀ (loewyObj U₀ h_semi o₂) h_semi
+      exact ih_le.trans step_le
+  | limit o₂ ho ih =>
+    intro o₁ h₁
+    rcases eq_or_lt_of_le h₁ with rfl | hlt
+    · exact le_rfl
+    · rw [loewyObj_limit U₀ h_semi o₂ ho]
+      exact le_biSup_subobject U₀ o₂ o₁ hlt (fun b _ => loewyObj U₀ h_semi b)
 
 noncomputable def loewyFunctor (h_semi : IsSemiArtinian U₀) : Ordinal.{u} ⥤ Subobject U₀ where
   obj o := loewyObj U₀ h_semi o
