@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2024 MathProject Authors. All rights reserved.
+Copyright (c) 2026 Shivansh Singh. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: MathProject Authors
+Authors: Shivansh Singh
 -/
 import Mathlib.Combinatorics.Matroid.Basic
 import Mathlib.Combinatorics.Matroid.Closure
