@@ -111,3 +111,18 @@ end OntologicalMachine
 ```
 
 [See full proof in OntologicalMachine.lean](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/OntologicalMachine.lean)
+
+### The Transfinite Recursion Trace
+
+Rather than just making a single greedy choice, the full Sieve algorithm builds an iterative chain of sets over the ordinals. It takes the limit over all ordinals to construct the final output.
+```lean
+noncomputable def B_seq (cl : Set U → Set U) (o : Ordinal) : Set U :=
+  Ordinal.limitRecOn o
+    (∅ : Set U)
+    (fun _ B => if h : cl B ⊂ Set.univ then B ∪ {Phi (cl B) h} else B)
+    (fun a _ f => ⋃ (b : Ordinal) (hb : b < a), f b hb)
+
+noncomputable def sieve_output (cl : Set U → Set U) : Set U :=
+  ⋃ o : Ordinal.{0}, B_seq cl o
+```
+[See full proof in OntologicalMachine.lean](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/OntologicalMachine.lean)

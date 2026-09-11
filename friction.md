@@ -132,3 +132,34 @@ The advanced combinatorial proofs for cardinality friction are formalized in the
        cardinalityBloat cl sieve_output opt h_opt = 1
    ```
    [See full proof in MatroidFriction.lean](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/MatroidFriction.lean)
+
+3. **The Submodular Approximation Bound ($c \le \ln(\Delta) + 1$)**
+   ```lean
+   theorem greedy_submodular_bound (cl : Set U → Set U) (opt greedy : Set U)
+       (h_submod : IsSubmodularClosure cl)
+       (h_opt : IsOptimalGenerator cl opt)
+       (h_greedy : IsGeneratingSet cl greedy)
+       (Δ : ℝ) (h_Δ : Δ = maxMarginalGain cl) :
+       (greedy.toFinite.toFinset.card : ℝ) ≤ (opt.toFinite.toFinset.card : ℝ) * (Real.log Δ + 1)
+   ```
+   [See full proof in SubmodularFriction.lean](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/SubmodularFriction.lean)
+
+4. **The Randomized Expected Bound ($n/2$)**
+   ```lean
+   theorem randomized_expected_bound (cl : Set U → Set U) (n : ℝ)
+       (h_n : n = Fintype.card U) :
+       expectedUniformRank cl = n / 2
+   ```
+   [See full proof in SubmodularFriction.lean](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/SubmodularFriction.lean)
+
+5. **Search Work Limits ($W = 0$ and $W \to 1$)**
+   Perfect structural alignment eliminates search work entirely, while the adversarial trap pushes the discard rate asymptotically to 100%:
+   ```lean
+   theorem searchWork_perfect_alignment (k : ℕ) (sieve_output : Set U)
+       (h : sieve_output.toFinite.toFinset.card = k) :
+       searchWork k sieve_output = 0
+       
+   theorem searchWork_limit (sieve_output : Set U) :
+       Tendsto (fun (k : ℕ) => searchWork k sieve_output) atTop (𝓝 1)
+   ```
+   [See full proof in OntologicalFriction.lean](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/OntologicalFriction.lean)

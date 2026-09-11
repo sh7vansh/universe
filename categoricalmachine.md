@@ -452,3 +452,15 @@ theorem residual_colimit_vanishes (F : J ⥤ Subobject U₀) [IsFiltered J]
 ```
 [See full proof in CategoricalColimits.lean](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/CategoricalColimits.lean)
 
+
+**Categorical Friction Bound**
+Measures the ordinal discrepancy between the actual transfinite Loewy length (socle filtration depth) and a hypothetical optimal filtration length. When the actual length strictly exceeds the optimal length, the friction is strictly positive:
+```lean
+noncomputable def lengthFriction (h_semi : IsSemiArtinian U₀) (optimalLength : Ordinal.{0}) : Ordinal.{0} :=
+  (LoewyLength U₀ h_semi) - optimalLength
+
+theorem categorical_friction_bound (h_semi : IsSemiArtinian U₀) (optimalLength : Ordinal.{0})
+    (h_bound : optimalLength < LoewyLength U₀ h_semi) :
+    0 < lengthFriction U₀ h_semi optimalLength
+```
+[See full proof in CategoricalColimits.lean](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/CategoricalColimits.lean)
