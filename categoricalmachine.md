@@ -416,6 +416,8 @@ noncomputable def cellularSubobject
 end CategoricalMachine
 ```
 
+[See full definitions in CategoricalMachine.lean](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/CategoricalMachine.lean)
+
 ### Transfinite Colimits and Convergence
 
 The heavy transfinite limit proofs and convergence mappings are modeled over filtered ordinal categories in their own dedicated module:
