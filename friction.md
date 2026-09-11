@@ -135,12 +135,13 @@ The advanced combinatorial proofs for cardinality friction are formalized in the
 
 3. **The Submodular Approximation Bound ($c \le \ln(\Delta) + 1$)**
    ```lean
-   theorem greedy_submodular_bound (cl : Set U → Set U) (opt greedy : Set U)
+   theorem greedy_submodular_bound [LinearOrder U] [WellFoundedLT U] (cl : Set U → Set U) (opt greedy : Set U)
        (h_submod : IsSubmodularClosure cl)
        (h_opt : IsOptimalGenerator cl opt)
        (h_greedy : IsGeneratingSet cl greedy)
+       (h_is_greedy_output : greedy = OntologicalMachine.sieve_output cl)
        (Δ : ℝ) (h_Δ : Δ = maxMarginalGain cl) :
-       (greedy.toFinite.toFinset.card : ℝ) ≤ (opt.toFinite.toFinset.card : ℝ) * (Real.log Δ + 1)
+       (greedy.toFinite.toFinset.card : ℝ) ≤ (Real.log Δ + 1) * (opt.toFinite.toFinset.card : ℝ)
    ```
    [See full proof in SubmodularFriction.lean](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/SubmodularFriction.lean)
 

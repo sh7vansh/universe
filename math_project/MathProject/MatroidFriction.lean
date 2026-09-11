@@ -59,7 +59,7 @@ lemma matroid_maclane (M : Matroid U) [UnivMatroid M] : MacLaneSteinitz M.closur
 def IsIndependent (S : Set U) : Prop :=
   ∀ x ∈ S, x ∉ cl (S \ {x})
 
-/-- The greedy Sieve yields a generating set with no redundant elements. -/
+/-- The greedy Sieve yields a generating set with no redundant elements, under ANY priority order. -/
 def IsGreedySieveOutput (S : Set U) : Prop :=
   IsGeneratingSet cl S ∧ IsIndependent cl S
 
@@ -73,6 +73,7 @@ as the optimal basis (c=1).
 theorem matroid_optimality_bound [Fintype U] [DecidableEq U]
     (M : Matroid U) [UnivMatroid M] (h_cl : cl = M.closure)
     (sieve_output : Set U) (h_sieve : IsGreedySieveOutput cl sieve_output)
+    -- Note: sieve_output could be `OntologicalMachine.sieve_output cl Phi` for any Phi
     (opt : Set U) (h_opt : IsOptimalGenerator cl opt)
     (h_nz : opt.toFinite.toFinset.card ≠ 0) :
     cardinalityBloat cl sieve_output opt h_opt = 1 := by

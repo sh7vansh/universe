@@ -28,7 +28,9 @@ namespace CategoricalMachine
 open CategoryTheory
 open CategoryTheory.Limits
 
-variable {A : Type*} [Category A] [Abelian A]
+universe v u
+
+variable {A : Type u} [Category.{v} A] [Abelian A]
 
 def IsSimple (X : A) : Prop :=
   ¬ IsZero X ∧ ∀ (Y : Subobject X), Y = ⊥ ∨ Y = ⊤

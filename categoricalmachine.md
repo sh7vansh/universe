@@ -433,6 +433,16 @@ noncomputable def transfiniteRecursionStep (C : Subobject U₀) (h_semi : IsSemi
     haveI : Mono i := (h_semi C h).choose_spec.choose_spec.2
     cellularSubobject U₀ C a i
 
+noncomputable def loewyObj (h_semi : IsSemiArtinian U₀) (o : Ordinal.{0}) : Subobject U₀ :=
+  Ordinal.limitRecOn o
+    ⊥
+    (fun _ C => transfiniteRecursionStep U₀ C h_semi)
+    (fun a _ f => ⨆ (b : Ordinal.{0}) (_hb : b < a), f b _hb)
+
+noncomputable def loewyFunctor (h_semi : IsSemiArtinian U₀) : Ordinal.{0} ⥤ Subobject U₀ where
+  obj o := loewyObj U₀ h_semi o
+  map {o₁ o₂} _ := homOfLE (by sorry)
+
 noncomputable def residualDiagramMap (F : J ⥤ Subobject U₀) (j k : J) (f : j ⟶ k) : 
     cokernel (F.obj j).arrow ⟶ cokernel (F.obj k).arrow
 
