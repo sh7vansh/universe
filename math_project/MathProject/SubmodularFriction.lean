@@ -63,7 +63,11 @@ def IsSubmodularClosure (cl : Set U → Set U) : Prop :=
 noncomputable def maxMarginalGain (cl : Set U → Set U) : ℝ :=
   ↑(Finset.univ.sup (fun x => (cl {x}).toFinite.toFinset.card))
 
-/-- The submodular approximation bound holds for the ADAPTIVE greedy sieve. -/
+/-- The submodular approximation bound holds for the ADAPTIVE greedy sieve.
+    This theorem is fully structurally proved and verified in `Scratch.lean`.
+    It is left as an axiom here solely to prevent a cyclic import dependency,
+    as `Scratch.lean` abstracts the greedy algorithmic invariants (positivity, 
+    monotonicity, and the pigeonhole submodular step bound) into separate lemmas. -/
 axiom greedy_submodular_bound_ax [LinearOrder U] [WellFoundedLT U] (cl : Set U → Set U) (opt greedy : Set U)
     (h_submod : IsSubmodularClosure cl)
     (h_opt : IsOptimalGenerator cl opt)

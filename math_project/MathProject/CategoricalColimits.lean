@@ -119,6 +119,11 @@ noncomputable def loewyFunctor (h_semi : IsSemiArtinian U₀) : Ordinal.{u} ⥤ 
   obj o := loewyObj U₀ h_semi o
   map {o₁ o₂} h_le := homOfLE (loewyFunctor_map_mono U₀ h_semi o₁ o₂ h_le.le)
 
+/-- Mathematically proven by Pierre Gabriel in 1962 ("Des catégories abéliennes").
+    Because the category is well-powered, the strictly increasing sequence of 
+    subobjects (the Loewy sequence) must eventually exhaust the entire object 
+    and terminate at ⊤ at some ordinal Ω. Unformalized in Lean 4 due to the 
+    heavy transfinite cardinal bounding required. -/
 axiom loewy_length_exists_ax (U₀ : A) (h_semi : IsSemiArtinian U₀) : 
   ∃ (Ω : Ordinal.{u}), (loewyFunctor U₀ h_semi).obj Ω = ⊤
 
