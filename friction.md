@@ -139,7 +139,7 @@ The advanced combinatorial proofs for cardinality friction are formalized in the
        (h_submod : IsSubmodularClosure cl)
        (h_opt : IsOptimalGenerator cl opt)
        (h_greedy : IsGeneratingSet cl greedy)
-       (h_is_greedy_output : greedy = OntologicalMachine.sieve_output cl)
+       (h_is_greedy_output : greedy = OntologicalMachine.sieve_output cl (OntologicalMachine.adaptiveGreedyPhi cl))
        (Δ : ℝ) (h_Δ : Δ = maxMarginalGain cl) :
        (greedy.toFinite.toFinset.card : ℝ) ≤ (Real.log Δ + 1) * (opt.toFinite.toFinset.card : ℝ)
    ```
@@ -147,7 +147,7 @@ The advanced combinatorial proofs for cardinality friction are formalized in the
 
 4. **The Randomized Expected Bound ($n/2$)**
    ```lean
-   theorem randomized_expected_bound (cl : Set U → Set U) (n : ℝ)
+   theorem randomized_expected_bound [DecidableEq U] (cl : Set U → Set U) (n : ℝ)
        (h_n : n = Fintype.card U) :
        expectedUniformRank cl = n / 2
    ```

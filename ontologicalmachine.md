@@ -97,13 +97,13 @@ class ClosureSystem (cl : Set U → Set U) where
 
 variable [LinearOrder U] [WellFoundedLT U]
 
-noncomputable def Phi (C : Set U) (h : C ⊂ Set.univ) : U :=
+noncomputable def fixedPriorityPhi (C : Set U) (h : C ⊂ Set.univ) : U :=
   let compl : Set U := Cᶜ
   have h_nonempty : compl.Nonempty := Set.nonempty_compl.mpr h.ne
   WellFounded.min wellFounded_lt compl h_nonempty
 
-theorem novelty_of_phi (C : Set U) (h : C ⊂ Set.univ) :
-    Phi C h ∉ C := by
+theorem novelty_of_fixedPriorityPhi (C : Set U) (h : C ⊂ Set.univ) :
+    fixedPriorityPhi C h ∉ C := by
   have h1 := WellFounded.min_mem wellFounded_lt Cᶜ (Set.nonempty_compl.mpr h.ne)
   exact h1
 

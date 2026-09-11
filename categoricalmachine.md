@@ -435,13 +435,13 @@ noncomputable def transfiniteRecursionStep (C : Subobject U₀) (h_semi : IsSemi
     haveI : Mono i := (h_semi C h).choose_spec.choose_spec.2
     cellularSubobject U₀ C a i
 
-noncomputable def loewyObj (h_semi : IsSemiArtinian U₀) (o : Ordinal.{0}) : Subobject U₀ :=
+noncomputable def loewyObj (h_semi : IsSemiArtinian U₀) (o : Ordinal.{u}) : Subobject U₀ :=
   Ordinal.limitRecOn o
     ⊥
     (fun _ C => transfiniteRecursionStep U₀ C h_semi)
-    (fun a _ f => ⨆ (b : Ordinal.{0}) (_hb : b < a), f b _hb)
+    (fun a _ f => ⨆ (b : Ordinal.{u}) (_hb : b < a), f b _hb)
 
-noncomputable def loewyFunctor (h_semi : IsSemiArtinian U₀) : Ordinal.{0} ⥤ Subobject U₀ where
+noncomputable def loewyFunctor (h_semi : IsSemiArtinian U₀) : Ordinal.{u} ⥤ Subobject U₀ where
   obj o := loewyObj U₀ h_semi o
   map {o₁ o₂} _ := homOfLE (by sorry)
 
@@ -468,10 +468,10 @@ theorem residual_colimit_vanishes (F : J ⥤ Subobject U₀) [IsFiltered J]
 **Categorical Friction Bound**
 Measures the ordinal discrepancy between the actual transfinite Loewy length (socle filtration depth) and a hypothetical optimal filtration length. When the actual length strictly exceeds the optimal length, the friction is strictly positive:
 ```lean
-noncomputable def lengthFriction (h_semi : IsSemiArtinian U₀) (optimalLength : Ordinal.{0}) : Ordinal.{0} :=
+noncomputable def lengthFriction (h_semi : IsSemiArtinian U₀) (optimalLength : Ordinal.{u}) : Ordinal.{u} :=
   (LoewyLength U₀ h_semi) - optimalLength
 
-theorem categorical_friction_bound (h_semi : IsSemiArtinian U₀) (optimalLength : Ordinal.{0})
+theorem categorical_friction_bound (h_semi : IsSemiArtinian U₀) (optimalLength : Ordinal.{u})
     (h_bound : optimalLength < LoewyLength U₀ h_semi) :
     0 < lengthFriction U₀ h_semi optimalLength
 ```
