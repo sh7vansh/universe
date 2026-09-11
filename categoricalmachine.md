@@ -427,4 +427,4 @@ theorem residual_colimit_vanishes (F : J ⥤ Subobject U₀) [IsFiltered J]
     (h_conv : Convergence U₀ F) :
     IsZero (colimit (residualDiagram U₀ F))
 ```
-[See full proof in CategoricalColimits.lean](file:///home/shivansh/math_project/MathProject/CategoricalColimits.lean)
+[See full proof in CategoricalColimits.lean](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/CategoricalColimits.lean)

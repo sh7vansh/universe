@@ -117,7 +117,7 @@ The advanced combinatorial proofs for cardinality friction are formalized in the
    theorem optimal_e_star [Fintype U] :
        IsOptimalGenerator (advCl e_star) {e_star}
    ```
-   [See full proof in AdversarialTrap.lean](file:///home/shivansh/math_project/MathProject/AdversarialTrap.lean)
+   [See full proof in AdversarialTrap.lean](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/AdversarialTrap.lean)
 
 2. **The Matroid Optimality Bound ($c = 1$)**
    Under the Mac Lane-Steinitz exchange property, the greedy Sieve outputs an independent generating set of optimal size:
@@ -129,4 +129,4 @@ The advanced combinatorial proofs for cardinality friction are formalized in the
        (h_nz : opt.toFinite.toFinset.card ≠ 0) :
        cardinalityBloat cl sieve_output opt h_opt = 1
    ```
-   [See full proof in MatroidFriction.lean](file:///home/shivansh/math_project/MathProject/MatroidFriction.lean)
+   [See full proof in MatroidFriction.lean](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/MatroidFriction.lean)
