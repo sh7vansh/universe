@@ -34,7 +34,8 @@ open Classical
 open CategoryTheory.Limits
 
 
-variable {A : Type*} [Category A] [Abelian A] [HasColimits A]
+universe u
+variable {A : Type u} [Category A] [Abelian A] [HasColimits A]
 variable (U₀ : A)
 
 noncomputable def transfiniteRecursionStep (C : Subobject U₀) (h_semi : IsSemiArtinian U₀) : Subobject U₀ :=
@@ -46,25 +47,20 @@ noncomputable def transfiniteRecursionStep (C : Subobject U₀) (h_semi : IsSemi
     haveI : Mono i := (h_semi C h).choose_spec.choose_spec.2
     cellularSubobject U₀ C a i
 
-noncomputable def limitFunctor (a : Ordinal.{0}) (_seq : ∀ (o' : Ordinal.{0}), o' < a → Subobject U₀) : Set.Iio a ⥤ Subobject U₀ :=
-  (CategoryTheory.Functor.const _).obj ⊥
+noncomputable def loewyObj (h_semi : IsSemiArtinian U₀) (o : Ordinal.{u}) : Subobject U₀ :=
+  Ordinal.limitRecOn o ⊥ (fun _ C => transfiniteRecursionStep U₀ C h_semi) (fun a _ f => ⨆ (b : Ordinal.{u}) (_hb : b < a), f b _hb)
 
-noncomputable def loewyObj (_h_semi : IsSemiArtinian U₀) (_o : Ordinal.{0}) : Subobject U₀ := ⊤
+noncomputable def loewyFunctor (h_semi : IsSemiArtinian U₀) : Ordinal.{u} ⥤ Subobject U₀ where
+  obj o := loewyObj U₀ h_semi o
+  map {o₁ o₂} _ := homOfLE (by sorry)
 
-noncomputable def loewyFunctor (_h_semi : IsSemiArtinian U₀) : Ordinal.{0} ⥤ Subobject U₀ where
-  obj _ := ⊤
-  map _ := 𝟙 _
+theorem loewy_length_exists (h_semi : IsSemiArtinian U₀) : ∃ (Ω : Ordinal.{u}), (loewyFunctor U₀ h_semi).obj Ω = ⊤ := by sorry
 
-omit [HasColimits A] in
-theorem loewy_length_exists (h_semi : IsSemiArtinian U₀) : ∃ (Ω : Ordinal.{0}), (loewyFunctor U₀ h_semi).obj Ω = ⊤ := ⟨0, rfl⟩
+noncomputable def LoewyLength (h_semi : IsSemiArtinian U₀) : Ordinal.{u} := (loewy_length_exists U₀ h_semi).choose
 
-noncomputable def LoewyLength (h_semi : IsSemiArtinian U₀) : Ordinal.{0} := (loewy_length_exists U₀ h_semi).choose
-
-omit [HasColimits A] in
 theorem reconstruction (h_semi : IsSemiArtinian U₀) : (loewyFunctor U₀ h_semi).obj (LoewyLength U₀ h_semi) = ⊤ :=
   (loewy_length_exists U₀ h_semi).choose_spec
 
-omit [HasColimits A] in
 theorem reconstruction_iso (h_semi : IsSemiArtinian U₀) : IsIso ((loewyFunctor U₀ h_semi).obj (LoewyLength U₀ h_semi)).arrow := by
   rw [reconstruction]
   exact Subobject.top_arrow_isIso
@@ -121,7 +117,7 @@ Categorical Friction (Length Discrepancy)
 Measures the difference between the actual transfinite Loewy length 
 and a hypothetical optimal filtration length.
 -/
-noncomputable def lengthFriction (h_semi : IsSemiArtinian U₀) (optimalLength : Ordinal.{0}) : Ordinal.{0} :=
+noncomputable def lengthFriction (h_semi : IsSemiArtinian U₀) (optimalLength : Ordinal.{u}) : Ordinal.{u} :=
   (LoewyLength U₀ h_semi) - optimalLength
 
 /--
@@ -129,9 +125,10 @@ Extreme bound theorem for categorical friction.
 If the actual Loewy length strictly exceeds the optimal length, 
 then the length friction is non-zero.
 -/
-theorem categorical_friction_bound (h_semi : IsSemiArtinian U₀) (optimalLength : Ordinal.{0})
+theorem categorical_friction_bound (h_semi : IsSemiArtinian U₀) (optimalLength : Ordinal.{u})
     (h_bound : optimalLength < LoewyLength U₀ h_semi) :
     0 < lengthFriction U₀ h_semi optimalLength := by
-  sorry
+  apply pos_iff_ne_zero.mpr
+  exact Ordinal.sub_ne_zero_iff_lt.mpr h_bound
 
 end CategoricalMachine
