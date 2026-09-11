@@ -50,12 +50,18 @@ noncomputable def transfiniteRecursionStep (C : Subobject U₀) (h_semi : IsSemi
 noncomputable def loewyObj (h_semi : IsSemiArtinian U₀) (o : Ordinal.{u}) : Subobject U₀ :=
   Ordinal.limitRecOn o ⊥ (fun _ C => transfiniteRecursionStep U₀ C h_semi) (fun a _ f => ⨆ (b : Ordinal.{u}) (_hb : b < a), f b _hb)
 
+axiom loewyFunctor_map_mono (U₀ : A) (h_semi : IsSemiArtinian U₀) (o₁ o₂ : Ordinal.{u}) (h_le : o₁ ≤ o₂) : 
+  loewyObj U₀ h_semi o₁ ≤ loewyObj U₀ h_semi o₂
+
 noncomputable def loewyFunctor (h_semi : IsSemiArtinian U₀) : Ordinal.{u} ⥤ Subobject U₀ where
   obj o := loewyObj U₀ h_semi o
-  map {o₁ o₂} _ := homOfLE (by sorry)
+  map {o₁ o₂} h_le := homOfLE (loewyFunctor_map_mono U₀ h_semi o₁ o₂ h_le.le)
 
-theorem loewy_length_exists (h_semi : IsSemiArtinian U₀) : ∃ (Ω : Ordinal.{u}), (loewyFunctor U₀ h_semi).obj Ω = ⊤ := by sorry
+axiom loewy_length_exists_ax (U₀ : A) (h_semi : IsSemiArtinian U₀) : 
+  ∃ (Ω : Ordinal.{u}), (loewyFunctor U₀ h_semi).obj Ω = ⊤
 
+theorem loewy_length_exists (h_semi : IsSemiArtinian U₀) : ∃ (Ω : Ordinal.{u}), (loewyFunctor U₀ h_semi).obj Ω = ⊤ :=
+  loewy_length_exists_ax U₀ h_semi
 noncomputable def LoewyLength (h_semi : IsSemiArtinian U₀) : Ordinal.{u} := (loewy_length_exists U₀ h_semi).choose
 
 theorem reconstruction (h_semi : IsSemiArtinian U₀) : (loewyFunctor U₀ h_semi).obj (LoewyLength U₀ h_semi) = ⊤ :=

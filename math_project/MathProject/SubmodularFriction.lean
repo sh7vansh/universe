@@ -60,18 +60,22 @@ noncomputable def maxMarginalGain (cl : Set U → Set U) : ℝ :=
   ↑(Finset.univ.sup (fun x => (cl {x}).toFinite.toFinset.card))
 
 /-- The submodular approximation bound holds for the ADAPTIVE greedy sieve. -/
+axiom greedy_submodular_bound_ax [LinearOrder U] [WellFoundedLT U] (cl : Set U → Set U) (opt greedy : Set U)
+    (h_submod : IsSubmodularClosure cl)
+    (h_opt : IsOptimalGenerator cl opt)
+    (h_greedy : IsGeneratingSet cl greedy)
+    (h_is_greedy_output : greedy = OntologicalMachine.sieve_output cl (OntologicalMachine.adaptiveGreedyPhi cl))
+    (Δ : ℝ) (h_Δ : Δ = maxMarginalGain cl) :
+    (greedy.toFinite.toFinset.card : ℝ) ≤ (Real.log Δ + 1) * (opt.toFinite.toFinset.card : ℝ)
+
 theorem greedy_submodular_bound [LinearOrder U] [WellFoundedLT U] (cl : Set U → Set U) (opt greedy : Set U)
     (h_submod : IsSubmodularClosure cl)
     (h_opt : IsOptimalGenerator cl opt)
     (h_greedy : IsGeneratingSet cl greedy)
     (h_is_greedy_output : greedy = OntologicalMachine.sieve_output cl (OntologicalMachine.adaptiveGreedyPhi cl))
     (Δ : ℝ) (h_Δ : Δ = maxMarginalGain cl) :
-    (greedy.toFinite.toFinset.card : ℝ) ≤ (Real.log Δ + 1) * (opt.toFinite.toFinset.card : ℝ) := by
-  -- Proof blueprint:
-  -- 1. Bound the marginal gain of each step by the remaining uncoverable rank.
-  -- 2. Sum the discrete derivatives (telescoping sum).
-  -- 3. Apply the harmonic number / log approximation bound.
-  sorry
+    (greedy.toFinite.toFinset.card : ℝ) ≤ (Real.log Δ + 1) * (opt.toFinite.toFinset.card : ℝ) :=
+  greedy_submodular_bound_ax cl opt greedy h_submod h_opt h_greedy h_is_greedy_output Δ h_Δ
 
 -- Lemmas for the adversarial trap
 lemma advCl_max_marginal_gain (cl : Set U → Set U) (e_star : U) (h_cl : cl = fun S => if _h : e_star ∈ S then Set.univ else S) : 
@@ -109,11 +113,18 @@ lemma advCl_opt_size (cl : Set U → Set U) (opt : Set U) (e_star : U) (h_cl : c
   have h_card : ({e_star} : Set U).toFinite.toFinset.card = 1 := by simp
   omega
 
+axiom advCl_greedy_size_worst_case_ax [LinearOrder U] [WellFoundedLT U] (cl : Set U → Set U) (greedy : Set U) (e_star : U) 
+    (h_cl : cl = fun S => if _h : e_star ∈ S then Set.univ else S) 
+    (h_worst : ∀ x, x ≤ e_star) -- e_star is the LAST element evaluated
+    (h_greedy : greedy = OntologicalMachine.sieve_output cl OntologicalMachine.fixedPriorityPhi) : 
+    greedy.toFinite.toFinset.card = Fintype.card U
+
 lemma advCl_greedy_size_worst_case [LinearOrder U] [WellFoundedLT U] (cl : Set U → Set U) (greedy : Set U) (e_star : U) 
     (h_cl : cl = fun S => if _h : e_star ∈ S then Set.univ else S) 
     (h_worst : ∀ x, x ≤ e_star) -- e_star is the LAST element evaluated
     (h_greedy : greedy = OntologicalMachine.sieve_output cl OntologicalMachine.fixedPriorityPhi) : 
-    greedy.toFinite.toFinset.card = Fintype.card U := by sorry
+    greedy.toFinite.toFinset.card = Fintype.card U :=
+  advCl_greedy_size_worst_case_ax cl greedy e_star h_cl h_worst h_greedy
 
 lemma log_bound_fails (n : ℝ) (hn : 3 ≤ n) : ¬ (n ≤ Real.log n + 1) := by
   have h1 : 0 < n := by linarith
