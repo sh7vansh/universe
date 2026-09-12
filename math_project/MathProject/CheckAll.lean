@@ -1,0 +1,71 @@
+import MathProject.Basic
+import MathProject.CategoricalColimits
+import MathProject.OntologicalMachine
+import MathProject.SubmodularFriction
+import MathProject.MatroidFriction
+import MathProject.AdversarialTrap
+import MathProject.CategoricalMachine
+import MathProject.OntologicalFriction
+import MathProject.Scratch
+
+#print axioms AdversarialTrap.gen_e_star
+#print axioms AdversarialTrap.optimal_e_star
+#print axioms AdversarialTrap.searchWork_adv_trap_limit
+#print axioms CategoricalMachine.le_cellularSubobject
+#print axioms CategoricalMachine.le_transfiniteRecursionStep
+#print axioms CategoricalMachine.le_iSup_subobject
+#print axioms CategoricalMachine.le_biSup_subobject
+#print axioms CategoricalMachine.loewyObj_limit
+#print axioms CategoricalMachine.loewyFunctor_map_mono
+#print axioms CategoricalMachine.loewy_length_exists
+#print axioms CategoricalMachine.reconstruction
+#print axioms CategoricalMachine.reconstruction_iso
+#print axioms CategoricalMachine.residual_colimit_vanishes
+#print axioms CategoricalMachine.categorical_friction_bound
+#print axioms OntologicalFriction.matroid_maclane
+#print axioms OntologicalFriction.matroid_optimality_bound
+#print axioms OntologicalFriction.searchWork_perfect_alignment
+#print axioms OntologicalFriction.searchWork_limit
+#print axioms OntologicalMachine.novelty_of_fixedPriorityPhi
+#print axioms one_le_log_plus_one
+#print axioms bound_of_le
+#print axioms opt_empty_of_card_zero
+#print axioms B_seq_empty_of_cl_empty
+#print axioms sieve_output_empty_of_cl_empty
+#print axioms greedy_empty_of_opt_zero
+#print axioms closureRank_univ_of_gen
+#print axioms submodular_finset_le
+#print axioms sum_le_card_mul
+#print axioms deficit_zero_le
+#print axioms div_sub_le_log_sub
+#print axioms sum_log_telescope
+#print axioms analytic_greedy_bound_m
+#print axioms greedyDeficit_zero
+#print axioms greedyDeficit_zero_le
+#print axioms greedyDeficit_zero_pos
+#print axioms B_nat_subset_succ
+#print axioms B_nat_card_le
+#print axioms B_nat_succ_of_cl_univ
+#print axioms adaptiveGreedy_gain_ge
+#print axioms each_opt_gain_le
+#print axioms sum_opt_gain_le
+#print axioms submodular_opt_step_le
+#print axioms greedyDeficit_step_le
+#print axioms greedyDeficit_pos
+#print axioms greedyDeficit_mono
+#print axioms greedyDeficit_ukm
+#print axioms greedy_submodular_bound_ax
+#print axioms OntologicalFriction.greedy_submodular_bound
+#print axioms OntologicalFriction.advCl_max_marginal_gain
+#print axioms OntologicalFriction.advCl_opt_size
+#print axioms OntologicalFriction.B_seq_zero
+#print axioms OntologicalFriction.B_seq_add_one
+#print axioms OntologicalFriction.B_seq_nat_eq
+#print axioms OntologicalFriction.B_nat_subset_sieve_output
+#print axioms OntologicalFriction.B_nat_step
+#print axioms OntologicalFriction.B_nat_card_and_not_mem
+#print axioms OntologicalFriction.advCl_greedy_size_worst_case_ax
+#print axioms OntologicalFriction.advCl_greedy_size_worst_case
+#print axioms OntologicalFriction.log_bound_fails
+#print axioms OntologicalFriction.fixed_priority_violates_submodular_bound
+#print axioms OntologicalFriction.randomized_expected_bound

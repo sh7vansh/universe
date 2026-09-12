@@ -1,0 +1,4 @@
+import MathProject.CategoricalColimits
+import MathProject.SubmodularFriction
+#print axioms CategoricalMachine.loewy_length_exists_ax
+#print axioms OntologicalFriction.greedy_submodular_bound_ax
