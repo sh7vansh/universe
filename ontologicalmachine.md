@@ -1,4 +1,4 @@
-# The ontological sieve: greedy generator extraction in closure systems
+# Basis Discovery Algorithm: greedy generator extraction in closure systems
 
 ## The construction
 
@@ -61,7 +61,7 @@ Let $U$ be a Hilbert space, $\mathrm{cl}$ the closed linear span, and order stat
 
 ### Formal logic
 
-Let $U$ be the set of well-formed formulas, $\mathrm{cl}$ deductive closure, and order formulas by character length. Deductive closure fails the exchange property ($A \vdash B$ does not imply $B \vdash A$). The sieve tests thousands of short tautologies that are already implied by earlier selections. The discard rate is near 1, and the resulting axiom set depends heavily on the syntactic tie-breaking rule.
+Let $U$ be the set of well-formed formulas, $\mathrm{cl}$ deductive closure, and order formulas by character length. Deductive closure fails the exchange property ($A \vdash B$ does not imply $B \vdash A$). The algorithm tests thousands of short tautologies that are already implied by earlier selections. The discard rate is near 1, and the resulting axiom set depends heavily on the syntactic tie-breaking rule.
 
 ### Continuous geometry
 
@@ -79,7 +79,7 @@ Let $U = \mathbb{Z}_{\ge 2}$, and let closure be upward divisibility ($x \in \ma
 
 ## Lean 4 Formalization
 
-The basic structures of the ontological sieve can be expressed in Lean 4 as follows:
+The basic structures of the Basis Discovery Algorithm can be expressed in Lean 4 as follows:
 
 ```lean
 import Mathlib.Order.Closure
@@ -114,7 +114,7 @@ end OntologicalMachine
 
 ### The Transfinite Recursion Trace
 
-Rather than just making a single greedy choice, the full Sieve algorithm builds an iterative chain of sets over the ordinals. It takes the limit over all ordinals to construct the final output.
+Rather than just making a single greedy choice, the full Basis Discovery Algorithm builds an iterative chain of sets over the ordinals. It takes the limit over all ordinals to construct the final output.
 ```lean
 noncomputable def B_seq (cl : Set U → Set U) (o : Ordinal) : Set U :=
   Ordinal.limitRecOn o

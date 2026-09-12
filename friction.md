@@ -1,12 +1,12 @@
-# Formalizing Friction in the Ontological Sieve
+# Formalizing Friction in the Basis Discovery Algorithm
 
 ## I. The BNR Framework
 
-The Ontological Sieve extracts a generating family using a discovery operator:
+The Basis Discovery Algorithm extracts a generating family using a discovery operator:
 $$ \Phi(C) = \min_\prec(U \setminus C) $$
 The ordering $\prec$ is fixed by a priority gradient $\nabla$.
 
-Because the ordering is independent of the closure operator $\text{cl}$, the Sieve is a **Fixed Priority Algorithm** (Borodin, Nielsen, Rackoff). It lacks runtime adaptivity. It cannot reorder $\prec$ based on partial closure responses.
+Because the ordering is independent of the closure operator $\text{cl}$, the Basis Discovery Algorithm is a **Fixed Priority Algorithm** (Borodin, Nielsen, Rackoff). It lacks runtime adaptivity. It cannot reorder $\prec$ based on partial closure responses.
 
 This structural rigidity creates operational friction. We separate this into two metrics:
 * **Friction 1: Cardinality Bloat.** The approximation ratio $c = \frac{|B_\Omega|}{|B_{OPT}|}$. How much redundant baggage is selected?
@@ -17,15 +17,15 @@ This structural rigidity creates operational friction. We separate this into two
 ## II. Friction 1: Cardinality Bloat
 
 ### 1. The $\Theta(|E|)$ Worst-Case Bound
-Over finite closure operators, the Sieve has a worst-case cardinality friction of $\Theta(|E|)$.
+Over finite closure operators, the Basis Discovery Algorithm has a worst-case cardinality friction of $\Theta(|E|)$.
 
 **Proof:**
 Let $E = U = \{e_1, e_2, \dots, e_n\}$.
-The Sieve commits to a priority order: $e_1 \prec e_2 \prec \dots \prec e_n$.
+The Basis Discovery Algorithm commits to a priority order: $e_1 \prec e_2 \prec \dots \prec e_n$.
 The Adversary constructs the closure operator dynamically. For every step $k < n$, $\text{cl}(\{e_1, \dots, e_k\}) = \{e_1, \dots, e_k\}$.
-The Sieve is forced to select every element up to $e_{n-1}$. 
-Finally, the Sieve queries $e_n$. The Adversary defines $\text{cl}(\{e_n\}) = E$. 
-The Sieve halts with $|B_\Omega| = n$.
+The algorithm is forced to select every element up to $e_{n-1}$. 
+Finally, the algorithm queries $e_n$. The Adversary defines $\text{cl}(\{e_n\}) = E$. 
+The algorithm halts with $|B_\Omega| = n$.
 An optimal algorithm ($OPT$) selects only $e_n$, so $|B_{OPT}| = 1$.
 The ratio is $c = \frac{n}{1} = n = |E|$. $\blacksquare$
 
@@ -33,10 +33,10 @@ The ratio is $c = \frac{n}{1} = n = |E|$. $\blacksquare$
 The adversary wins through information starvation. The response $\text{cl}(\{e_1\}) = \{e_1\}$ provides zero entropy about the hidden structure. The optimal generator $e_n$ remains indistinguishable from a trivial element. Sequential discovery devolves into an unguided linear search.
 
 ### 3. Yao's Minimax and Randomization
-If we allow the Sieve to sample random priority orders, does it break the $\Theta(|E|)$ bound?
+If we allow the Basis Discovery Algorithm to sample random priority orders, does it break the $\Theta(|E|)$ bound?
 
 Using Yao's Minimax Principle, the Adversary hides $e^*$ uniformly at random. All other elements have trivial closures.
-The Randomized Sieve must search blindly. On average, it samples half the ground set before finding $e^*$.
+The randomized algorithm must search blindly. On average, it samples half the ground set before finding $e^*$.
 The expected friction is $\mathbb{E}[c] = \frac{n}{2}$. 
 
 Randomization only shaves off a constant factor. If the closure operator yields no gradient, the space is mathematically hostile.
@@ -51,22 +51,22 @@ If we restrict the algebraic freedom of the closure operator, the adversary's tr
 The ratio becomes exactly $c = 1$. Cardinality Friction is eliminated.
 
 ### 2. Submodular Rank
-If the generative rank $f(A) = |\text{cl}(A) \cap U|$ is submodular and monotonic, the Sieve acts as a greedy set cover. The bound is $c \le \ln(\Delta) + 1$. 
+If the generative rank $f(A) = |\text{cl}(A) \cap U|$ is submodular and monotonic, the Basis Discovery Algorithm acts as a greedy set cover. The bound is $c \le \ln(\Delta) + 1$. 
 
-However, this bound assumes an *Adaptive* Priority Algorithm. Because the Sieve uses a fixed gradient $\nabla$, it cannot dynamically chase the steepest submodular ascent. A fixed-priority algorithm walking blindly through a submodular space will pick suboptimal elements.
+However, this bound assumes an *Adaptive* Priority Algorithm. Because the Basis Discovery Algorithm uses a fixed gradient $\nabla$, it cannot dynamically chase the steepest submodular ascent. A fixed-priority algorithm walking blindly through a submodular space will pick suboptimal elements.
 
 ---
 
 ## IV. Friction 2: Search Work
 
 When Cardinality Friction is bounded (as in matroids), tension shifts to Friction 2: Search Work.
-The Sieve evaluates elements monotonically. It never backtracks.
+The Basis Discovery Algorithm evaluates elements monotonically. It never backtracks.
 
 Let $k$ be the Halting Index (the total elements explicitly evaluated). 
 The **Discard Rate** is $W = \frac{k - |B_\Omega|}{k}$.
 
-* **Low Friction (Alignment):** If the well-order perfectly aligns with the generative hierarchy, highly generative elements are evaluated first. They immediately subsume the space. The Sieve halts early, and $W \to 0$.
-* **High Friction (Adversarial):** If highly generative elements are placed at the end of the well-order, the Sieve starves. It walks linearly through trivial elements, evaluating $k$ elements but discarding almost all of them. $W \to 1$.
+* **Low Friction (Alignment):** If the well-order perfectly aligns with the generative hierarchy, highly generative elements are evaluated first. They immediately subsume the space. The algorithm halts early, and $W \to 0$.
+* **High Friction (Adversarial):** If highly generative elements are placed at the end of the well-order, the algorithm starves. It walks linearly through trivial elements, evaluating $k$ elements but discarding almost all of them. $W \to 1$.
 
 ## Conclusion
 
@@ -74,7 +74,7 @@ Algorithmic friction is the algebraic failure of the Exchange property combined 
 
 ## Lean 4 Formalization
 
-We can represent the concepts of cardinality bloat and search work by measuring the discrepancy between the greedy Sieve and an optimal generator.
+We can represent the concepts of cardinality bloat and search work by measuring the discrepancy between the greedy Basis Discovery Algorithm and an optimal generator.
 
 ```lean
 import Mathlib.Data.Set.Finite.Basic
@@ -122,7 +122,7 @@ The advanced combinatorial proofs for cardinality friction are formalized in the
    [See full proof in AdversarialTrap.lean](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/AdversarialTrap.lean)
 
 2. **The Matroid Optimality Bound ($c = 1$)**
-   Under the Mac Lane-Steinitz exchange property, the greedy Sieve outputs an independent generating set of optimal size:
+   Under the Mac Lane-Steinitz exchange property, the greedy Basis Discovery Algorithm outputs an independent generating set of optimal size:
    ```lean
    theorem matroid_optimality_bound [Fintype U] [DecidableEq U]
        (M : Matroid U) [UnivMatroid M] (h_cl : cl = M.closure)

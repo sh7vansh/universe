@@ -1,4 +1,4 @@
-# The categorical ontological sieve: transfinite cellular decomposition in abelian categories
+# Decoupling Algorithm: transfinite cellular decomposition in abelian categories
 
 This note specifies a transfinite cellular filtration for objects in Grothendieck categories. For any semi-Artinian object, the construction extracts simple subobjects from successive cokernels using pullbacks, records the Yoneda extension classes at each stage, and reconstructs the object as a directed colimit of an extension tower.
 
@@ -352,7 +352,7 @@ The dimension of global sections $\dim_k H^0(X, \mathcal{F})$ is an additive inv
 
 ## Lean 4 Formalization
 
-The structural properties of the categorical sieve, such as exact sequences and subobjects in an abelian category, can be formalized using Mathlib's category theory library.
+The structural properties of the Decoupling Algorithm, such as exact sequences and subobjects in an abelian category, can be formalized using Mathlib's category theory library.
 
 ```lean
 import Mathlib.CategoryTheory.Abelian.Basic
@@ -465,7 +465,7 @@ theorem residual_colimit_vanishes (F : J ⥤ Subobject U₀) [IsFiltered J]
 [See full proof in CategoricalColimits.lean](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/CategoricalColimits.lean)
 
 
-**Categorical Friction Bound**
+**Decoupling Friction Bound**
 Measures the ordinal discrepancy between the actual transfinite Loewy length (socle filtration depth) and a hypothetical optimal filtration length. When the actual length strictly exceeds the optimal length, the friction is strictly positive:
 ```lean
 noncomputable def lengthFriction (h_semi : IsSemiArtinian U₀) (optimalLength : Ordinal.{u}) : Ordinal.{u} :=

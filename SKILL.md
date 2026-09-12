@@ -1,6 +1,6 @@
 ---
 name: conjecture-diagnosis
-description: Diagnose any mathematical conjecture by mapping it through the Ontological Sieve, Categorical Machine, and algorithmic Friction limits.
+description: Diagnose any mathematical conjecture by mapping it through the Basis Discovery Algorithm, Decoupling Algorithm, and algorithmic Friction limits.
 ---
 
 # Conjecture Diagnosis
@@ -9,7 +9,7 @@ description: Diagnose any mathematical conjecture by mapping it through the Onto
 This skill acts as a structural diagnostic tool for mathematical conjectures. It maps the conjecture into the failure modes of algorithmic extraction to determine if the conjecture is structurally aligned, mathematically paradoxical, or prone to Geometry Shattering.
 
 ## Trigger
-Activate this skill whenever the user asks to analyze, diagnose, or run the "sieve" on a specific mathematical conjecture, hypothesis, or theorem (e.g., Riemann Hypothesis, Birch and Swinnerton-Dyer, Twin Prime).
+Activate this skill whenever the user asks to analyze, diagnose, or run the Basis Discovery Algorithm or Decoupling Algorithm on a specific mathematical conjecture, hypothesis, or theorem (e.g., Riemann Hypothesis, Birch and Swinnerton-Dyer, Twin Prime).
 
 ## Prerequisite Reading
 Before diagnosing the conjecture, you **MUST** read the foundational documents to load the mechanical framework into your context:
@@ -18,7 +18,7 @@ Before diagnosing the conjecture, you **MUST** read the foundational documents t
 3. `view_file` on `https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/friction.md`
 
 ## Instructions
-1. Run an algorithmic trace in `<thinking>` before writing output. Trace the discrete sieve step-by-step under the BNR framework. Trace the categorical pullback recursion and socle condition.
+1. Run an algorithmic trace in `<thinking>` before writing output. Trace the Basis Discovery Algorithm step-by-step under the BNR framework. Trace the Decoupling Algorithm pullback recursion and socle condition.
 2. Follow the math, not the user. If the mathematical mapping contradicts the user's suggested verdict, say so.
 3. Output the diagnosis using the sections below.
 
@@ -32,13 +32,13 @@ Write a Lean 4 code block declaring the `mathlib` variables for the core compone
 
 **Real structures only.** You must use actual Mathlib structures that exist today. Do not invent generic placeholders just to force the code to compile. If Mathlib lacks the required structures, state exactly what is missing and only declare what exists.
 
-### 2. Dual Machine Mapping
-* **Ontological Sieve.** Ground set $U$, closure operator $\mathrm{cl}$, target object $C_\Omega$, well-order $\prec$, and discovery operator $\Phi(C)$.
-* **Categorical Machine.** Ambient Grothendieck category $\mathcal{A}$, ambient object $U_0$, simple generator selection $\Phi(S) \in \mathrm{Soc}(S)$, and extension classes $\xi \in \mathrm{Ext}^1$.
+### 2. Dual Algorithm Mapping
+* **Basis Discovery Algorithm.** Ground set $U$, closure operator $\mathrm{cl}$, target object $C_\Omega$, well-order $\prec$, and discovery operator $\Phi(C)$.
+* **Decoupling Algorithm.** Ambient Grothendieck category $\mathcal{A}$, ambient object $U_0$, simple generator selection $\Phi(S) \in \mathrm{Soc}(S)$, and extension classes $\xi \in \mathrm{Ext}^1$.
 
 ### 3. Dual Friction Limits
-* **Ontological Friction.** Cardinality bloat $c = |B_\Omega| / |B_{\mathrm{OPT}}|$ and discard rate $W = (k - |B_\Omega|)/k$. Check if the search hits flat closures or loops infinitely.
-* **Categorical Friction.** Check for socle vanishing ($\mathrm{Soc}(S) = 0$), wild extension classes, or non-vanishing residual colimits.
+* **Basis Discovery Friction.** Cardinality bloat $c = |B_\Omega| / |B_{\mathrm{OPT}}|$ and discard rate $W = (k - |B_\Omega|)/k$. Check if the search hits flat closures or loops infinitely.
+* **Decoupling Friction.** Check for socle vanishing ($\mathrm{Soc}(S) = 0$), wild extension classes, or non-vanishing residual colimits.
 * **Modulus of Failure.** Mathematical invariant quantifying the breakdown.
 
 ### 4. The Verdict
@@ -47,7 +47,7 @@ Select exactly one verdict based on the primary breakdown:
 * **Asymptotic Discard Rate Divergence ($W \to 1$).** Discrete non-matroidal closure with misaligned priority order forces $W \to 1$. Root cause: Deterministic rules faking infinite randomness.
 * **Non-Compactness of the Critical Sobolev Embedding.** Scaling symmetry breaks compactness in the critical Sobolev embedding, concentrating energy. Root cause: Macroscopic conservation cannot bind microscopic concentration.
 * **Non-Vanishing First Yoneda Extension Group ($\mathrm{Ext}^1 \neq 0$).** Simple subobjects exist, but non-trivial $\mathrm{Ext}^1$ classes generate wild representation types. Root cause: Exactness without reconstructibility.
-* **Strictly Incomparable Topologies ($\tau_1 \not\subseteq \tau_2$ and $\tau_2 \not\subseteq \tau_1$).** Discrete generators and continuous topologies share no common topological basis, leaving permanent oscillating residue. Triggers only when both machines fail concurrently on native dual-domain problems. Root cause: Incompatible metrics.
+* **Strictly Incomparable Topologies ($\tau_1 \not\subseteq \tau_2$ and $\tau_2 \not\subseteq \tau_1$).** Discrete generators and continuous topologies share no common topological basis, leaving permanent oscillating residue. Triggers only when both algorithms fail concurrently on native dual-domain problems. Root cause: Incompatible metrics.
 
 ### 5. The Obstruction Class
 * **The Gap.** Topological, algebraic, or homological defect where the construction breaks.
