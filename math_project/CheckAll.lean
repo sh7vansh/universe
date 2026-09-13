@@ -7,7 +7,7 @@ import MathProject.AdversarialTrap
 import MathProject.CategoricalMachine
 import MathProject.OntologicalFriction
 import MathProject.LoewyLength
-import MathProject.Scratch
+open OntologicalFriction
 
 #print axioms AdversarialTrap.gen_e_star
 #print axioms AdversarialTrap.optimal_e_star
@@ -71,7 +71,6 @@ import MathProject.Scratch
 #print axioms greedyDeficit_pos
 #print axioms greedyDeficit_mono
 #print axioms greedyDeficit_ukm
-#print axioms greedy_submodular_bound_ax
 #print axioms OntologicalFriction.greedy_submodular_bound
 #print axioms OntologicalFriction.advCl_max_marginal_gain
 #print axioms OntologicalFriction.advCl_opt_size
@@ -81,7 +80,6 @@ import MathProject.Scratch
 #print axioms OntologicalFriction.B_nat_subset_sieve_output
 #print axioms OntologicalFriction.B_nat_step
 #print axioms OntologicalFriction.B_nat_card_and_not_mem
-#print axioms OntologicalFriction.advCl_greedy_size_worst_case_ax
 #print axioms OntologicalFriction.advCl_greedy_size_worst_case
 #print axioms OntologicalFriction.log_bound_fails
 #print axioms OntologicalFriction.fixed_priority_violates_submodular_bound

@@ -60,7 +60,6 @@ greedyDeficit_step_le
 greedyDeficit_pos
 greedyDeficit_mono
 greedyDeficit_ukm
-greedy_submodular_bound_ax
 OntologicalFriction.greedy_submodular_bound
 OntologicalFriction.advCl_max_marginal_gain
 OntologicalFriction.advCl_opt_size
@@ -70,7 +69,6 @@ OntologicalFriction.B_seq_nat_eq
 OntologicalFriction.B_nat_subset_sieve_output
 OntologicalFriction.B_nat_step
 OntologicalFriction.B_nat_card_and_not_mem
-OntologicalFriction.advCl_greedy_size_worst_case_ax
 OntologicalFriction.advCl_greedy_size_worst_case
 OntologicalFriction.log_bound_fails
 OntologicalFriction.fixed_priority_violates_submodular_bound
