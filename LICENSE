@@ -1,4 +1,11 @@
 Copyright (c) 2026 Shivansh Singh. 
 All rights reserved.
 
-This code is proprietary. It may not be copied, modified, distributed, or used without explicit written permission from the author.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated mathematics files (the "Software"), to run,
+compile, and execute the Software solely for the purposes of academic peer 
+review, replication, and scientific evaluation.
+
+Any commercial distribution, unauthorized modification, or inclusion of this 
+Software into public open-source package registries (including Lean Mathlib) 
+without explicit written permission from the copyright holder is strictly prohibited.
