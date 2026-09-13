@@ -1,9 +1,6 @@
 import MathProject.Basic
-import MathProject.OntologicalMachine
-import MathProject.OntologicalFriction
+import MathProject.BasisDiscovery
 import MathProject.CategoricalMachine
-import MathProject.AdversarialTrap
 import MathProject.CategoricalColimits
-import MathProject.MatroidFriction
-import MathProject.SubmodularFriction
 import MathProject.LoewyLength
+import MathProject.Friction

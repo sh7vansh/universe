@@ -10,9 +10,9 @@ import Mathlib.Data.Finset.Max
 import Mathlib.Data.Fintype.Basic
 
 /-!
-# OntologicalMachine
+# BasisDiscovery
 
-This module implements OntologicalMachine.
+This module implements BasisDiscovery.
 -/
 
 set_option linter.style.longLine false
@@ -22,7 +22,7 @@ set_option linter.style.whitespace false
 set_option linter.unusedVariables false
 set_option linter.unusedDecidableInType false
 
-namespace OntologicalMachine
+namespace BasisDiscovery
 
 variable {U : Type}
 
@@ -91,4 +91,4 @@ noncomputable def B_seq (cl : Set U → Set U) (phi : DiscoveryOperator U) (o : 
 noncomputable def sieve_output (cl : Set U → Set U) (phi : DiscoveryOperator U) : Set U :=
   ⋃ o : Ordinal.{0}, B_seq cl phi o
 
-end OntologicalMachine
+end BasisDiscovery
