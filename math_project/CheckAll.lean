@@ -6,6 +6,7 @@ import MathProject.MatroidFriction
 import MathProject.AdversarialTrap
 import MathProject.CategoricalMachine
 import MathProject.OntologicalFriction
+import MathProject.LoewyLength
 import MathProject.Scratch
 
 #print axioms AdversarialTrap.gen_e_star
@@ -15,13 +16,29 @@ import MathProject.Scratch
 #print axioms CategoricalMachine.le_transfiniteRecursionStep
 #print axioms CategoricalMachine.le_iSup_subobject
 #print axioms CategoricalMachine.le_biSup_subobject
+#print axioms CategoricalMachine.lt_cellular
 #print axioms CategoricalMachine.loewyObj_limit
+#print axioms CategoricalMachine.loewyObj_mono
+#print axioms CategoricalMachine.loewyObj_strict_mono
+#print axioms CategoricalMachine.loewyObj_stabilizes
 #print axioms CategoricalMachine.loewyFunctor_map_mono
 #print axioms CategoricalMachine.loewy_length_exists
 #print axioms CategoricalMachine.reconstruction
 #print axioms CategoricalMachine.reconstruction_iso
 #print axioms CategoricalMachine.residual_colimit_vanishes
 #print axioms CategoricalMachine.categorical_friction_bound
+#print axioms LoewyLength.eq_top_of_isZero_residual
+#print axioms LoewyLength.not_isZero_residual_of_ne_top
+#print axioms LoewyLength.lt_cellular
+#print axioms LoewyLength.le_nextLoewy
+#print axioms LoewyLength.le_iSup_subobject
+#print axioms LoewyLength.le_biSup_subobject
+#print axioms LoewyLength.loewySequence_limit
+#print axioms LoewyLength.loewySequence_le
+#print axioms LoewyLength.loewySequence_mono
+#print axioms LoewyLength.loewySequence_strict_mono
+#print axioms LoewyLength.loewySequence_stabilizes
+#print axioms LoewyLength.loewy_length_exists
 #print axioms OntologicalFriction.matroid_maclane
 #print axioms OntologicalFriction.matroid_optimality_bound
 #print axioms OntologicalFriction.searchWork_perfect_alignment

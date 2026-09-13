@@ -7,8 +7,12 @@ import Mathlib.CategoryTheory.Subobject.Basic
 import Mathlib.CategoryTheory.Limits.Shapes.Pullback.HasPullback
 import Mathlib.CategoryTheory.Limits.Shapes.ZeroMorphisms
 import Mathlib.CategoryTheory.Subobject.Lattice
+import Mathlib.CategoryTheory.Subobject.WellPowered
+import Mathlib.CategoryTheory.Limits.Shapes.Pullback.Mono
 import Mathlib.SetTheory.Ordinal.Basic
 import Mathlib.SetTheory.Ordinal.Arithmetic
+import Mathlib.SetTheory.Cardinal.Basic
+import Mathlib.SetTheory.Cardinal.EventuallyConst
 import Mathlib.CategoryTheory.Filtered.Basic
 import MathProject.CategoricalMachine
 
@@ -118,16 +122,94 @@ noncomputable def loewyFunctor (h_semi : IsSemiArtinian U₀) : Ordinal.{u} ⥤ 
   obj o := loewyObj U₀ h_semi o
   map {o₁ o₂} h_le := homOfLE (loewyFunctor_map_mono U₀ h_semi o₁ o₂ h_le.le)
 
+lemma eq_top_of_isZero_residual (C : Subobject U₀) (h : IsZero (residual U₀ C)) : C = ⊤ := by
+  have hπ : cokernel.π C.arrow = 0 := h.eq_zero_of_tgt _
+  have : Epi C.arrow := Abelian.epi_of_cokernel_π_eq_zero C.arrow hπ
+  have : IsIso C.arrow := isIso_of_mono_of_epi C.arrow
+  exact Subobject.eq_top_of_isIso_arrow C
+
+lemma not_isZero_residual_of_ne_top (C : Subobject U₀) (h : C ≠ ⊤) : ¬ IsZero (residual U₀ C) := by
+  intro hz
+  exact h (eq_top_of_isZero_residual U₀ C hz)
+
+lemma lt_cellular (C : Subobject U₀) (a : A) (i : a ⟶ cokernel C.arrow) (hi : Mono i)
+    (ha : IsSimple a) :
+    letI : Mono (pullback.snd i (cokernel.π C.arrow)) := pullback.snd_of_mono
+    C < Subobject.mk (pullback.snd i (cokernel.π C.arrow)) := by
+  have : Mono (pullback.snd i (cokernel.π C.arrow)) := pullback.snd_of_mono
+  have h_le : C ≤ Subobject.mk (pullback.snd i (cokernel.π C.arrow)) := by
+    have h_comm : (0 : (C : A) ⟶ a) ≫ i = C.arrow ≫ cokernel.π C.arrow := by
+      rw [Limits.zero_comp, cokernel.condition]
+    let g : (C : A) ⟶ pullback i (cokernel.π C.arrow) := pullback.lift 0 C.arrow h_comm
+    have hg : g ≫ pullback.snd i (cokernel.π C.arrow) = C.arrow := pullback.lift_snd 0 C.arrow h_comm
+    have := Subobject.mk_le_mk_of_comm g hg
+    rwa [Subobject.mk_arrow] at this
+  refine lt_of_le_not_ge h_le ?_
+  intro h_ge
+  let k : pullback i (cokernel.π C.arrow) ⟶ (C : A) := Subobject.ofMkLE (pullback.snd i (cokernel.π C.arrow)) C h_ge
+  have hk : k ≫ C.arrow = pullback.snd i (cokernel.π C.arrow) := Subobject.ofMkLE_arrow _
+  have h_comp : pullback.fst i (cokernel.π C.arrow) ≫ i = 0 := by
+    calc
+      pullback.fst i (cokernel.π C.arrow) ≫ i = pullback.snd i (cokernel.π C.arrow) ≫ cokernel.π C.arrow := pullback.condition
+      _ = (k ≫ C.arrow) ≫ cokernel.π C.arrow := by rw [← hk]
+      _ = k ≫ (C.arrow ≫ cokernel.π C.arrow) := by rw [Category.assoc]
+      _ = k ≫ 0 := by rw [cokernel.condition]
+      _ = 0 := Limits.comp_zero
+  have h_fst_zero : pullback.fst i (cokernel.π C.arrow) = 0 := by
+    rw [← cancel_mono i]
+    exact h_comp.trans Limits.zero_comp.symm
+  have h_epi : Epi (pullback.fst i (cokernel.π C.arrow)) := inferInstance
+  rw [h_fst_zero] at h_epi
+  have : Epi (0 : pullback i (cokernel.π C.arrow) ⟶ a) := h_epi
+  have h_zero : IsZero a := IsZero.of_epi_zero (pullback i (cokernel.π C.arrow)) a
+  exact ha.1 h_zero
+
+variable [WellPowered.{u} A]
+
+lemma loewyObj_strict_mono (h_semi : IsSemiArtinian U₀) (o : Ordinal.{u}) :
+    loewyObj U₀ h_semi o ≠ ⊤ → 
+    loewyObj U₀ h_semi o < loewyObj U₀ h_semi (o + 1) := by
+  intro h_ne
+  have h_succ : loewyObj U₀ h_semi (o + 1) = transfiniteRecursionStep U₀ (loewyObj U₀ h_semi o) h_semi := by
+    dsimp [loewyObj]
+    rw [Ordinal.limitRecOn_add_one]
+  rw [h_succ]
+  have hz : ¬ IsZero (residual U₀ (loewyObj U₀ h_semi o)) :=
+    not_isZero_residual_of_ne_top U₀ _ h_ne
+  dsimp [transfiniteRecursionStep]
+  rw [dif_neg hz]
+  let a := (h_semi (loewyObj U₀ h_semi o) hz).choose
+  let i := (h_semi (loewyObj U₀ h_semi o) hz).choose_spec.choose
+  have ha_simple := (h_semi (loewyObj U₀ h_semi o) hz).choose_spec.choose_spec.1
+  have hi : Mono i := (h_semi (loewyObj U₀ h_semi o) hz).choose_spec.choose_spec.2
+  have := lt_cellular U₀ (loewyObj U₀ h_semi o) a i hi ha_simple
+  exact this
+
+lemma loewyObj_mono (h_semi : IsSemiArtinian U₀) :
+    Monotone (loewyObj U₀ h_semi) :=
+  fun _ _ h => loewyFunctor_map_mono U₀ h_semi _ _ h
+
+lemma loewyObj_stabilizes (h_semi : IsSemiArtinian U₀) :
+    ∃ (Ω : Ordinal.{u}), loewyObj U₀ h_semi Ω = loewyObj U₀ h_semi (Ω + 1) := by
+  have h_ev := Ordinal.eventuallyConst_of_monotone (loewyObj_mono U₀ h_semi)
+  rw [Filter.eventuallyConst_atTop] at h_ev
+  rcases h_ev with ⟨Ω, hΩ⟩
+  refine ⟨Ω, ?_⟩
+  have h_le : Ω ≤ Ω + 1 := le_self_add
+  exact (hΩ (Ω + 1) h_le).symm
+
 /-- Mathematically proven by Pierre Gabriel in 1962 ("Des catégories abéliennes").
     Because the category is well-powered, the strictly increasing sequence of 
     subobjects (the Loewy sequence) must eventually exhaust the entire object 
-    and terminate at ⊤ at some ordinal Ω. Unformalized in Lean 4 due to the 
-    heavy transfinite cardinal bounding required. -/
-axiom loewy_length_exists_ax (U₀ : A) (h_semi : IsSemiArtinian U₀) : 
-  ∃ (Ω : Ordinal.{u}), (loewyFunctor U₀ h_semi).obj Ω = ⊤
-
-theorem loewy_length_exists (h_semi : IsSemiArtinian U₀) : ∃ (Ω : Ordinal.{u}), (loewyFunctor U₀ h_semi).obj Ω = ⊤ :=
-  loewy_length_exists_ax U₀ h_semi
+    and terminate at ⊤ at some ordinal Ω. -/
+theorem loewy_length_exists (h_semi : IsSemiArtinian U₀) : ∃ (Ω : Ordinal.{u}), (loewyFunctor U₀ h_semi).obj Ω = ⊤ := by
+  obtain ⟨Ω, hΩ⟩ := loewyObj_stabilizes U₀ h_semi
+  refine ⟨Ω, ?_⟩
+  change loewyObj U₀ h_semi Ω = ⊤
+  by_contra h_ne
+  have h_lt := loewyObj_strict_mono U₀ h_semi Ω h_ne
+  rw [hΩ] at h_lt
+  exact lt_irrefl _ h_lt
 noncomputable def LoewyLength (h_semi : IsSemiArtinian U₀) : Ordinal.{u} := (loewy_length_exists U₀ h_semi).choose
 
 theorem reconstruction (h_semi : IsSemiArtinian U₀) : (loewyFunctor U₀ h_semi).obj (LoewyLength U₀ h_semi) = ⊤ :=
@@ -138,7 +220,7 @@ theorem reconstruction_iso (h_semi : IsSemiArtinian U₀) : IsIso ((loewyFunctor
   exact Subobject.top_arrow_isIso
 
 -- Transfinite Filtration functor
-variable {J : Type*} [Category J]
+variable {J : Type u} [Category J]
 
 noncomputable def residualDiagramMap (F : J ⥤ Subobject U₀) (j k : J) (f : j ⟶ k) : 
     cokernel (F.obj j).arrow ⟶ cokernel (F.obj k).arrow :=
