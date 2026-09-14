@@ -1,4 +1,4 @@
-# Basis Discovery Algorithm: greedy generator extraction in closure systems
+# Basis Discovery in Complete Lattices
 
 ## The construction
 
