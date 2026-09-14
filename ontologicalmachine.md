@@ -81,33 +81,4 @@ Let $U = \mathbb{Z}_{\ge 2}$, and let closure be upward divisibility ($x \in \ma
 
 The basic structures of the Basis Discovery Algorithm can be expressed in Lean 4 as follows:
 
-```lean
-import Mathlib.Order.Closure
-import Mathlib.Order.WellFounded
-
-namespace OntologicalMachine
-
-variable {U : Type}
-
-/-- A closure operator satisfies extensivity, monotonicity, and idempotence. -/
-class ClosureSystem (cl : Set U → Set U) where
-  extensive : ∀ X, X ⊆ cl X
-  monotone : ∀ X Y, X ⊆ Y → cl X ⊆ cl Y
-  idempotent : ∀ X, cl (cl X) = cl X
-
-variable [LinearOrder U] [WellFoundedLT U]
-
-noncomputable def fixedPriorityPhi (C : Set U) (h : C ⊂ Set.univ) : U :=
-  let compl : Set U := Cᶜ
-  have h_nonempty : compl.Nonempty := Set.nonempty_compl.mpr h.ne
-  WellFounded.min wellFounded_lt compl h_nonempty
-
-theorem novelty_of_fixedPriorityPhi (C : Set U) (h : C ⊂ Set.univ) :
-    fixedPriorityPhi C h ∉ C := by
-  have h1 := WellFounded.min_mem wellFounded_lt Cᶜ (Set.nonempty_compl.mpr h.ne)
-  exact h1
-
-end OntologicalMachine
-```
-
 [See full proof in OntologicalMachine.lean](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/BasisDiscovery.lean)
