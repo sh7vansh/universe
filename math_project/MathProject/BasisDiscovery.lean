@@ -1,94 +1,94 @@
 /-
 Copyright (c) 2026 Shivansh Singh. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Shivansh Singh
 -/
-import Mathlib.Order.Closure
+
+import Mathlib.Order.CompleteLattice.Defs
 import Mathlib.Order.WellFounded
-import Mathlib.SetTheory.Ordinal.Arithmetic
-import Mathlib.Data.Set.Finite.Basic
-import Mathlib.Data.Finset.Max
-import Mathlib.Data.Fintype.Basic
+import Mathlib.SetTheory.Ordinal.Basic
+import Mathlib.SetTheory.Ordinal.Principal
+import Mathlib.Data.Set.Basic
 
 /-!
-# BasisDiscovery
-
-This module implements BasisDiscovery.
+# Basis Discovery Algorithm
+This file contains the core definitions for the basis discovery algorithm.
 -/
-
-set_option linter.style.longLine false
-set_option linter.style.docString false
-set_option linter.style.openClassical false
-set_option linter.style.whitespace false
-set_option linter.unusedVariables false
-set_option linter.unusedDecidableInType false
 
 namespace BasisDiscovery
 
-variable {U : Type}
+variable {L : Type} [CompleteLattice L]
+/- 
+This typeclass acts as a firewall against circular logic. 
+By requiring a Well-Founded order, it mathematically guarantees there are no 
+infinite descending chains or circular priority loops (e.g., A < B < C < A), 
+ensuring a fundamental "bottom" always exists.
+-/
+variable {J : Type} [LinearOrder J] [WellFoundedLT J]
+variable (embed : J → L)
 
-/-- A closure operator satisfies extensivity, monotonicity, and idempotence. -/
-class ClosureSystem (cl : Set U → Set U) where
-  extensive : ∀ X, X ⊆ cl X
-  monotone : ∀ X Y, X ⊆ Y → cl X ⊆ cl Y
-  idempotent : ∀ X, cl (cl X) = cl X
+/--
+This axiom mathematically guarantees that the universe is built out of discrete, 
+fundamental building blocks (atoms/join-irreducibles). 
+It acts as a firewall to prevent the algorithm from running on continuous spaces 
+or fractals, which are infinitely divisible and possess no fundamental generators.
+-/
+class IsGenerated {L J : Type} [CompleteLattice L] (embed : J → L) : Prop where
+  eq_iSup : ∀ x : L, x = ⨆ (j : J) (_ : embed j ≤ x), embed j
 
-/-- A Discovery Operator selects a new element outside the current closed set. -/
-def DiscoveryOperator (U : Type) := 
-  ∀ (C : Set U), C ⊂ Set.univ → U
+variable [IsGenerated embed]
 
-section FixedPriority
+omit [LinearOrder J] [WellFoundedLT J] in
+lemma candidates_nonempty (x : L) (h : x < ⊤) : { j : J | ¬ (embed j ≤ x) }.Nonempty := by
+  by_contra h_contra
+  rw [Set.not_nonempty_iff_eq_empty] at h_contra
+  have h_all : ∀ j, embed j ≤ x := by
+    intro j
+    by_contra h_not_le
+    have h_in : j ∈ { j : J | ¬ (embed j ≤ x) } := h_not_le
+    rw [h_contra] at h_in
+    exact h_in
+  have h_top_le_x : (⊤ : L) ≤ x := by
+    have h_top := IsGenerated.eq_iSup (embed := embed) ⊤
+    rw [h_top]
+    apply iSup_le
+    intro j
+    apply iSup_le
+    intro _
+    exact h_all j
+  have h_eq : x = ⊤ := top_le_iff.mp h_top_le_x
+  exact h.ne h_eq
 
-variable [LinearOrder U] [WellFoundedLT U]
+open Classical in
+/--
+The `open Classical` statement invokes the Axiom of Choice.
+It acts as a firewall against strictly Constructive mathematics, allowing the 
+algorithm to mathematically "choose" a minimum generator out of uncountably 
+infinite sets where computing one is physically impossible.
+-/
+noncomputable def fixedPriorityPhi (x : L) (h : x < ⊤) : J :=
+  let candidates := { j : J | ¬ (embed j ≤ x) }
+  have h_nonempty : candidates.Nonempty := candidates_nonempty embed x h
+  WellFounded.min wellFounded_lt candidates h_nonempty
 
-noncomputable def fixedPriorityPhi : DiscoveryOperator U :=
-  fun C h =>
-    let compl : Set U := Cᶜ
-    have h_nonempty : compl.Nonempty := Set.nonempty_compl.mpr h.ne
-    WellFounded.min wellFounded_lt compl h_nonempty
+theorem novelty_of_fixedPriorityPhi (x : L) (h : x < ⊤) :
+    ¬ (embed (fixedPriorityPhi embed x h) ≤ x) :=
+  WellFounded.min_mem wellFounded_lt { j : J | ¬ (embed j ≤ x) } (candidates_nonempty embed x h)
 
-theorem novelty_of_fixedPriorityPhi (C : Set U) (h : C ⊂ Set.univ) :
-    fixedPriorityPhi C h ∉ C := by
-  have h1 := WellFounded.min_mem wellFounded_lt Cᶜ (Set.nonempty_compl.mpr h.ne)
-  exact h1
-
-end FixedPriority
-
-section AdaptiveGreedy
-
-variable [Fintype U]
-
-noncomputable def adaptiveGreedyPhi (cl : Set U → Set U) : DiscoveryOperator U :=
-  fun C h =>
-    let compl := Cᶜ
-    have h_nonempty : compl.Nonempty := Set.nonempty_compl.mpr h.ne
-    have h_exists : ∃ x ∈ compl, ∀ y ∈ compl, 
-        (cl (C ∪ {y})).toFinite.toFinset.card ≤ (cl (C ∪ {x})).toFinite.toFinset.card := by
-      let f := fun (y : U) => (cl (C ∪ {y})).toFinite.toFinset.card
-      have h_fin : compl.Finite := Set.toFinite compl
-      have h_finset_nonempty : h_fin.toFinset.Nonempty := by
-        exact h_fin.toFinset_nonempty.mpr h_nonempty
-      rcases Finset.exists_max_image h_fin.toFinset f h_finset_nonempty with ⟨x, hx, hmax⟩
-      use x
-      rw [Set.Finite.mem_toFinset] at hx
-      use hx
-      intro y hy
-      have hy_finset : y ∈ h_fin.toFinset := by
-        rw [Set.Finite.mem_toFinset]
-        exact hy
-      exact hmax y hy_finset
-    Classical.choose h_exists
-
-end AdaptiveGreedy
-
-open Classical
-
-noncomputable def B_seq (cl : Set U → Set U) (phi : DiscoveryOperator U) (o : Ordinal) : Set U :=
+open Classical in
+/--
+The transfinite sequence of extracted generators across ordinals.
+-/
+noncomputable def xSeq (o : Ordinal) : L :=
   Ordinal.limitRecOn o
-    (∅ : Set U)
-    (fun _ B => if h : cl B ⊂ Set.univ then B ∪ {phi (cl B) h} else B)
-    (fun a _ f => ⋃ (b : Ordinal) (hb : b < a), f b hb)
+    (⊥ : L)
+    (fun _ x => if h : x < ⊤ then x ⊔ embed (fixedPriorityPhi embed x h) else x)
+    (fun a _ f => ⨆ (b : Ordinal) (hb : b < a), f b hb)
 
-noncomputable def sieve_output (cl : Set U → Set U) (phi : DiscoveryOperator U) : Set U :=
-  ⋃ o : Ordinal.{0}, B_seq cl phi o
+/--
+The final supremum of all generators extracted across the transfinite sequence.
+-/
+noncomputable def sieveOutput : L :=
+  ⨆ (o : Ordinal.{0}), xSeq embed o
 
 end BasisDiscovery
