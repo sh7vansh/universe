@@ -18,7 +18,7 @@ Before diagnosing the conjecture, you **MUST** read the foundational documents t
 3. `view_file` on `https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/friction.md`
 
 ## Instructions
-1. Run an algorithmic trace in `<thinking>` before writing output. Trace the Basis Discovery Algorithm step-by-step under the BNR framework. Trace the Decoupling Algorithm pullback recursion and socle condition.
+1. Run an algorithmic trace in `<thinking>` before writing output. Trace the Basis Discovery Algorithm step-by-step under the Lattice Theory framework (Closure Systems, Complete Lattices, Mac Lane-Steinitz Exchange). Trace the Decoupling Algorithm pullback recursion and socle condition.
 2. Follow the math, not the user. If the mathematical mapping contradicts the user's suggested verdict, say so.
 3. Output the diagnosis using the sections below.
 
@@ -33,18 +33,18 @@ Write a Lean 4 code block declaring the `mathlib` variables for the core compone
 **Real structures only.** You must use actual Mathlib structures that exist today. Do not invent generic placeholders just to force the code to compile. If Mathlib lacks the required structures, state exactly what is missing and only declare what exists.
 
 ### 2. Dual Algorithm Mapping
-* **Basis Discovery Algorithm.** Ground set $U$, closure operator $\mathrm{cl}$, target object $C_\Omega$, well-order $\prec$, and discovery operator $\Phi(C)$.
+* **Basis Discovery Algorithm (Lattice Theory).** Complete Lattice $L$, Ground set $U$, closure operator $\mathrm{cl}$, target object $\top$, well-order $\prec$, and discovery operator $\Phi(C)$.
 * **Decoupling Algorithm.** Ambient Grothendieck category $\mathcal{A}$, ambient object $U_0$, simple generator selection $\Phi(S) \in \mathrm{Soc}(S)$, and extension classes $\xi \in \mathrm{Ext}^1$.
 
 ### 3. Dual Friction Limits
-* **Basis Discovery Friction.** Cardinality bloat $c = |B_\Omega| / |B_{\mathrm{OPT}}|$ and discard rate $W = (k - |B_\Omega|)/k$. Check if the search hits flat closures or loops infinitely.
+* **Basis Discovery Friction (Lattice Theory).** Assess Geometric Friction (absence of Mac Lane-Steinitz Exchange) and Semimodular Friction (Adversarial Rank Trap and Rank Collapse tautology $r(\top) = r_{OPT}(\top)$).
 * **Decoupling Friction.** Check for socle vanishing ($\mathrm{Soc}(S) = 0$), wild extension classes, or non-vanishing residual colimits.
 * **Modulus of Failure.** Mathematical invariant quantifying the breakdown.
 
 ### 4. The Verdict
 Select exactly one verdict based on the primary breakdown:
 * **Trivial Socle ($\mathrm{Soc}(S) = 0$).** Continuous quotient category has zero simple subobjects ($\mathrm{Soc}(S) = 0$). Halts the cellular filtration at the root. Root cause: The continuum has no atoms.
-* **Asymptotic Discard Rate Divergence ($W \to 1$).** Discrete non-matroidal closure with misaligned priority order forces $W \to 1$. Root cause: Deterministic rules faking infinite randomness.
+* **Geometric / Semimodular Friction (Rank Collapse).** The lattice space lacks the Mac Lane-Steinitz exchange property or semimodularity, causing an Adversarial Rank Trap where the extraction algorithm takes an exponentially long chain of suprema to reach $\top$. Root cause: Geometrically asymmetrical lattice structure.
 * **Non-Compactness of the Critical Sobolev Embedding.** Scaling symmetry breaks compactness in the critical Sobolev embedding, concentrating energy. Root cause: Macroscopic conservation cannot bind microscopic concentration.
 * **Non-Vanishing First Yoneda Extension Group ($\mathrm{Ext}^1 \neq 0$).** Simple subobjects exist, but non-trivial $\mathrm{Ext}^1$ classes generate wild representation types. Root cause: Exactness without reconstructibility.
 * **Strictly Incomparable Topologies ($\tau_1 \not\subseteq \tau_2$ and $\tau_2 \not\subseteq \tau_1$).** Discrete generators and continuous topologies share no common topological basis, leaving permanent oscillating residue. Triggers only when both algorithms fail concurrently on native dual-domain problems. Root cause: Incompatible metrics.
