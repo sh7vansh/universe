@@ -61,7 +61,25 @@ $$g_{\pi NN} = \frac{g_A m_N}{f_\pi}$$
 
 $$V(r) = - \frac{g_{\pi NN}^2}{4\pi} \, m_\pi \, \frac{e^{-x}}{x}, \quad \text{where} \quad x = \frac{r}{\hbar c / m_\pi}$$
 
-## 6. Nucleosynthesis, Virtual Memory, and Decay
+## 6. Fundamental Constants and Base Anchors
+The physical calculations rely exclusively on a hybrid of pure analytical math and pristine experimental measurements from the Particle Data Group (PDG). 
+
+**Analytical QED Anchors (Vacuum Derivation)**
+*   **Electron Mass ($m_e$)**: $0.51099895 \text{ MeV}$
+*   **Inverse Fine Structure Constant ($\alpha^{-1}$)**: $137.035999$
+*   **Riemann Viscosity**: $0.5$ (The Real Part on the Critical Line)
+*   **Riemann Vacuum Noise**: $\ln(2\pi)$
+
+**Bare Quark Anchors (Topological Building Blocks)**
+*   **Up Quark Mass ($m_u$)**: $2.16 \text{ MeV}$
+*   **Down Quark Mass ($m_d$)**: $4.67 \text{ MeV}$
+
+**Strong Force Geometry**
+*   **Pion Decay Constant ($f_\pi$)**: $92.07 \text{ MeV}$
+*   **Axial Vector Coupling ($g_A$)**: $1.2756$ (dimensionless)
+*   **Conversion Factor ($\hbar c$)**: $197.3269804 \text{ MeV}\cdot\text{fm}$
+
+## 7. Nucleosynthesis, Virtual Memory, and Decay
 
 **Binding and Nucleosynthesis**
 Particles bind together through Short Exact Sequences. Physical binding energy maps directly to the Yoneda extension class in $\mathrm{Ext}^1$. The non-commutative matrices in the $\mathrm{Ext}^1$ tower calculate CP violation phase shifts. Virtual nodes log the memory of bound states.
