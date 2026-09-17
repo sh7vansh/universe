@@ -27,6 +27,10 @@ class PauliExclusionError(Exception):
 
 @dataclass
 class SimpleObject:
+    """
+    Represents a fundamental fermion in the categorical framework.
+    Maps prime numbers as unique identifiers instead of physical mass.
+    """
     name: str
     identifier: int 
     mass: float
@@ -50,6 +54,10 @@ SIMPLE_OBJECTS = {
 
 @dataclass
 class ExtensionClass:
+    """
+    Represents a Yoneda extension class in the Ext1 tower.
+    Logs binding energy, CP violation matrices, and virtual state memory.
+    """
     name: str
     binding_energy: float 
     matrix: Optional[List[List[complex]]] = None
@@ -57,6 +65,10 @@ class ExtensionClass:
 
 @dataclass
 class GrothendieckObject:
+    """
+    Represents a composite particle within the Grothendieck group K_0.
+    Identified by a complex signature Z = Magnitude * e^(i * pi * Spin).
+    """
     signature: complex
     mass: float
     factors: List[SimpleObject] = field(default_factory=list)
@@ -89,6 +101,10 @@ class GrothendieckObject:
         return f"GrothendieckObject(Signature={sig_str}, Mass={self.mass:.3f} MeV, Spin={self.spin}, Composition={comp})"
 
 class CategoricalMachine:
+    """
+    The main engine executing categorical tracking, binding, and decay.
+    Uses discrete algebraic operations instead of continuous fields.
+    """
     def __init__(self):
         self.generators = SIMPLE_OBJECTS
         
@@ -106,6 +122,10 @@ class CategoricalMachine:
         self.kappa_residual = None 
 
     def get_simple(self, prime: int, is_anti: bool = False, color: Optional[str] = None) -> GrothendieckObject:
+        """
+        Instantiates a fundamental particle as a GrothendieckObject.
+        Assigns reciprocal magnitude fractions for antimatter.
+        """
         if prime not in self.generators:
             simp = SimpleObject(f"Unknown Simple ({prime})", prime, 0.0, 0.5, color, is_anti)
         else:
@@ -177,7 +197,11 @@ class CategoricalMachine:
         return self.exact_sequence_reconstruction(A, B, ext)
 
     def exact_sequence_reconstruction(self, A: GrothendieckObject, B: GrothendieckObject, ext: Optional[ExtensionClass] = None) -> GrothendieckObject:
-        """Base Short Exact Sequence Reconstruction (Supports generic custom bindings like Electroweak & CKM)."""
+        """
+        Base Short Exact Sequence Reconstruction.
+        Multiplies complex signatures (Z_C = Z_A * Z_B) and enforces Pauli Exclusion.
+        Applies extension matrices for geometric phase shifts.
+        """
         for f1 in A.factors:
             for f2 in B.factors:
                 if (f1.spin % 1) != 0.0:
@@ -230,6 +254,11 @@ class CategoricalMachine:
         )
 
     def decoupling_algorithm(self, obj: GrothendieckObject) -> List[GrothendieckObject]:
+        """
+        Simulates particle decay via transfinite cellular filtration.
+        Executes pure prime factorization on the signature magnitude
+        to determine the constituent fundamental particles.
+        """
         magnitude = abs(obj.signature)
         if magnitude < 1e-9: return [self.get_simple(0)]
         mag_frac = Fraction(round(magnitude, 10)).limit_denominator(1000000)
