@@ -31,12 +31,16 @@ The system natively limits this friction through **SU(3) Color Singlet Encapsula
 `\sum Red_{net} = \sum Green_{net} = \sum Blue_{net}`
 
 ## 5. Self-Bootstrapping Physics (GMOR and Yukawa)
-The framework maps continuous Standard Model equations natively onto the discrete friction geometry. The system bootstraps its own physics from two fundamental inputs: the chiral vacuum scale and the bare quark masses.
+The framework maps continuous Standard Model equations natively onto the discrete friction geometry. The system bootstraps its own physics by coupling the discrete topological framework with high-precision analytical constants, entirely bypassing arbitrary lattice QCD estimates.
 
-1. **Confinement:** The engine dynamically derives the massive positive scalar (`\kappa_{confinement}`) using the Gell-Mann-Oakes-Renner (GMOR) relation:
+1. **Vacuum Density (The Riemann/QED Bridge):** The engine mathematically derives the exact physical density of the Chiral Condensate (`\langle \bar{q}q \rangle`) by cross-multiplying pure number theory constants with precise physical anchors:
+`\langle \bar{q}q \rangle = - ( \frac{1}{2} \cdot \pi \cdot \ln(2\pi) \cdot \alpha^{-1} \cdot \sqrt{m_e} )^3`
+This derivation translates the exact Riemann Vacuum Noise (`\ln(2\pi)`) and Riemann Viscosity (`1/2`) into a heavy SI vacuum density via the fine structure geometry (`\alpha^{-1}`) and the electron mass (`m_e`).
+
+2. **Confinement:** The engine dynamically derives the massive positive scalar (`\kappa_{confinement}`) using the Gell-Mann-Oakes-Renner (GMOR) relation:
 `m_\pi = \sqrt{- \frac{(m_u + m_d) \langle \bar{q}q \rangle}{f_\pi^2}}`
 
-2. **Residual Binding:** Once the first proton forms, the engine natively extracts its emergent mass (`m_N`), feeds it through the Goldberger-Treiman relation to calculate the strong force coupling constant:
+3. **Residual Binding:** Once the first proton forms, the engine natively extracts its emergent mass (`m_N`), feeds it through the Goldberger-Treiman relation to calculate the strong force coupling constant:
 `g_{\pi NN} = \frac{g_A m_N}{f_\pi}`
 It then applies the continuous Yukawa integral to calculate the exact negative mass defect scale (`\kappa_{residual}`) for nuclear synthesis:
 `V(r) = - \frac{g_{\pi NN}^2}{4\pi} m_\pi \frac{e^{-x}}{x} \quad \text{where} \quad x = \frac{r}{\hbar c / m_\pi}`
