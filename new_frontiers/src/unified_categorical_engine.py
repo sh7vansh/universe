@@ -42,8 +42,8 @@ SIMPLE_OBJECTS = {
     0: SimpleObject("Void", 0, 0.0, 0.0),
     1: SimpleObject("Photon", 1, 0.0, 1.0),
     2: SimpleObject("Electron", 2, 0.511, 0.5),
-    3: SimpleObject("Up Quark", 3, 2.2, 0.5),
-    5: SimpleObject("Down Quark", 5, 4.7, 0.5),
+    3: SimpleObject("Up Quark", 3, 2.16, 0.5),
+    5: SimpleObject("Down Quark", 5, 4.67, 0.5),
     7: SimpleObject("Strange Quark", 7, 95.0, 0.5),
     11: SimpleObject("Muon", 11, 105.0, 0.5),
     13: SimpleObject("Charm Quark", 13, 1270.0, 0.5),
@@ -114,12 +114,12 @@ class CategoricalMachine:
         self.pure_math_mode = pure_math_mode
         
         # --- FIRST-PRINCIPLES BASE INPUTS ---
-        self.m_u = 2.2        # Bare Up Quark (MeV)
-        self.m_d = 4.7        # Bare Down Quark (MeV)
-        self.f_pi = 93.0      # Pion Decay Constant (MeV)
-        self.chiral_condensate = -(284.0)**3  # Vacuum Scale
-        self.g_A = 1.27       # Axial vector coupling (dimensionless)
-        self.hbar_c = 197.3   # Conversion factor
+        self.m_u = 2.16       # Bare Up Quark (MeV)
+        self.m_d = 4.67       # Bare Down Quark (MeV)
+        self.f_pi = 92.07     # Pion Decay Constant (MeV)
+        self.chiral_condensate = -(279.6646414)**3  # Vacuum Scale
+        self.g_A = 1.2756     # Axial vector coupling (dimensionless)
+        self.hbar_c = 197.3269804 # Conversion factor
         
         # 1. GMOR CONFINEMENT EQUATION
         self.m_pi = math.sqrt(- ((self.m_u + self.m_d) * self.chiral_condensate) / (self.f_pi**2))
@@ -173,13 +173,21 @@ class CategoricalMachine:
                 elif 'blue' in base_color: net['blue'] += val
         return (len(obj.factors) > 0) and (net['red'] == net['green'] == net['blue'])
 
+    def _get_shielded_length(self, obj: GrothendieckObject) -> int:
+        if self.is_color_singlet(obj):
+            return 1
+        return len(obj.factors)
+
     def calculate_friction(self, A: GrothendieckObject, B: GrothendieckObject) -> int:
         """4. CATEGORICAL FRICTION EQUATION (Loewy Discrepancy)"""
         def get_virtual_count(obj):
             if self.is_color_singlet(obj): return 0 
             return sum(len(ext.virtual_nodes) for ext in obj.extensions)
+        
         optimal = len(A.factors) + len(B.factors)
-        return (optimal + get_virtual_count(A) + get_virtual_count(B) + optimal) - optimal
+        len_new_virtual = self._get_shielded_length(A) + self._get_shielded_length(B)
+        
+        return (optimal + get_virtual_count(A) + get_virtual_count(B) + len_new_virtual) - optimal
 
     def confinement_bind(self, A: GrothendieckObject, B: GrothendieckObject, name: str) -> GrothendieckObject:
         """Natively binds simple objects using the GMOR-derived mass scale."""
