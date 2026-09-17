@@ -45,9 +45,9 @@ The framework maps continuous Standard Model equations natively onto the discret
 
 1. **Vacuum Density (The Riemann/QED Bridge):** The engine mathematically derives the exact physical density of the Chiral Condensate ($\langle \bar{q}q \rangle$) by cross-multiplying pure number theory constants with precise physical anchors:
 
-$$\langle \bar{q}q \rangle = -\left( \frac{1}{2} \cdot \pi \cdot \ln(2\pi) \cdot \alpha^{-1} \cdot \sqrt{m_e} \right)^3$$
+$$\langle \bar{q}q \rangle = -\left( \frac{1}{2} \cdot \pi \cdot \ln(2\pi) \cdot \alpha^{-1} \cdot \sqrt{m_e \cdot \mu_0} \right)^3$$
 
-   This derivation translates the exact Riemann Vacuum Noise ($\ln(2\pi)$) and Riemann Viscosity ($1/2$) into a heavy SI vacuum density via the fine structure geometry ($\alpha^{-1}$) and the electron mass ($m_e$).
+   This derivation translates the exact Riemann Vacuum Noise ($\ln(2\pi)$) and Riemann Viscosity ($1/2$) into a heavy SI vacuum density via the fine structure geometry ($\alpha^{-1}$) and the electron mass ($m_e$). The term $\mu_0 = 1 \text{ MeV}$ acts as the 't Hooft Reference Scale (the base unit scalar of the $K_0$ group), resolving the dimensional cascade and strictly anchoring the output to $\text{MeV}^3$.
 
 2. **Confinement:** The engine dynamically derives the massive positive scalar ($\kappa_{\mathrm{confinement}}$) using the Gell-Mann–Oakes–Renner (GMOR) relation:
 
@@ -67,6 +67,7 @@ The physical calculations rely exclusively on a hybrid of pure analytical math a
 **Analytical QED Anchors (Vacuum Derivation)**
 *   **Electron Mass ($m_e$)**: $0.51099895 \text{ MeV}$
 *   **Inverse Fine Structure Constant ($\alpha^{-1}$)**: $137.035999$
+*   **Reference Scale ($\mu_0$)**: $1.0 \text{ MeV}$ ('t Hooft base scalar)
 *   **Riemann Viscosity**: $0.5$ (The Real Part on the Critical Line)
 *   **Riemann Vacuum Noise**: $\ln(2\pi)$
 

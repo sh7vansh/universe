@@ -120,10 +120,11 @@ class CategoricalMachine:
         
         # --- MATHEMATICAL VACUUM DENSITY (RIEMANN / QED BRIDGE) ---
         # Derives the Chiral Condensate vacuum density purely from number theory and QED constants
-        # X = 1/2 * pi * ln(2*pi) * alpha^-1 * sqrt(m_e)
+        # X = 1/2 * pi * ln(2*pi) * alpha^-1 * sqrt(m_e * mu_0)
         alpha_inv = 137.035999
         m_e = 0.51099895
-        vacuum_density = 0.5 * math.pi * math.log(2 * math.pi) * alpha_inv * math.sqrt(m_e)
+        mu_0 = 1.0  # 't Hooft Reference Scale / Categorical Base Unit (MeV)
+        vacuum_density = 0.5 * math.pi * math.log(2 * math.pi) * alpha_inv * math.sqrt(m_e * mu_0)
         self.chiral_condensate = -(vacuum_density)**3
         
         self.g_A = 1.2756     # Axial vector coupling (dimensionless)
