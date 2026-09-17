@@ -26,7 +26,13 @@ to rebuild composites. This operation structurally merges the composition factor
 The Proton composition maps two Up quarks and one Down quark. Their distinct $SU(3)$ color charges satisfy the Pauli Exclusion Principle. Their magnitudes multiply to $45$ and their phases add to determine the net spin. The final Complex Signature proves the exact structural components and spin state of the particle.
 
 ## 4. Mass as an Additive Homomorphism and Categorical Friction
-Physical mass functions as an additive homomorphism $V$ from $K_0$ to $\mathbb{R}$. Mass strictly adds. The total mass of a composite particle equals the sum of its bare simple objects plus the energetic manifestation of its categorical binding structure.
+Physical mass functions as an additive homomorphism $V$ from $K_0$ to $\mathbb{R}$. This function maps a dimensionless integer from the Grothendieck group into a physical real number. To execute this mapping, the function requires a baseline physical scaling factor.
+
+The system evaluates the categorical identity element (the Photon, holding a signature magnitude of exactly $1$) against the 't Hooft Reference Scale ($\mu_0$):
+
+$$V(1) = \mu_0 = 1 \text{ MeV}$$
+
+Once this $1 \text{ MeV}$ base unit is locked, every other particle mass evaluates against it. The total mass of a composite particle equals the sum of its bare simple objects plus the energetic manifestation of its categorical binding structure.
 
 Binding energy no longer requires empirical hardcoding. The engine natively derives it through **Categorical Friction (Loewy Discrepancy)**. Every exact sequence generation calculates the ordinal length discrepancy between the optimal combined structure and the accumulated internal virtual nodes.
 
