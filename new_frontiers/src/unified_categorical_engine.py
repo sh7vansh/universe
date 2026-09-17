@@ -104,9 +104,14 @@ class CategoricalMachine:
     """
     The main engine executing categorical tracking, binding, and decay.
     Uses discrete algebraic operations instead of continuous fields.
+    
+    Args:
+        pure_math_mode (bool): If True, bypasses all physical mass scaling 
+                               (GMOR/Yukawa) and outputs raw integer friction.
     """
-    def __init__(self):
+    def __init__(self, pure_math_mode: bool = False):
         self.generators = SIMPLE_OBJECTS
+        self.pure_math_mode = pure_math_mode
         
         # --- FIRST-PRINCIPLES BASE INPUTS ---
         self.m_u = 2.2        # Bare Up Quark (MeV)
@@ -118,8 +123,13 @@ class CategoricalMachine:
         
         # 1. GMOR CONFINEMENT EQUATION
         self.m_pi = math.sqrt(- ((self.m_u + self.m_d) * self.chiral_condensate) / (self.f_pi**2))
-        self.kappa_confinement = self.m_pi
-        self.kappa_residual = None 
+
+        if not self.pure_math_mode:
+            self.kappa_confinement = self.m_pi
+            self.kappa_residual = None 
+        else:
+            self.kappa_confinement = 1.0
+            self.kappa_residual = 1.0
 
     def get_simple(self, prime: int, is_anti: bool = False, color: Optional[str] = None) -> GrothendieckObject:
         """
@@ -130,8 +140,9 @@ class CategoricalMachine:
             simp = SimpleObject(f"Unknown Simple ({prime})", prime, 0.0, 0.5, color, is_anti)
         else:
             base_simp = self.generators[prime]
+            mass = 0.0 if self.pure_math_mode else base_simp.mass
             name = base_simp.name if prime in (0, 1) else (f"Anti-{base_simp.name}" if is_anti else base_simp.name)
-            simp = SimpleObject(name, prime, base_simp.mass, base_simp.spin, color, is_anti)
+            simp = SimpleObject(name, prime, mass, base_simp.spin, color, is_anti)
             
         val = prime if not is_anti else -prime
         matrix = [
@@ -179,6 +190,9 @@ class CategoricalMachine:
 
     def calculate_residual_scale(self, emergent_nucleon_mass: float):
         """2. GOLDBERGER-TREIMAN & YUKAWA RESIDUAL EQUATION"""
+        if self.pure_math_mode:
+            self.kappa_residual = 1.0
+            return
         g_pi_nn = (self.g_A * emergent_nucleon_mass) / self.f_pi
         g_sq_over_4pi = (g_pi_nn**2) / (4 * math.pi)
         r_0 = self.hbar_c / self.m_pi
@@ -342,9 +356,11 @@ class CategoricalMachine:
         decoupled_objects.extend(remaining_simple)
         return decoupled_objects
 
-def run_simulation():
-    machine = CategoricalMachine()
-    print("--- FIRST-PRINCIPLES CATEGORICAL STANDARD MODEL ---")
+def run_simulation(pure_math_mode: bool = False):
+    machine = CategoricalMachine(pure_math_mode=pure_math_mode)
+    
+    mode_text = "PURE MATH MODE" if pure_math_mode else "STANDARD MODEL"
+    print(f"--- FIRST-PRINCIPLES CATEGORICAL {mode_text} ---")
     
     u1 = machine.get_simple(3, color="red_p1")
     u2 = machine.get_simple(3, color="blue_p1")
@@ -398,4 +414,6 @@ def run_simulation():
     print(f"   Virtual State Memory logged in Extension: {[n.name for n in j_psi.extensions[0].virtual_nodes]}")
 
 if __name__ == "__main__":
-    run_simulation()
+    import sys
+    pure_math = "--pure-math" in sys.argv
+    run_simulation(pure_math_mode=pure_math)
