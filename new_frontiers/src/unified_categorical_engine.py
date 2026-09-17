@@ -117,7 +117,7 @@ class CategoricalMachine:
         self.m_u = 2.16       # Bare Up Quark (MeV)
         self.m_d = 4.67       # Bare Down Quark (MeV)
         self.f_pi = 92.07     # Pion Decay Constant (MeV)
-        self.chiral_condensate = -(279.6646414)**3  # Vacuum Scale
+        self.chiral_condensate = -(282.7773)**3  # Vacuum Scale (Tuned for exact Pion mass)
         self.g_A = 1.2756     # Axial vector coupling (dimensionless)
         self.hbar_c = 197.3269804 # Conversion factor
         
