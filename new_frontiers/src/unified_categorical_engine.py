@@ -235,11 +235,22 @@ class CategoricalMachine:
         optimal = len(A.factors) + len(B.factors)
         
         if self.is_color_singlet(A) and self.is_color_singlet(B):
-            n_A = len(A.factors) / 3.0
-            n_B = len(B.factors) / 3.0
-            A_total = n_A + n_B
+            u_count = sum(1 for f in A.factors + B.factors if f.identifier == 3)
+            d_count = sum(1 for f in A.factors + B.factors if f.identifier == 5)
+            
+            Z = round((2 * u_count - d_count) / 3.0)
+            N = round((2 * d_count - u_count) / 3.0)
+            A_total = Z + N
+            
             # Topological boundary scaling for color singlets
             len_new_virtual = 1.0 + 1.5 * ALPHA * (A_total ** (2.0/3.0))
+            
+            # Magic Shell Spherical Optimization
+            magic_numbers = {2, 8, 20, 28, 50, 82, 126}
+            if Z in magic_numbers or N in magic_numbers:
+                magic_bonus = (A_total * ALPHA) / 2.0
+                if Z in magic_numbers: len_new_virtual += magic_bonus
+                if N in magic_numbers: len_new_virtual += magic_bonus
         else:
             len_new_virtual = self._get_shielded_length(A) + self._get_shielded_length(B)
             
