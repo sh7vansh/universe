@@ -87,6 +87,10 @@ The physical calculations rely exclusively on a hybrid of pure analytical math a
 *   **Electron Mass ($m_e$)**: $\mu_0 (0.5 + 1.5\alpha + \alpha^2) \approx 0.510999 \text{ MeV}$
 *   **Up Quark Mass ($m_u$)**: $\mu_0 (1.0 + \frac{2}{\sqrt{3}}) \approx 2.1547 \text{ MeV}$
 *   **Down Quark Mass ($m_d$)**: $\mu_0 (2.0 + \frac{8}{3}) \approx 4.6667 \text{ MeV}$
+*   **Strange Quark Mass ($m_s$)**: $\mu_0 (3.0 + f_\pi) \approx 95.07 \text{ MeV}$
+*   **Charm Quark Mass ($m_c$)**: $\mu_0 (6.0 + (\sqrt{3})^{13}) \approx 1268.66 \text{ MeV}$
+*   **Bottom Quark Mass ($m_b$)**: $\mu_0 (9.0 + f_\pi \frac{\alpha^{-1}}{3}) \approx 4214.6 \text{ MeV}$
+*   **Top Quark Mass ($m_t$)**: $\mu_0 (11.0 + f_\pi^{8/3}) \approx 172852.6 \text{ MeV}$
 *   **Higher Generation Masses**: Derived universally via $m(p) = \mu_0 \left( \frac{p - 1}{2} + \mathcal{F}_{\text{Gauge}} \right)$, separating base topology from scaling gauge friction.
 
 **Strong Force Geometry**

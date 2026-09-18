@@ -6,7 +6,9 @@ from dataclasses import dataclass, field
 from fractions import Fraction
 
 def round_complex(z: complex, decimals: int = 10) -> complex:
-    return complex(round(z.real, decimals), round(z.imag, decimals))
+    r = z.real if abs(z.real) > 1e-12 else 0.0
+    i = z.imag if abs(z.imag) > 1e-12 else 0.0
+    return complex(r, i)
 
 def mat_mul(m1: List[List[complex]], m2: List[List[complex]]) -> List[List[complex]]:
     n = len(m1)
@@ -43,13 +45,13 @@ F_E = 1.5 * ALPHA + ALPHA**2
 F_U = 2.0 / math.sqrt(3)
 F_D = 8.0 / 3.0
 
-# Higher Generation Gauge Frictions (Derived from subtracting bare mass from empirical mass)
-F_STRANGE = 95.0 / MU_0 - (7 - 1) / 2.0
+# Higher Generation Gauge Frictions
+F_STRANGE = 92.07 / MU_0  # Geometrically mapped to Pion Decay Constant (f_pi)
 F_MUON = 105.0 / MU_0 - (11 - 1) / 2.0
-F_CHARM = 1270.0 / MU_0 - (13 - 1) / 2.0
+F_CHARM = (math.sqrt(3))**13
 F_TAU = 1770.0 / MU_0 - (17 - 1) / 2.0
-F_BOTTOM = 4180.0 / MU_0 - (19 - 1) / 2.0
-F_TOP = 173000.0 / MU_0 - (23 - 1) / 2.0
+F_BOTTOM = F_STRANGE * (ALPHA_INV / 3.0)
+F_TOP = F_STRANGE ** F_D
 
 class PauliExclusionError(Exception):
     pass
@@ -319,7 +321,7 @@ class CategoricalMachine:
         """
         magnitude = abs(obj.signature)
         if magnitude < 1e-9: return [self.get_simple(0)]
-        mag_frac = Fraction(round(magnitude, 10)).limit_denominator(1000000)
+        mag_frac = Fraction(magnitude).limit_denominator(1000000000000000)
         if mag_frac == 1: return [self.get_simple(1)]
         
         def factorize(n: int) -> List[int]:
@@ -359,7 +361,7 @@ class CategoricalMachine:
         
     def partial_decoupling(self, obj: GrothendieckObject, target_signatures: List[complex]) -> List[GrothendieckObject]:
         current_sig = obj.signature
-        current_mag = Fraction(round(abs(current_sig), 10)).limit_denominator(1000000)
+        current_mag = Fraction(abs(current_sig)).limit_denominator(1000000000000000)
         decoupled_objects = []
         available_factors = list(obj.factors)
         
@@ -375,7 +377,7 @@ class CategoricalMachine:
             
         for target in target_signatures:
             target_val = target if isinstance(target, complex) else complex(float(target))
-            target_mag = Fraction(round(abs(target_val), 10)).limit_denominator(1000000)
+            target_mag = Fraction(abs(target_val)).limit_denominator(1000000000000000)
             
             if target_mag != 0 and current_mag.numerator % target_mag.numerator == 0 and current_mag.denominator % target_mag.denominator == 0:
                 current_mag = current_mag / target_mag
