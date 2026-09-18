@@ -315,7 +315,8 @@ def main():
         if true_u is not None:
             true_mass_mev = true_u * 931.4941
             error_margin = abs(atom.mass - true_mass_mev)
-            accuracy = 100 * (1 - error_margin / true_mass_mev)
+            error_pct = 100 * (error_margin / true_mass_mev)
+            accuracy = 100 - error_pct
             
         if not quiet:
             print("\n=========================================")
@@ -332,6 +333,7 @@ def main():
                 print(f" [ Accuracy & Error ]")
                 print(f"   True Mass        : {true_mass_mev:,.3f} MeV")
                 print(f"   Model Error      : {error_margin:,.3f} MeV")
+                print(f"   Error Percentage : {error_pct:.4f}%")
                 print(f"   Model Accuracy   : {accuracy:.4f}%")
                 
             print()
@@ -349,7 +351,7 @@ def main():
             
         return {
             "name": name, "Z": Z, "N": N, "mass": atom.mass, 
-            "error": error_margin, "accuracy": accuracy
+            "error": error_margin, "error_pct": error_pct, "accuracy": accuracy
         }
 
     while True:
@@ -364,8 +366,8 @@ def main():
             print("\n[+] Running batch synthesis over entire periodic database...\n")
             symbols = sorted([k for k in PERIODIC_TABLE.keys() if len(k) <= 2], key=lambda k: PERIODIC_TABLE[k]["Z"])
             
-            print(f"{'Element':<15} | {'Z':<3} | {'N':<3} | {'Pred Mass (MeV)':<16} | {'Error (MeV)':<12} | {'Accuracy'}")
-            print("-" * 75)
+            print(f"{'Element':<15} | {'Z':<3} | {'N':<3} | {'Pred Mass (MeV)':<16} | {'Error (MeV)':<12} | {'Error %':<9} | {'Accuracy'}")
+            print("-" * 88)
             
             total_acc = 0.0
             count = 0
@@ -373,16 +375,17 @@ def main():
                 data = PERIODIC_TABLE[sym]
                 res = synthesize_element(data["name"], data["Z"], data["N"], data.get("true_u"), quiet=True)
                 
-                acc_str = f"{res['accuracy']:.4f}%" if res['accuracy'] else "N/A"
-                err_str = f"{res['error']:.3f}" if res['error'] else "N/A"
-                print(f"{res['name']:<15} | {res['Z']:<3} | {res['N']:<3} | {res['mass']:<16,.3f} | {err_str:<12} | {acc_str}")
+                acc_str = f"{res['accuracy']:.4f}%" if res['accuracy'] is not None else "N/A"
+                err_str = f"{res['error']:.3f}" if res['error'] is not None else "N/A"
+                err_pct_str = f"{res['error_pct']:.4f}%" if res['error_pct'] is not None else "N/A"
+                print(f"{res['name']:<15} | {res['Z']:<3} | {res['N']:<3} | {res['mass']:<16,.3f} | {err_str:<12} | {err_pct_str:<9} | {acc_str}")
                 
-                if res['accuracy']:
+                if res['accuracy'] is not None:
                     total_acc += res['accuracy']
                     count += 1
                     
             if count > 0:
-                print("-" * 75)
+                print("-" * 88)
                 print(f"Average Accuracy across {count} elements: {total_acc/count:.4f}%\n")
             continue
             
