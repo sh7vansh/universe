@@ -26,6 +26,14 @@ json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'periodic_t
 with open(json_path, 'r') as f:
     PERIODIC_TABLE = json.load(f)
 
+def get_atom_by_symbol(symbol, tag=None):
+    sym_lower = symbol.lower()
+    if sym_lower not in PERIODIC_TABLE:
+        raise ValueError(f"Unknown element symbol: {symbol}")
+    data = PERIODIC_TABLE[sym_lower]
+    return synthesize_element_core(data["name"], data["Z"], data["N"], tag)
+
+
 def synthesize_element_core(name, Z, N, tag=None):
     """Core function to synthesize an element from engine."""
     tag_prefix = tag if tag else name

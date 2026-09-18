@@ -4,6 +4,7 @@ import copy
 import re
 import readline
 import sys
+import os
 
 from quantum_engine import CategoricalMachine, ExtensionClass, round_complex, GrothendieckObject, M_E, ALPHA_INV
 from atomic_engine import synthesize_element_core, machine
@@ -20,9 +21,9 @@ class CategoricalChemistryEngine(CategoricalMachine):
         alpha = 1.0 / ALPHA_INV
         self.rydberg_energy = 0.5 * M_E * (alpha ** 2)
 
-    def synthesize_atom(self, name, Z, N, tag):
-        # Delegate directly to the atomic abstraction layer!
-        return synthesize_element_core(name, Z, N, tag)
+    def atomic_engine(self, symbol, tag):
+        from atomic_engine import get_atom_by_symbol
+        return get_atom_by_symbol(symbol, tag)
 
     def molecular_bind(self, atoms_list, name: str) -> GrothendieckObject:
         def bind_silent(A, B, pair_name):
@@ -214,18 +215,11 @@ class CategoricalChemistryEngine(CategoricalMachine):
         res.extensions.append(ExtensionClass(name, binding_energy=total_defect, virtual_nodes=res.factors))
         return res
 
-MOLECULAR_TARGETS = {
-    "h2": -4.52,
-    "h2o": -9.58,
-    "ch4": -17.2,
-    "co2": -16.6,
-    "nh3": -12.1,
-    "hf": -5.9,
-    "n2": -9.75,
-    "o2": -5.15
-}
+import json
+json_path_mol = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'molecular_targets.json')
+with open(json_path_mol, 'r') as f:
+    MOLECULAR_TARGETS = json.load(f)
 
-from atomic_engine import PERIODIC_TABLE
 
 def parse_formula(formula):
     matches = re.findall(r'([A-Z][a-z]*)(\d*)', formula)
@@ -254,14 +248,13 @@ def main():
         isolated_mass = 0.0
         
         for sym, count in comps:
-            if sym not in PERIODIC_TABLE:
-                print(f"Error: Element '{sym}' not loaded in local table.")
-                return
-                
-            data = PERIODIC_TABLE[sym]
             for i in range(count):
                 tag = f"{sym.upper()}{i+1}"
-                atom = engine.atomic_engine(data["name"], data["Z"], data["N"], tag)
+                try:
+                    atom = engine.atomic_engine(sym, tag)
+                except ValueError as e:
+                    print(f"Error: {e}")
+                    return
                 atoms_list.append(atom)
                 isolated_mass += atom.mass
                 
@@ -307,11 +300,44 @@ def main():
         print("=========================================\n")
 
     while True:
-        print("Type a chemical formula (e.g. 'H2O', 'CO2', 'CH4'). ('q' to quit)")
+        print("Type a chemical formula (e.g. 'H2O', 'CO2'). Type 'batch' for all targets. ('q' to quit)")
         query = input("> ").strip()
         
         if query.lower() in ('q', 'quit', 'exit'):
             break
+        elif query.lower() == 'batch':
+            print("\n[+] Running batch synthesis on all known molecular targets...\n")
+            print(f"{'Molecule':<10} | {'Pred BE (eV)':<12} | {'True BE (eV)':<12} | {'Error (eV)':<10}")
+            print("-" * 55)
+            
+            total_err = 0.0
+            count = 0
+            for formula, target_ev in MOLECULAR_TARGETS.items():
+                comps = parse_formula(formula.upper())
+                atoms_list = []
+                isolated_mass = 0.0
+                
+                # We need to build a new engine instance for the batch scope or just use the global scope
+                engine = CategoricalChemistryEngine()
+                
+                for sym, c in comps:
+                    for i in range(c):
+                        tag = f"{sym.upper()}{i+1}"
+                        atom = engine.atomic_engine(sym, tag)
+                        atoms_list.append(atom)
+                        isolated_mass += atom.mass
+                        
+                molecule = engine.molecular_bind(atoms_list, formula.upper())
+                pred_ev = (molecule.mass - isolated_mass) * 1_000_000
+                err = abs(pred_ev - target_ev)
+                
+                total_err += err
+                count += 1
+                
+                print(f"{formula.upper():<10} | {pred_ev:<12.2f} | {target_ev:<12.2f} | {err:<10.2f}")
+                
+            print("-" * 55)
+            print(f"Average Accuracy Error across {count} molecules: {total_err/count:.3f} eV\n")
         elif query:
             synthesize_target(query)
 

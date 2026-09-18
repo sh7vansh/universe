@@ -1,6 +1,6 @@
 import sys
 sys.path.append('src/hierarchical')
-from molecular_engine import CategoricalChemistryEngine, parse_formula, PERIODIC_TABLE
+from molecular_engine import CategoricalChemistryEngine, parse_formula
 
 def test_h2o():
     engine = CategoricalChemistryEngine()
@@ -10,10 +10,9 @@ def test_h2o():
     atoms_list = []
     isolated_mass = 0.0
     for sym, count in comps:
-        data = PERIODIC_TABLE[sym]
         for i in range(count):
             tag = f"{sym.upper()}{i+1}"
-            atom = engine.synthesize_atom(data["name"], data["Z"], data["N"], tag)
+            atom = engine.atomic_engine(sym, tag)
             atoms_list.append(atom)
             isolated_mass += atom.mass
             
