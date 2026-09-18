@@ -94,3 +94,10 @@ This locks the transition morphism between the $W$ and $Z$ states to a strict ge
 $$ \frac{m_W}{m_Z} = \frac{\sqrt{7}}{3} $$
 
 Applying this geometric scale to the $W$ boson predicts a $Z$ boson mass of roughly $91.13$ GeV, aligning with experimental bounds to $99.94\%$ accuracy without requiring any free parameters. The $Z$ boson is structurally the $W$ transition fraction bounded by the $\sqrt{7}/3$ geometric constraint.
+
+## 12. Gluons and SU(3) Color Permutation Matrices
+Unlike massive fermions or the $W/Z$ bosons, Gluons do not carry prime magnitude generators or mass transition fractions. Instead, they act strictly as **color permutation operators** within the strong force exact sequences. 
+
+Because identical quarks rely on distinct topological color attributes (Red, Green, Blue) to bypass Pauli exclusion crashes during confinement, a Gluon mathematically maps to a transition morphism that swaps these attributes. The geometry of a 3-color space allows for exactly $3 \times 3 - 1 = 8$ independent, trace-less transition states. 
+
+These 8 states correspond exactly to the 8 empirical Gluons (the Gell-Mann matrices). In the Categorical Machine, a Gluon is natively implemented as a $3 \times 3$ matrix injected into the `Ext1` tower during a `confinement_bind`. For example, a Red-AntiBlue gluon acts as a strict categorical morphism that evaluates a Blue quark tensor and maps it to a Red state, maintaining perfect SU(3) encapsulation without altering the baseline complex signature or mass of the target quark.
