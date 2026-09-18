@@ -60,7 +60,7 @@ The framework maps continuous Standard Model equations natively onto the discret
 
 $$\langle \bar{q}q \rangle = -\left( \frac{1}{2} \cdot \pi \cdot \ln(2\pi) \cdot \alpha^{-1} \cdot \sqrt{(0.5 + 1.5\alpha + \alpha^2) \cdot \mu_0^2} \right)^3$$
 
-   The Chiral Condensate—the density of the physical vacuum—now generates entirely from pure dimensionless constants ($\pi, \alpha, \ln(2\pi)$) and the base unit $\mu_0$. The system is closed, and the empirical anchors are eliminated.
+   The Chiral Condensate—the density of the physical vacuum—now generates entirely from pure dimensionless constants ($\pi$, $\alpha$, $\ln(2\pi)$) and the base unit $\mu_0$ . The system is closed, and the empirical anchors are eliminated.
 
 2. **Confinement:** The engine dynamically derives the massive positive scalar ($\kappa_{\mathrm{confinement}}$) using the Gell-Mann–Oakes–Renner (GMOR) relation:
 
