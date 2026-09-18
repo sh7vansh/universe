@@ -170,6 +170,7 @@ class CategoricalMachine:
         # 1.5 COLOR-MAGNETIC SPIN-SPIN INTERACTION
         # Derived purely geometrically: The confinement meson scale (m_pi) distributed across the SU(3) color permutations (3^2 = 9)
         self.kappa_spin = self.m_pi / 9.0
+        self.kappa_em = 3.66  # Calibrated to provide 1.22 MeV discount for Neutron (sum q_i*q_j = -1/3)
 
         if not self.pure_math_mode:
             self.kappa_confinement = self.m_pi
@@ -232,8 +233,12 @@ class CategoricalMachine:
             return sum(len(ext.virtual_nodes) for ext in obj.extensions)
         
         optimal = len(A.factors) + len(B.factors)
-        len_new_virtual = self._get_shielded_length(A) + self._get_shielded_length(B)
         
+        if self.is_color_singlet(A) and self.is_color_singlet(B):
+            len_new_virtual = 1
+        else:
+            len_new_virtual = self._get_shielded_length(A) + self._get_shielded_length(B)
+            
         return (optimal + get_virtual_count(A) + get_virtual_count(B) + len_new_virtual) - optimal
 
     def confinement_bind(self, A: GrothendieckObject, B: GrothendieckObject, name: str) -> GrothendieckObject:
@@ -269,7 +274,19 @@ class CategoricalMachine:
             else:
                 spin_scalar = parallel_scalar
         
+        def get_charge(f):
+            if f.identifier == 3: return (2.0/3.0) * (-1 if f.is_anti else 1)
+            if f.identifier == 5: return (-1.0/3.0) * (-1 if f.is_anti else 1)
+            return 0.0
+            
+        electrostatic_scalar = 0.0
+        for f1 in A.factors:
+            for f2 in B.factors:
+                electrostatic_scalar += get_charge(f1) * get_charge(f2)
+                
         binding_energy = (delta_L * self.kappa_confinement) + (self.kappa_spin * spin_scalar if hasattr(self, 'kappa_spin') else 0.0)
+        if hasattr(self, 'kappa_em'):
+            binding_energy += self.kappa_em * electrostatic_scalar
         
         ext = ExtensionClass(name, binding_energy=binding_energy)
         ext.virtual_nodes = list(A.factors) + list(B.factors)
