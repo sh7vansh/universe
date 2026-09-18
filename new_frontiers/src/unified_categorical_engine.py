@@ -243,11 +243,31 @@ class CategoricalMachine:
         # Color-Magnetic Spin-Spin Interaction (applied only within confinement boundary)
         spin_scalar = 0.0
         if hasattr(self, 'kappa_spin'):
+            # Calculate standard parallel scalar
+            parallel_scalar = 0.0
             for f1 in A.factors:
                 for f2 in B.factors:
                     z1 = cmath.rect(1.0, math.pi * f1.spin)
                     z2 = cmath.rect(1.0, math.pi * f2.spin)
-                    spin_scalar += (z1 * z2.conjugate()).real
+                    parallel_scalar += (z1 * z2.conjugate()).real
+            
+            # Calculate anti-parallel scalar (if B flips its spin)
+            anti_scalar = 0.0
+            for f1 in A.factors:
+                for f2 in B.factors:
+                    z1 = cmath.rect(1.0, math.pi * f1.spin)
+                    z2 = cmath.rect(1.0, math.pi * (-f2.spin))
+                    anti_scalar += (z1 * z2.conjugate()).real
+                    
+            # Physics seeks the lowest energy ground state. 
+            # If anti-aligning drops the mass, physically flip B before binding.
+            if anti_scalar < parallel_scalar:
+                spin_scalar = anti_scalar
+                B.signature = B.signature.conjugate()
+                for f in B.factors:
+                    f.spin = -f.spin
+            else:
+                spin_scalar = parallel_scalar
         
         binding_energy = (delta_L * self.kappa_confinement) + (self.kappa_spin * spin_scalar if hasattr(self, 'kappa_spin') else 0.0)
         
