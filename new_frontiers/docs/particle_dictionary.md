@@ -71,3 +71,14 @@ When nucleons bind into composite nuclei, they execute exact sequences using `nu
 
 ## 9. Electroweak Atomic Binding
 Atoms form natively in the category by taking a heavy nucleosynthetic nucleus and binding electrons to it via `electroweak_bind`. The mass defect maps linearly into the atomic Rydberg scaling without disrupting the underlying quantum signatures, spinning out complete neutral atoms with intact Categorical Spin constraints.
+
+## 10. W Bosons and Algebraic Decay (Morphisms)
+In this framework, the $W$ bosons are not distinct fundamental base primes. Instead, they act as **rational transition fractions** (categorical morphisms) that bridge the structural gap between quarks and leptons during weak decay.
+
+For example, in Beta Decay, a Neutron ($udd = 75$) decays into a Proton ($uud = 45$). At the quark level, a Down quark ($5$) converts into an Up quark ($3$) and a $W^-$ boson:
+$$ \text{Down} = \text{Up} \times W^- \implies 5 = 3 \times W^- \implies W^- = \mathbf{5/3} $$
+
+The $W^-$ boson ($5/3$) subsequently decays into an Electron ($2$) and an Anti-Neutrino. Because the Neutrino is $6/5$, the Anti-Neutrino is its reciprocal ($5/6$):
+$$ \text{Electron} \times \text{Anti-Neutrino} = 2 \times \frac{5}{6} = \frac{10}{6} = \mathbf{\frac{5}{3}} $$
+
+The algebra balances flawlessly. The $W^+$ boson is simply the reciprocal morphism **$3/5$**, mapping perfectly to a Positron ($1/2$) and a Neutrino ($6/5$).
