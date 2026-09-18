@@ -235,26 +235,43 @@ class CategoricalMachine:
         optimal = len(A.factors) + len(B.factors)
         
         if self.is_color_singlet(A) and self.is_color_singlet(B):
-            u_count = sum(1 for f in A.factors + B.factors if f.identifier == 3)
-            d_count = sum(1 for f in A.factors + B.factors if f.identifier == 5)
+            def get_Z_N(obj):
+                if not obj.factors: return 0, 0
+                u = sum(1 for f in obj.factors if f.identifier == 3)
+                d = sum(1 for f in obj.factors if f.identifier == 5)
+                return round((2*u - d)/3.0), round((2*d - u)/3.0)
+                
+            def geom_friction(Z, N):
+                A_tot = Z + N
+                if A_tot <= 1: return 0.0
+                
+                # Geometrically Derived Liquid Drop Model
+                # Multiplier converts base residual coupling into physical binding scales
+                vol = (6.0 / math.pi) * A_tot
+                surf = math.sqrt(5.0) * (A_tot ** (2.0/3.0))
+                coul = (12.0 * ALPHA) * Z * (Z - 1) / (A_tot ** (1.0/3.0)) if A_tot > 0 else 0.0
+                asym = (2.0 * math.sqrt(2.0)) * ((N - Z) ** 2) / A_tot
+                
+                # Magic Shell Spherical Optimization
+                magic_bonus = 0.0
+                magic_numbers = {2, 8, 20, 28, 50, 82, 126}
+                if Z in magic_numbers: magic_bonus += A_tot / (2.0 * math.pi)
+                if N in magic_numbers: magic_bonus += A_tot / (2.0 * math.pi)
+                
+                return vol - surf - coul - asym + magic_bonus
+
+            Z_A, N_A = get_Z_N(A)
+            Z_B, N_B = get_Z_N(B)
             
-            Z = round((2 * u_count - d_count) / 3.0)
-            N = round((2 * d_count - u_count) / 3.0)
-            A_total = Z + N
+            f_A = geom_friction(Z_A, N_A)
+            f_B = geom_friction(Z_B, N_B)
+            f_C = geom_friction(Z_A + Z_B, N_A + N_B)
             
-            # Topological boundary scaling for color singlets
-            len_new_virtual = 1.0 + 1.5 * ALPHA * (A_total ** (2.0/3.0))
-            
-            # Magic Shell Spherical Optimization
-            magic_numbers = {2, 8, 20, 28, 50, 82, 126}
-            if Z in magic_numbers or N in magic_numbers:
-                magic_bonus = (A_total * ALPHA) / 2.0
-                if Z in magic_numbers: len_new_virtual += magic_bonus
-                if N in magic_numbers: len_new_virtual += magic_bonus
+            # Return the incremental friction needed for the new composite
+            return f_C - (f_A + f_B)
         else:
             len_new_virtual = self._get_shielded_length(A) + self._get_shielded_length(B)
-            
-        return (optimal + get_virtual_count(A) + get_virtual_count(B) + len_new_virtual) - optimal
+            return (optimal + get_virtual_count(A) + get_virtual_count(B) + len_new_virtual) - optimal
 
     def confinement_bind(self, A: GrothendieckObject, B: GrothendieckObject, name: str) -> GrothendieckObject:
         """Natively binds simple objects using the GMOR-derived mass scale."""
@@ -329,6 +346,12 @@ class CategoricalMachine:
             raise ValueError("Must calculate residual scale from a bound nucleon first.")
         delta_L = self.calculate_friction(A, B)
         ext = ExtensionClass(name, binding_energy=(delta_L * self.kappa_residual))
+        ext.virtual_nodes = list(A.factors) + list(B.factors)
+        return self.exact_sequence_reconstruction(A, B, ext)
+
+    def electroweak_bind(self, A: GrothendieckObject, B: GrothendieckObject, name: str, binding_energy: float = -0.0000136) -> GrothendieckObject:
+        """Natively synthesizes atoms via electroweak interaction with a specified mass defect."""
+        ext = ExtensionClass(name, binding_energy=binding_energy)
         ext.virtual_nodes = list(A.factors) + list(B.factors)
         return self.exact_sequence_reconstruction(A, B, ext)
 
@@ -511,8 +534,7 @@ def run_simulation(pure_math_mode: bool = False):
     print(f"   Total Mass Defect: {he4.mass - (2*proton.mass + 2*n1.mass):.2f} MeV")
 
     print("\n4. Electroweak Binding (Hydrogen Atom):")
-    electroweak_force = ExtensionClass("Electroweak Binding", -0.0000136) # -13.6 eV mass defect
-    hydrogen = machine.exact_sequence_reconstruction(proton, e, electroweak_force)
+    hydrogen = machine.electroweak_bind(proton, e, "Hydrogen Atom")
     print(f"   Synthesized Hydrogen Atom: {hydrogen}")
 
     print("\n5. Decoupling Algorithm (Transfinite Filtration):")
