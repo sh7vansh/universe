@@ -167,6 +167,10 @@ class CategoricalMachine:
         # 1. GMOR CONFINEMENT EQUATION
         self.m_pi = math.sqrt(- ((self.m_u + self.m_d) * self.chiral_condensate) / (self.f_pi**2))
 
+        # 1.5 COLOR-MAGNETIC SPIN-SPIN INTERACTION
+        # Derived purely geometrically: The confinement meson scale (m_pi) distributed across the SU(3) color permutations (3^2 = 9)
+        self.kappa_spin = self.m_pi / 9.0
+
         if not self.pure_math_mode:
             self.kappa_confinement = self.m_pi
             self.kappa_residual = None 
@@ -235,7 +239,19 @@ class CategoricalMachine:
     def confinement_bind(self, A: GrothendieckObject, B: GrothendieckObject, name: str) -> GrothendieckObject:
         """Natively binds simple objects using the GMOR-derived mass scale."""
         delta_L = self.calculate_friction(A, B)
-        ext = ExtensionClass(name, binding_energy=(delta_L * self.kappa_confinement))
+        
+        # Color-Magnetic Spin-Spin Interaction (applied only within confinement boundary)
+        spin_scalar = 0.0
+        if hasattr(self, 'kappa_spin'):
+            for f1 in A.factors:
+                for f2 in B.factors:
+                    z1 = cmath.rect(1.0, math.pi * f1.spin)
+                    z2 = cmath.rect(1.0, math.pi * f2.spin)
+                    spin_scalar += (z1 * z2.conjugate()).real
+        
+        binding_energy = (delta_L * self.kappa_confinement) + (self.kappa_spin * spin_scalar if hasattr(self, 'kappa_spin') else 0.0)
+        
+        ext = ExtensionClass(name, binding_energy=binding_energy)
         ext.virtual_nodes = list(A.factors) + list(B.factors)
         return self.exact_sequence_reconstruction(A, B, ext)
 
@@ -278,6 +294,7 @@ class CategoricalMachine:
                         
         sig_C = round_complex(A.signature * B.signature)
         mass_C = A.mass + B.mass
+        
         ext_list = list(A.extensions) + list(B.extensions)
         matrix_C = mat_mul(A.matrix, B.matrix)
         
