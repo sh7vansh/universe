@@ -342,10 +342,31 @@ def main():
             print(f"   Up Quarks        : {u_quarks}")
             print(f"   Down Quarks      : {d_quarks}")
             print(f"   Electrons        : {electrons}")
+            from fractions import Fraction
+            prime_composite = Fraction(1, 1)
+            for f in atom.factors:
+                if f.is_anti:
+                    prime_composite /= f.identifier
+                else:
+                    prime_composite *= f.identifier
+                    
             print()
             print(f" [ Quantum State ]")
             print(f"   Net Spin         : {atom.spin}")
-            print(f"   Signature Mag.   : {abs(atom.signature):.3e}")
+            
+            # Print the exact integer if it's whole, otherwise fraction
+            if prime_composite.denominator == 1:
+                comp_str = str(prime_composite.numerator)
+            else:
+                comp_str = f"{prime_composite.numerator}/{prime_composite.denominator}"
+                
+            # If the prime composite is massive, we can truncate or wrap it, but printing it raw shows the scale!
+            if len(comp_str) > 60:
+                print(f"   Signature Mag.   : {comp_str[:30]}...{comp_str[-25:]} ({len(comp_str)} digits)")
+            else:
+                print(f"   Signature Mag.   : {comp_str}")
+                
+            print(f"   Float Magnitude  : {abs(atom.signature):.3e}")
             print(f"   Signature Phase  : {phase:.3f} rad")
             print("=========================================\n")
             
