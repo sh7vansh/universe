@@ -1,0 +1,26 @@
+  [molecular_engine.py]  <-- User types "H2O" here
+           │
+           │ 1. Requests: "Build 2 Hydrogens & 1 Oxygen (Z, N)"
+           ▼
+  [atomic_engine.py]
+           │
+           │ 2. Requests: "Spawn raw Quarks/Electrons & bind them"
+           ▼
+  [quantum_engine.py]
+           │
+           │ 3. Returns: Mathematical Objects (completed Nuclei/Electrons)
+           ▼
+  [atomic_engine.py]
+           │
+           │ 4. Returns: Fully assembled Atoms (GrothendieckObjects)
+           ▼
+  [molecular_engine.py]
+           │
+           │ 5. Calculates chemistry (VSEPR, bonds) 
+           │    Requests: "Merge these atoms with this Bond Energy"
+           ▼
+  [quantum_engine.py]
+           │
+           │ 6. Returns: Final merged Molecule (Signature & Mass)
+           ▼
+  [molecular_engine.py]  --> Prints Final Mass & Error to Terminal
