@@ -35,10 +35,13 @@ Composite objects like hadrons and atoms take definition from their multiset of 
 | Composite Object | Composition Factors | Complex Signature |
 | --- | --- | --- |
 | **Pion** | Up, Anti-Down | 3e^{i pi/2} * 1/5e^{i pi/2} = 3/5e^{i pi} |
+| **Electron Neutrino** | Electron, Up, Anti-Down | 2e^{i pi/2} * 3e^{i pi/2} * 1/5e^{i pi/2} = 6/5e^{-i pi/2} |
 | **Proton** | Up, Up, Down | 3e^{i pi/2} * 3e^{i pi/2} * 5e^{i pi/2} = 45e^{-i pi/2} |
 | **Neutron** | Up, Down, Down | 3e^{i pi/2} * 5e^{i pi/2} * 5e^{i pi/2} = 75e^{-i pi/2} |
 
-The magnitude 45 does not measure the mass of the Proton. It provides a unique algebraic signature proving the Proton contains exactly two Up quarks and one Down quark. The phase -pi/2 resolves geometrically to the net spin configuration.
+The magnitude 45 does not measure the mass of the Proton. It provides a unique algebraic signature proving the Proton contains exactly two Up quarks and one Down quark. 
+
+Similarly, the **Electron Neutrino** relies natively on the antimatter reciprocal rule ($1/p$). Its structural signature of $6/5$ proves it is algebraically built from an Electron ($2$), an Up Quark ($3$), and an Anti-Down Quark ($1/5$). The physical zero-mass state of the neutrino is enforced through topological boundary cancellation in the `Ext1` tower, leaving only the pure rational signature.
 
 ## 5. Physical Mass as an Additive Homomorphism
 Physical mass functions as an additive invariant. It acts as a homomorphism V from K_0 to R. It maps the category to the real numbers. The total mass of a composite object equals the sum of the geometrically derived masses of its composition factors plus the categorical friction defined by its Yoneda extension classes in Ext1.
