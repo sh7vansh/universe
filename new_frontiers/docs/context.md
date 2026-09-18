@@ -93,6 +93,11 @@ The physical calculations rely exclusively on a hybrid of pure analytical math a
 *   **Top Quark Mass ($m_t$)**: $\mu_0 (11.0 + f_\pi^{8/3}) \approx 172852.6 \text{ MeV}$
 *   **Higher Generation Masses**: Derived universally via $m(p) = \mu_0 \left( \frac{p - 1}{2} + \mathcal{F}_{\text{Gauge}} \right)$, separating base topology from scaling gauge friction.
 
+**Heavy Quark Categorical Scaling**
+The massive divergence in particle weights at higher generations stems entirely from gauge friction exponentiation, not the base topology. The heavy quarks build their gauge frictions ($\mathcal{F}$) recursively from the constants of lower generations:
+1. **Generation 2 (Strange and Charm):** The Strange Quark maps its friction directly to the Pion Decay Constant ($f_\pi$). The Charm Quark exponentiates the SU(3) root lattice geometry ($\sqrt{3}$) to its prime identifier ($p=13$).
+2. **Generation 3 (Top and Bottom):** The heaviest generation algebraically stacks the lower generations. The Top Quark friction scales by raising the Generation 2 Strange friction ($f_\pi$) to the power of the Generation 1 Down friction ($8/3$). The Bottom Quark scales the Strange friction linearly using the QED vacuum anchor ($\alpha^{-1}$) divided by the color factor ($N_c = 3$).
+
 **Strong Force Geometry**
 *   **Pion Decay Constant ($f_\pi$)**: $92.07 \text{ MeV}$
 *   **Axial Vector Coupling ($g_A$)**: $1.2756$ (dimensionless)
