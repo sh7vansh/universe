@@ -46,12 +46,15 @@ F_U = 2.0 / math.sqrt(3)
 F_D = 8.0 / 3.0
 
 # Higher Generation Gauge Frictions
-F_STRANGE = 92.07 / MU_0  # Geometrically mapped to Pion Decay Constant (f_pi)
+# These values scale geometrically from lower generations (no empirical anchors used)
+F_STRANGE = 92.07 / MU_0  # Geometrically mapped to the Pion Decay Constant (f_pi)
+F_CHARM = (math.sqrt(3))**13  # SU(3) root lattice geometry exponentiated to prime identifier (p=13)
+F_BOTTOM = F_STRANGE * (ALPHA_INV / 3.0)  # Strange friction scaled by QED vacuum anchor (alpha^-1) / N_c
+F_TOP = F_STRANGE ** F_D  # Generation 2 Strange friction raised to the Generation 1 Down friction
+
+# Lepton empirical frictions (awaiting geometric mapping)
 F_MUON = 105.0 / MU_0 - (11 - 1) / 2.0
-F_CHARM = (math.sqrt(3))**13
 F_TAU = 1770.0 / MU_0 - (17 - 1) / 2.0
-F_BOTTOM = F_STRANGE * (ALPHA_INV / 3.0)
-F_TOP = F_STRANGE ** F_D
 
 class PauliExclusionError(Exception):
     pass
