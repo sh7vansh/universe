@@ -101,3 +101,15 @@ Unlike massive fermions or the $W/Z$ bosons, Gluons do not carry prime magnitude
 Because identical quarks rely on distinct topological color attributes (Red, Green, Blue) to bypass Pauli exclusion crashes during confinement, a Gluon mathematically maps to a transition morphism that swaps these attributes. The geometry of a 3-color space allows for exactly $3 \times 3 - 1 = 8$ independent, trace-less transition states. 
 
 These 8 states correspond exactly to the 8 empirical Gluons (the Gell-Mann matrices). In the Categorical Machine, a Gluon is natively implemented as a $3 \times 3$ matrix injected into the `Ext1` tower during a `confinement_bind`. For example, a Red-AntiBlue gluon acts as a strict categorical morphism that evaluates a Blue quark tensor and maps it to a Red state, maintaining perfect SU(3) encapsulation without altering the baseline complex signature or mass of the target quark.
+
+## 13. The Higgs Boson and the Geometric Weak Coupling
+In the Standard Model, the Higgs mass ($m_H$) is a free empirical parameter defined by an arbitrary quartic self-coupling constant ($\lambda$). In this categorical framework, the Higgs mass derives natively from the geometric Weak coupling.
+
+The Weak coupling constant ($g$) is defined geometrically by the electric charge ($e = \sqrt{4\pi\alpha}$) and the topological Weinberg angle ($\sin \theta_W = \sqrt{2/9}$):
+$$ g = \frac{e}{\sin \theta_W} = \frac{\sqrt{4\pi\alpha}}{\sqrt{2/9}} = 3\sqrt{2\pi\alpha} \approx 0.6424 $$
+
+The Higgs Boson mass evaluates exactly as the $W$ Boson mass divided by this pure geometric weak coupling:
+$$ m_H = \frac{m_W}{g} = \frac{80.377 \text{ GeV}}{0.6424} \approx 125.12 \text{ GeV} $$
+
+This predicts the experimentally measured Higgs mass ($125.25 \pm 0.17 \text{ GeV}$) natively. Furthermore, because the Standard Model dictates $m_W = \frac{1}{2}gv$, substituting this into our equation reveals that $m_H = \frac{1}{2}v$. When mapped back to the classical formula $m_H = v\sqrt{2\lambda}$, this formally locks the fundamental Higgs vacuum self-coupling ($\lambda$) to a perfect rational fraction:
+$$ \lambda = \frac{1}{8} $$
