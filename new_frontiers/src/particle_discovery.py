@@ -23,6 +23,17 @@ def discover_particles():
     print(f"Up Quark Red: {up_red}")
     print(f"Up Quark Blue: {up_blue}")
     print(f"Down Quark Green: {down_green}")
+
+    print("\n--- Heavy Quarks (Geometrically Derived Frictions) ---")
+    strange = machine.get_simple(7)
+    charm = machine.get_simple(13)
+    bottom = machine.get_simple(19)
+    top = machine.get_simple(23)
+    
+    print(f"Strange Quark (f_pi anchor): {strange}")
+    print(f"Charm Quark (SU(3) root exponent): {charm}")
+    print(f"Bottom Quark (alpha^-1 / N_c scaled): {bottom}")
+    print(f"Top Quark (Generation 2/1 exponent): {top}")
     
     print("\n--- Neutrinos (Rational Fractions) ---")
     anti_down = machine.get_simple(5, is_anti=True, color="green")

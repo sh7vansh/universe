@@ -5,19 +5,21 @@ This document defines the mathematical mapping of the Standard Model using the G
 ## 1. Complex Signatures for Simple Objects
 Fundamental fermions map to simple objects in the abelian category. Each simple object carries a Complex Signature Z = Magnitude * e^{i * pi * Spin}. 
 
-The Magnitude acts as the integer or fractional prime generator. Prime numbers do not represent physical mass. They provide unique algebraic identifiers and preserve discrete Grothendieck categorical tracking. They map sequentially to the empirical fermion mass hierarchy. The Phase geometrically encodes the Spin.
+The Magnitude acts as the integer or fractional prime generator. Prime numbers do not represent physical mass. They provide unique algebraic identifiers and preserve discrete Grothendieck categorical tracking. They map sequentially to the geometrically derived fermion mass hierarchy. The Phase geometrically encodes the Spin.
 
-| Simple Object | Magnitude Generator | Bare Mass | Phase Spin | Complex Signature |
+| Simple Object | Magnitude Generator | Geometrically Derived Mass | Phase Spin | Complex Signature |
 | --- | --- | --- | --- | --- |
 | **Electron** | 2 | 0.511 MeV | 1/2 | 2e^{i pi/2} |
-| **Up Quark** | 3 | 2.2 MeV | 1/2 | 3e^{i pi/2} |
-| **Down Quark** | 5 | 4.7 MeV | 1/2 | 5e^{i pi/2} |
-| **Strange Quark** | 7 | 95.0 MeV | 1/2 | 7e^{i pi/2} |
-| **Muon** | 11 | 105.0 MeV | 1/2 | 11e^{i pi/2} |
-| **Charm Quark** | 13 | 1.27 GeV | 1/2 | 13e^{i pi/2} |
-| **Tau** | 17 | 1.77 GeV | 1/2 | 17e^{i pi/2} |
-| **Bottom Quark** | 19 | 4.18 GeV | 1/2 | 19e^{i pi/2} |
-| **Top Quark** | 23 | 173 GeV | 1/2 | 23e^{i pi/2} |
+| **Up Quark** | 3 | 2.155 MeV | 1/2 | 3e^{i pi/2} |
+| **Down Quark** | 5 | 4.667 MeV | 1/2 | 5e^{i pi/2} |
+| **Strange Quark** | 7 | 95.07 MeV | 1/2 | 7e^{i pi/2} |
+| **Muon** | 11 | 105.0 MeV* | 1/2 | 11e^{i pi/2} |
+| **Charm Quark** | 13 | 1268.66 MeV | 1/2 | 13e^{i pi/2} |
+| **Tau** | 17 | 1770.0 MeV* | 1/2 | 17e^{i pi/2} |
+| **Bottom Quark** | 19 | 4214.6 MeV | 1/2 | 19e^{i pi/2} |
+| **Top Quark** | 23 | 172852.6 MeV | 1/2 | 23e^{i pi/2} |
+
+*Note: Lepton masses for Muon and Tau are currently empirical and awaiting geometric derivation.
 
 ## 2. SU3 Color Charge and Topological Pauli Exclusion
 Fermions follow the Pauli Exclusion Principle. Identical fermions cannot occupy the same state. The framework introduces SU3 Color Charge to satisfy this constraint. SU3 Color Charge assigns an explicit string attribute to simple fermion objects to mathematically distinguish them. Quarks require distinct color attributes like red, blue, and green to bind without triggering exclusion crashes. Color distinguishes identical simple objects during exact sequence reconstruction. The Categorical Machine throws an error if two fermions with identical signatures, spins, and colors attempt to bind within the same exact sequence.
@@ -39,14 +41,14 @@ Composite objects like hadrons and atoms take definition from their multiset of 
 The magnitude 45 does not measure the mass of the Proton. It provides a unique algebraic signature proving the Proton contains exactly two Up quarks and one Down quark. The phase -pi/2 resolves geometrically to the net spin configuration.
 
 ## 5. Physical Mass as an Additive Homomorphism
-Physical mass functions as an additive invariant. It acts as a homomorphism V from K_0 to R. It maps the category to the real numbers. The total mass of a composite object equals the sum of the bare simple objects plus the categorical friction defined by its Yoneda extension classes in Ext1.
+Physical mass functions as an additive invariant. It acts as a homomorphism V from K_0 to R. It maps the category to the real numbers. The total mass of a composite object equals the sum of the geometrically derived masses of its composition factors plus the categorical friction defined by its Yoneda extension classes in Ext1.
 
 Binding energy resolves structurally. The engine extracts the ordinal exact sequence length discrepancy (`\Delta L`). 
 `\Delta L = (Len_{optimal} + Virtual_A + Virtual_B + Len_{new\_virtual}) - Len_{optimal}`
 
-It scales this native integer with continuous equations bootstrapped directly from the vacuum scale and the bare quarks. Confinement scales via the GMOR relation (positive friction mass). Nuclear binding scales dynamically via the Goldberger-Treiman relation and the Yukawa potential (negative friction mass defect).
+It scales this native integer with continuous equations bootstrapped directly from the vacuum scale. Confinement scales via the GMOR relation (positive friction mass). Nuclear binding scales dynamically via the Goldberger-Treiman relation and the Yukawa potential (negative friction mass defect).
 
-`Mass = \sum V_{bare} + (\Delta L \times \kappa)`
+`Mass = \sum V_a + (\Delta L \times \kappa)`
 
 ## 6. Binding Energy and CP Violation Matrices in the Ext1 Tower
 Binding energy physically manifests the Yoneda extension classes Ext1. The Ext1 tower accepts matrix operators to formally calculate geometric phase shifts. During exact sequence reconstruction, the commutative matrices M_A and M_B form a commutator M_A M_B - M_B M_A. The framework extracts a phase shift theta from the first non-zero entry of this commutator. The resulting complex signature multiplies by e^{i theta}. This mathematically executes CP violation through a geometric phase shift. The composite matrix evaluates as M_C = M_ext M_A M_B. Virtual Nodes within the extension class log the memory of these bindings. Exact sequence reconstruction governs nucleosynthesis. The binding energy provides an additive mass contribution to the composite object without altering its complex signature.
