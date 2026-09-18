@@ -255,8 +255,8 @@ class CategoricalMachine:
                 # Magic Shell Spherical Optimization
                 magic_bonus = 0.0
                 magic_numbers = {2, 8, 20, 28, 50, 82, 126}
-                if Z in magic_numbers: magic_bonus += A_tot / (2.0 * math.pi)
-                if N in magic_numbers: magic_bonus += A_tot / (2.0 * math.pi)
+                if Z in magic_numbers: magic_bonus += math.pi / 4.0
+                if N in magic_numbers: magic_bonus += math.pi / 4.0
                 
                 return vol - surf - coul - asym + magic_bonus
 
