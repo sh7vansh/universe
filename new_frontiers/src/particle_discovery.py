@@ -44,14 +44,28 @@ def discover_particles():
     neutrino = machine.exact_sequence_reconstruction(comp1, anti_down, ext=ext_mass_cancel)
     print(f"Electron Neutrino: {neutrino}")
 
-    print("\n--- Composite Hadrons (Natively Bootstrapped) ---")
+    print("\n--- Geometric Nucleosynthesis (Liquid Drop Model) ---")
     diquark = machine.confinement_bind(up_red, up_blue, "Diquark")
     proton = machine.confinement_bind(diquark, down_green, "Proton")
-    print(f"Proton: {proton}")
+    
+    # Needs a baseline residual scale anchored from a single nucleon
+    machine.calculate_residual_scale(proton.mass)
+    
+    # We must synthesize a neutron for Helium
+    up_green = machine.get_simple(3, color="green")
+    down_red = machine.get_simple(5, color="red")
+    down_blue = machine.get_simple(5, color="blue")
+    neutron = machine.confinement_bind(machine.confinement_bind(up_green, down_red, "DiQ"), down_blue, "Neutron")
+    
+    print(f"Proton (Singlet): {proton}")
+    print(f"Neutron (Singlet): {neutron}")
+    
+    # Synthesize Deuteron Nucleus (Proton + Neutron)
+    deuteron = machine.nuclear_bind(proton, neutron, "Deuteron")
+    print(f"Deuteron Nucleus: {deuteron}")
     
     print("\n--- Electroweak Binding (Atoms) ---")
-    electroweak_force = ExtensionClass("Electroweak Binding", -0.0000136)
-    hydrogen = machine.exact_sequence_reconstruction(proton, electron, ext=electroweak_force)
+    hydrogen = machine.electroweak_bind(proton, electron, "Hydrogen")
     print(f"Hydrogen Atom: {hydrogen}")
 
     print("\n--- Ext1 Virtual Memory and CP Violation ---")

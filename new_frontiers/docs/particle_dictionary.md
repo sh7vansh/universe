@@ -57,3 +57,14 @@ Binding energy physically manifests the Yoneda extension classes Ext1. The Ext1 
 Particle radiation or decay triggers a transfinite cellular filtration. The residual quotient calculates out and a simple subobject extracts from the socle via categorical pullbacks. 
 
 This process executes mathematically as the prime factorization of the complex signature magnitude for numerator and denominator fractions alongside phase subtraction. The decay algorithm calculates the exact simple fundamental fields that decouple from the bound state.
+
+## 8. Geometric Nucleosynthesis (Liquid Drop Model)
+When nucleons bind into composite nuclei, they execute exact sequences using `nuclear_bind`. The friction length calculates based purely on geometric boundary dynamics mapping the strong force. Using pure mathematical constants, the binding energy is extracted via:
+1. Volume: `(6.0 / pi) * A`
+2. Surface: `-sqrt(5.0) * A^(2/3)`
+3. Coulomb: `-12.0 * alpha * Z(Z-1) / A^(1/3)`
+4. Asymmetry: `-2sqrt(2) * (N-Z)^2 / A`
+5. Magic Shell Topology: `+ pi / 4.0` (for every closed shell)
+
+## 9. Electroweak Atomic Binding
+Atoms form natively in the category by taking a heavy nucleosynthetic nucleus and binding electrons to it via `electroweak_bind`. The mass defect maps linearly into the atomic Rydberg scaling without disrupting the underlying quantum signatures, spinning out complete neutral atoms with intact Categorical Spin constraints.
