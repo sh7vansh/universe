@@ -370,9 +370,16 @@ def main():
             print(f"   Signature Phase  : {phase:.3f} rad")
             print("=========================================\n")
             
+        from fractions import Fraction
+        prime_comp = Fraction(1, 1)
+        for f in atom.factors:
+            if f.is_anti: prime_comp /= f.identifier
+            else: prime_comp *= f.identifier
+
         return {
             "name": name, "Z": Z, "N": N, "mass": atom.mass, 
-            "error": error_margin, "error_pct": error_pct, "accuracy": accuracy
+            "error": error_margin, "error_pct": error_pct, "accuracy": accuracy,
+            "prime_composite": prime_comp
         }
 
     while True:
@@ -398,8 +405,8 @@ def main():
             all_symbols = sorted([k for k in PERIODIC_TABLE.keys() if len(k) <= 2], key=lambda k: PERIODIC_TABLE[k]["Z"])
             symbols = [sym for sym in all_symbols if start_z <= PERIODIC_TABLE[sym]["Z"] <= end_z]
             
-            print(f"{'Element':<15} | {'Z':<3} | {'N':<3} | {'Pred Mass (MeV)':<16} | {'Error (MeV)':<12} | {'Error %':<9} | {'Accuracy'}")
-            print("-" * 88)
+            print(f"{'Element':<15} | {'Z':<3} | {'N':<3} | {'Pred Mass (MeV)':<16} | {'Error %':<9} | {'Accuracy':<9} | {'Signature'}")
+            print("-" * 105)
             
             total_acc = 0.0
             count = 0
@@ -407,10 +414,17 @@ def main():
                 data = PERIODIC_TABLE[sym]
                 res = synthesize_element(data["name"], data["Z"], data["N"], data.get("true_u"), quiet=True)
                 
+                prime_comp = res["prime_composite"]
+                comp_str = str(prime_comp.numerator) if prime_comp.denominator == 1 else f"{prime_comp.numerator}/{prime_comp.denominator}"
+                if len(comp_str) > 18:
+                    sig_disp = f"{comp_str[:6]}...{comp_str[-6:]} ({len(comp_str)}d)"
+                else:
+                    sig_disp = comp_str
+
                 acc_str = f"{res['accuracy']:.4f}%" if res['accuracy'] is not None else "N/A"
-                err_str = f"{res['error']:.3f}" if res['error'] is not None else "N/A"
                 err_pct_str = f"{res['error_pct']:.4f}%" if res['error_pct'] is not None else "N/A"
-                print(f"{res['name']:<15} | {res['Z']:<3} | {res['N']:<3} | {res['mass']:<16,.3f} | {err_str:<12} | {err_pct_str:<9} | {acc_str}")
+                accuracy_val = f"{res['accuracy']:.4f}%" if res['accuracy'] is not None else "N/A"
+                print(f"{res['name']:<15} | {res['Z']:<3} | {res['N']:<3} | {res['mass']:<16,.3f} | {err_pct_str:<9} | {accuracy_val:<9} | {sig_disp}")
                 
                 if res['accuracy'] is not None:
                     total_acc += res['accuracy']
