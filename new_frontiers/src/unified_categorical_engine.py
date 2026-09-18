@@ -226,8 +226,8 @@ class CategoricalMachine:
             return 1
         return len(obj.factors)
 
-    def calculate_friction(self, A: GrothendieckObject, B: GrothendieckObject) -> int:
-        """4. CATEGORICAL FRICTION EQUATION (Loewy Discrepancy)"""
+    def calculate_friction(self, A: GrothendieckObject, B: GrothendieckObject) -> float:
+        """4. CATEGORICAL FRICTION EQUATION (Loewy Discrepancy with Topological Boundary)"""
         def get_virtual_count(obj):
             if self.is_color_singlet(obj): return 0 
             return sum(len(ext.virtual_nodes) for ext in obj.extensions)
@@ -235,7 +235,11 @@ class CategoricalMachine:
         optimal = len(A.factors) + len(B.factors)
         
         if self.is_color_singlet(A) and self.is_color_singlet(B):
-            len_new_virtual = 1
+            n_A = len(A.factors) / 3.0
+            n_B = len(B.factors) / 3.0
+            A_total = n_A + n_B
+            # Topological boundary scaling for color singlets
+            len_new_virtual = 1.0 + 1.5 * ALPHA * (A_total ** (2.0/3.0))
         else:
             len_new_virtual = self._get_shielded_length(A) + self._get_shielded_length(B)
             
