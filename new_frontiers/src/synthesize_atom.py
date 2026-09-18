@@ -81,6 +81,22 @@ def main():
         "zn": {"name": "Zinc-64", "Z": 30, "N": 34, "true_u": 63.929142},
         "zinc": {"name": "Zinc-64", "Z": 30, "N": 34, "true_u": 63.929142}
     }
+    
+    # Setup autocomplete
+    db_keys = list(PERIODIC_TABLE.keys()) + ["custom", "quit", "batch"]
+    def completer(text, state):
+        options = [k for k in db_keys if k.startswith(text.lower())]
+        if state < len(options):
+            match = options[state]
+            return match.capitalize() if len(match) > 2 else match
+        return None
+
+    readline.parse_and_bind("tab: complete")
+    readline.set_completer(completer)
+
+    print("Bootstrapping nuclear residual scale...")
+    base_p = make_nucleon(True, "base")
+    machine.calculate_residual_scale(base_p.mass)
 
     def synthesize_element(name, Z, N, true_u, quiet=False):
         if not quiet:
