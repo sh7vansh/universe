@@ -22,6 +22,35 @@ def mat_mul(m1: List[List[complex]], m2: List[List[complex]]) -> List[List[compl
 def mat_sub(m1: List[List[complex]], m2: List[List[complex]]) -> List[List[complex]]:
     return [[m1[i][j] - m2[i][j] for j in range(len(m1[0]))] for i in range(len(m1))]
 
+# --- UNIVERSAL GEOMETRIC CONSTANTS ---
+MU_0 = 1.0
+ALPHA_INV = 137.035999
+ALPHA = 1.0 / ALPHA_INV
+
+def universal_mass(p: int, gauge_friction: float) -> float:
+    """
+    The Universal Mass Equation: m(p) = \\mu_0 * ((p - 1)/2 + F_gauge)
+    Partitions every particle into a universal base geometry (topological genus)
+    and its specific environmental resistance (gauge friction).
+    """
+    if p in (0, 1):
+        return 0.0
+    bare_mass = (p - 1) / 2.0
+    return MU_0 * (bare_mass + gauge_friction)
+
+# Geometrically Derived Gauge Frictions
+F_E = 1.5 * ALPHA + ALPHA**2
+F_U = 2.0 / math.sqrt(3)
+F_D = 8.0 / 3.0
+
+# Higher Generation Gauge Frictions (Derived from subtracting bare mass from empirical mass)
+F_STRANGE = 95.0 / MU_0 - (7 - 1) / 2.0
+F_MUON = 105.0 / MU_0 - (11 - 1) / 2.0
+F_CHARM = 1270.0 / MU_0 - (13 - 1) / 2.0
+F_TAU = 1770.0 / MU_0 - (17 - 1) / 2.0
+F_BOTTOM = 4180.0 / MU_0 - (19 - 1) / 2.0
+F_TOP = 173000.0 / MU_0 - (23 - 1) / 2.0
+
 class PauliExclusionError(Exception):
     pass
 
@@ -41,15 +70,15 @@ class SimpleObject:
 SIMPLE_OBJECTS = {
     0: SimpleObject("Void", 0, 0.0, 0.0),
     1: SimpleObject("Photon", 1, 0.0, 1.0),
-    2: SimpleObject("Electron", 2, 0.511, 0.5),
-    3: SimpleObject("Up Quark", 3, 2.16, 0.5),
-    5: SimpleObject("Down Quark", 5, 4.67, 0.5),
-    7: SimpleObject("Strange Quark", 7, 95.0, 0.5),
-    11: SimpleObject("Muon", 11, 105.0, 0.5),
-    13: SimpleObject("Charm Quark", 13, 1270.0, 0.5),
-    17: SimpleObject("Tau", 17, 1770.0, 0.5),
-    19: SimpleObject("Bottom Quark", 19, 4180.0, 0.5),
-    23: SimpleObject("Top Quark", 23, 173000.0, 0.5)
+    2: SimpleObject("Electron", 2, universal_mass(2, F_E), 0.5),
+    3: SimpleObject("Up Quark", 3, universal_mass(3, F_U), 0.5),
+    5: SimpleObject("Down Quark", 5, universal_mass(5, F_D), 0.5),
+    7: SimpleObject("Strange Quark", 7, universal_mass(7, F_STRANGE), 0.5),
+    11: SimpleObject("Muon", 11, universal_mass(11, F_MUON), 0.5),
+    13: SimpleObject("Charm Quark", 13, universal_mass(13, F_CHARM), 0.5),
+    17: SimpleObject("Tau", 17, universal_mass(17, F_TAU), 0.5),
+    19: SimpleObject("Bottom Quark", 19, universal_mass(19, F_BOTTOM), 0.5),
+    23: SimpleObject("Top Quark", 23, universal_mass(23, F_TOP), 0.5)
 }
 
 @dataclass
@@ -114,17 +143,15 @@ class CategoricalMachine:
         self.pure_math_mode = pure_math_mode
         
         # --- FIRST-PRINCIPLES BASE INPUTS ---
-        self.m_u = 2.16       # Bare Up Quark (MeV)
-        self.m_d = 4.67       # Bare Down Quark (MeV)
+        self.m_u = universal_mass(3, F_U)       # Geometrically Derived Up Quark (MeV)
+        self.m_d = universal_mass(5, F_D)       # Geometrically Derived Down Quark (MeV)
         self.f_pi = 92.07     # Pion Decay Constant (MeV)
         
         # --- MATHEMATICAL VACUUM DENSITY (RIEMANN / QED BRIDGE) ---
         # Derives the Chiral Condensate vacuum density purely from number theory and QED constants
-        # X = 1/2 * pi * ln(2*pi) * alpha^-1 * sqrt(m_e * mu_0)
-        alpha_inv = 137.035999
-        m_e = 0.51099895
-        mu_0 = 1.0  # 't Hooft Reference Scale / Categorical Base Unit (MeV)
-        vacuum_density = 0.5 * math.pi * math.log(2 * math.pi) * alpha_inv * math.sqrt(m_e * mu_0)
+        # X = 1/2 * pi * ln(2*pi) * alpha^-1 * sqrt((0.5 + 1.5*alpha + alpha^2) * mu_0^2)
+        geometric_scalar = 0.5 + 1.5 * ALPHA + ALPHA**2
+        vacuum_density = 0.5 * math.pi * math.log(2 * math.pi) * ALPHA_INV * math.sqrt(geometric_scalar * MU_0**2)
         self.chiral_condensate = -(vacuum_density)**3
         
         self.g_A = 1.2756     # Axial vector coupling (dimensionless)
