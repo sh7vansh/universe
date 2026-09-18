@@ -34,6 +34,8 @@ def universal_mass(p: int, gauge_friction: float) -> float:
     The Universal Mass Equation: m(p) = \\mu_0 * ((p - 1)/2 + F_gauge)
     Partitions every particle into a universal base geometry (topological genus)
     and its specific environmental resistance (gauge friction).
+    For heavy quarks, F_gauge is built recursively by exponentiating 
+    the frictions of lower generations.
     """
     if p in (0, 1):
         return 0.0
