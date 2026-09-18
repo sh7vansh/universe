@@ -355,16 +355,27 @@ def main():
         }
 
     while True:
-        print("\nType an element symbol (e.g. 'Fe'), name ('Iron'), 'custom', or 'batch'. (Tab to autocomplete, 'q' to quit)")
+        print("\nType an element symbol ('Fe'), name ('Iron'), 'custom', or 'batch [start] [end]'. (Tab autocomplete, 'q' to quit)")
         query = input("> ").strip().lower()
         
         true_u = None
         if query in ('q', 'quit', 'exit'):
             break
             
-        if query == 'batch':
-            print("\n[+] Running batch synthesis over entire periodic database...\n")
-            symbols = sorted([k for k in PERIODIC_TABLE.keys() if len(k) <= 2], key=lambda k: PERIODIC_TABLE[k]["Z"])
+        if query.startswith('batch'):
+            parts = query.split()
+            start_z = 1
+            end_z = 118
+            
+            if len(parts) == 2 and parts[1].isdigit():
+                end_z = int(parts[1])
+            elif len(parts) == 3 and parts[1].isdigit() and parts[2].isdigit():
+                start_z = int(parts[1])
+                end_z = int(parts[2])
+                
+            print(f"\n[+] Running batch synthesis from Z={start_z} to Z={end_z}...\n")
+            all_symbols = sorted([k for k in PERIODIC_TABLE.keys() if len(k) <= 2], key=lambda k: PERIODIC_TABLE[k]["Z"])
+            symbols = [sym for sym in all_symbols if start_z <= PERIODIC_TABLE[sym]["Z"] <= end_z]
             
             print(f"{'Element':<15} | {'Z':<3} | {'N':<3} | {'Pred Mass (MeV)':<16} | {'Error (MeV)':<12} | {'Error %':<9} | {'Accuracy'}")
             print("-" * 88)
