@@ -489,11 +489,11 @@ class CategoricalMachine:
         
         # 1. Nucleon Condensate (Deuteron Boundary)
         # Evaluates pure topological noise disrupted by electromagnetic boundaries.
-        self.nucleon_condensate = (noise ** 2) * (1.0 - (1.0 / (viscosity ** 2)) / mp.sqrt(CONFIG.alpha_inv)) * CONFIG.mu_0
+        self.nucleon_condensate = (noise ** 2) * (1.0 - (1.0 / (viscosity ** 2)) / mp.sqrt(CONFIG.alpha_inv))
         
         # 2. Kappa Residual (Base Categorical Friction Scalar)
         # Projects the localized Nucleon Condensate across 4D spacetime geometry to define the global residual friction scale.
-        self.kappa_residual = - (self.nucleon_condensate * (1.0 / (viscosity ** 2)))
+        self.kappa_residual = - (self.nucleon_condensate * (1.0 / (viscosity ** 2))) * CONFIG.mu_0
 
     def deep_vacuum_bind(self, A: GrothendieckObject, B: GrothendieckObject, name: str) -> GrothendieckObject:
         base_friction = self.calculate_friction(A, B)
@@ -617,7 +617,7 @@ def run_simulation(pure_math_mode: bool = False):
     
     print("\n2. Bootstrapping Nuclear Physics (Nucleon Condensate):")
     machine.calculate_residual_scale(proton.mass)
-    print(f"   Nucleon Condensate (Deuteron Boundary): {machine.nucleon_condensate:.4f} MeV")
+    print(f"   Nucleon Condensate (Deuteron Boundary): {machine.nucleon_condensate:.4f}")
     print(f"   Base Residual Friction (Kappa): {machine.kappa_residual:.4f} MeV")
     
     print("\n3. Synthesizing Helium-4:")
