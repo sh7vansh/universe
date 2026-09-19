@@ -277,11 +277,14 @@ class CategoricalMachine:
                 phase_interference = (12.0 * ALPHA) * Z * (Z - 1) / (A_tot ** (1.0/3.0)) if A_tot > 0 else 0.0
                 parity_violation = (2.0 * mp.sqrt(2.0)) * ((N - Z) ** 2) / A_tot
                 
-                # Cohomological Closure (Magic Shells)
+                # Cohomological Closure (Magic Shells - Ext Periodicity)
+                # Scaled by topological volume (A_tot^-1/3) to represent the density of the Ext^n tower period
                 cohomological_closure = 0.0
                 magic_numbers = {2, 8, 20, 28, 50, 82, 126}
-                if Z in magic_numbers: cohomological_closure += mp.pi / 4.0
-                if N in magic_numbers: cohomological_closure += mp.pi / 4.0
+                
+                volumetric_dampener = 1.0 / (A_tot ** (1.0/3.0)) if A_tot > 0 else 1.0
+                if Z in magic_numbers: cohomological_closure += (mp.pi / 4.0) * volumetric_dampener
+                if N in magic_numbers: cohomological_closure += (mp.pi / 4.0) * volumetric_dampener
                 
                 return rank - boundary_degradation - phase_interference - parity_violation + cohomological_closure
 
@@ -311,7 +314,7 @@ class CategoricalMachine:
     def deep_vacuum_bind(self, A: GrothendieckObject, B: GrothendieckObject, name: str) -> GrothendieckObject:
         base_friction = self.calculate_friction(A, B)
         total_friction = base_friction 
-        n = 2
+        n = 1
         current_correction = base_friction * float(WYLER_ALPHA)
         while abs(current_correction) > 1e-15:
             phase = (-1) ** n
@@ -319,7 +322,7 @@ class CategoricalMachine:
             n += 1
             current_correction *= float(WYLER_ALPHA)
         binding_energy = total_friction * float(self.kappa_residual) if hasattr(self, 'kappa_residual') and self.kappa_residual else total_friction
-        ext = ExtensionClass(name, binding_energy=binding_energy, degree=n, source_node=A, target_node=B)
+        ext = ExtensionClass(name, binding_energy=binding_energy)
         ext.virtual_nodes = list(A.factors) + list(B.factors)
         return self.exact_sequence_reconstruction(A, B, ext)
 
@@ -401,13 +404,12 @@ class CategoricalMachine:
         self.kappa_residual = - (self.nucleon_condensate * (1.0 / (viscosity ** 2)))
 
     def nuclear_bind(self, A: GrothendieckObject, B: GrothendieckObject, name: str) -> GrothendieckObject:
-        """Natively synthesizes nuclei with accurate negative mass defects."""
+        """Natively synthesizes nuclei with accurate negative mass defects using the infinite Ext tower."""
         if self.kappa_residual is None:
             raise ValueError("Must calculate residual scale from a bound nucleon first.")
-        delta_L = self.calculate_friction(A, B)
-        ext = ExtensionClass(name, binding_energy=(delta_L * self.kappa_residual))
-        ext.virtual_nodes = list(A.factors) + list(B.factors)
-        return self.exact_sequence_reconstruction(A, B, ext)
+        
+        # Route the macroscopic geometry through the infinite Ext^n vacuum solver
+        return self.deep_vacuum_bind(A, B, name)
 
     def electroweak_bind(self, A: GrothendieckObject, B: GrothendieckObject, name: str, binding_energy: float = -0.0000136) -> GrothendieckObject:
         """Natively synthesizes atoms via electroweak interaction with a specified mass defect."""
