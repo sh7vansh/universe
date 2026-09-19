@@ -530,7 +530,7 @@ def run_simulation(pure_math_mode: bool = False):
     
     print("\n2. Bootstrapping Nuclear Physics (Goldberger-Treiman & Yukawa):")
     machine.calculate_residual_scale(proton.mass)
-    print(f"   Dynamic Coupling (g^2/4pi): {((machine.g_A * proton.mass / machine.f_pi)**2 / (4*math.pi)):.2f}")
+    print(f"   Dynamic Coupling (g^2/4pi): {((G_A * proton.mass / machine.f_pi)**2 / (4*math.pi)):.2f}")
     
     print("\n3. Synthesizing Helium-4:")
     p2 = machine.confinement_bind(machine.confinement_bind(machine.get_simple(3, color="red_p2"), machine.get_simple(3, color="blue_p2"), "DiQ"), machine.get_simple(5, color="green_p2"), "Proton 2")
