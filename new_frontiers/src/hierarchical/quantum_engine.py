@@ -30,7 +30,6 @@ WYLER_ALPHA = (9.0 / (16.0 * (math.pi ** 3))) * ((math.pi / 120.0) ** 0.25)
 ALPHA_INV = 1.0 / WYLER_ALPHA
 ALPHA = 1.0 / ALPHA_INV
 G_A = 7.0 ** (1.0 / 8.0)  # Axial vector coupling (Strange Prime rooted to Gluon space)
-HBAR_C = 197.3269804 # Conversion factor (MeV * fm)
 PHI = (1.0 + math.sqrt(5.0)) / 2.0  # The Golden Ratio
 
 def universal_mass(p: int, gauge_friction: float) -> float:
@@ -62,13 +61,13 @@ F_TOP = F_STRANGE ** F_D  # Generation 2 Strange friction raised to the Generati
 # Lepton geometric derivations
 M_E = universal_mass(2, F_E)
 # Muon derives as Electron scaled by QED dipole, plus inverse Golden Ratio self-energy (1/phi)
-M_MUON = (M_E * 1.5 * ALPHA_INV) + (1.0 / PHI)
-F_MUON = M_MUON - (11 - 1) / 2.0
+M_MUON = (M_E * 1.5 * ALPHA_INV) + (MU_0 / PHI)
+F_MUON = (M_MUON / MU_0) - (11 - 1) / 2.0
 
 # Tau derives as QED vacuum scaled by Gen 2 prime (13), minus one Down Quark self-energy
 M_D = universal_mass(5, F_D)
-M_TAU = (13.0 * ALPHA_INV) - M_D
-F_TAU = M_TAU - (17 - 1) / 2.0
+M_TAU = (13.0 * ALPHA_INV * MU_0) - M_D
+F_TAU = (M_TAU / MU_0) - (17 - 1) / 2.0
 
 class PauliExclusionError(Exception):
     pass
@@ -164,7 +163,7 @@ class CategoricalMachine:
         # --- FIRST-PRINCIPLES BASE INPUTS ---
         self.m_u = universal_mass(3, F_U)       # Geometrically Derived Up Quark (MeV)
         self.m_d = universal_mass(5, F_D)       # Geometrically Derived Down Quark (MeV)
-        self.f_pi = F_STRANGE     # Pion Decay Constant derived algebraically (alpha^-1 - 45)
+        self.f_pi = F_STRANGE * MU_0            # Pion Decay Constant derived algebraically (alpha^-1 - 45)
         
         # --- MATHEMATICAL VACUUM DENSITY (RIEMANN / QED BRIDGE) ---
         # Derives the Chiral Condensate vacuum density purely from number theory and QED constants
@@ -175,7 +174,7 @@ class CategoricalMachine:
         
         # --- STRONG FORCE GEOMETRY ---
         # The scale of the Yukawa potential is derived via Goldberger-Treiman
-        # using the global G_A (Axial Vector Coupling) and HBAR_C (Conversion factor)
+        # using the global G_A (Axial Vector Coupling) purely in energy space
         
         # 1. GMOR CONFINEMENT EQUATION
         self.m_pi = math.sqrt(- ((self.m_u + self.m_d) * self.chiral_condensate) / (self.f_pi**2))
