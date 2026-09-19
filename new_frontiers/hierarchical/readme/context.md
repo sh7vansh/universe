@@ -48,9 +48,9 @@ The divergence in particle weights at higher generations stems entirely from gau
 ## 4. Categorical Friction & Nucleosynthesis
 Binding energy natively derives through **Categorical Friction (Loewy Discrepancy)**. Every exact sequence generation calculates the ordinal length discrepancy between the optimal combined structure and the accumulated internal virtual nodes.
 
-When two color singlets bind, they fuse into a single geometric boundary. The friction count computes the binding energy landscape using a purely **Geometrically Derived Liquid Drop Model**, replacing empirical tuning parameters with pure mathematical constants ($\pi, \alpha, \sqrt{2}, \sqrt{5}$):
+When two color singlets bind, they fuse into a single geometric boundary. The friction count computes the binding energy landscape using a purely **Geometrically Derived Liquid Drop Model**, replacing empirical tuning parameters with pure mathematical constants ($\pi, \alpha, \sqrt{2}, E_D$):
 1. **Volume:** $\frac{6}{\pi} \cdot A$
-2. **Surface Tension:** $- \sqrt{5} \cdot A^{2/3}$
+2. **Surface Tension:** $- E_D \cdot A^{2/3}$ (Where $E_D$ is the Geometric Deuteron Boundary)
 3. **Coulomb Repulsion:** $- 12\alpha \cdot \frac{Z(Z-1)}{A^{1/3}}$
 4. **Asymmetry:** $- 2\sqrt{2} \cdot \frac{(N-Z)^2}{A}$
 
@@ -73,10 +73,16 @@ $$
 m_\pi = \sqrt{- \frac{(m_u + m_d) \langle \bar{q}q \rangle}{f_\pi^2}}
 $$
 
-3. **Residual Binding (Pure Energy Space)**: The engine extracts the emergent proton mass and feeds it through the Goldberger–Treiman relation. *Note: The framework calculates the continuous Yukawa integral purely in energy space (MeV) clamped topologically to the Golden Ratio ($\Phi \approx 1.618$). As the engine does not simulate continuous 3D distances (femtometers), the traditional $\hbar c$ conversion factor is completely omitted.*
+3. **Residual Binding (Geometric Deuteron Boundary)**: The engine abandons the phenomenological Goldberger-Treiman relation and the continuous Yukawa integral. Instead, residual strong friction is natively derived from the **Riemann Vacuum Noise** ($\ln(2\pi)$) and the **Viscosity** (0.5), degraded by the internal electromagnetic boundary ($\sqrt{\alpha^{-1}}$). This naturally yields the Geometric Deuteron Binding ($E_D \approx 2.2236 \text{ MeV}$).
 
 $$
-V(E) = - \frac{g_{\pi NN}^2}{4\pi} \, m_\pi \, \frac{e^{-\Phi}}{\Phi}, \quad \kappa_{\text{residual}} = \frac{V(E)}{27}
+E_D = (\ln(2\pi))^2 \cdot \left( 1 - \frac{(0.5)^{-2}}{\sqrt{\alpha^{-1}}} \right) \cdot \mu_0
+$$
+
+The global Base Categorical Friction Scalar ($\kappa_{\text{residual}}$) is then calculated by projecting this localized $1D$ bond across the 4-dimensional spacetime geometry ($Viscosity^{-2} = 4$).
+
+$$
+\kappa_{\text{residual}} = - E_D \cdot (0.5)^{-2}
 $$
 
 4. **Color-Magnetic Spin-Spin**: Evaluated using the geometric dot product of complex signature phases $(Z_A \cdot \overline{Z_B})_{\text{real}}$. This scalar is distributed across the 9 permutations of the SU(3) space: $\kappa_{\text{spin}} = m_\pi / 9.0$.
