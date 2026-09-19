@@ -172,8 +172,9 @@ class CategoricalMachine:
         self.chiral_condensate = -(vacuum_density)**3
         
         # --- STRONG FORCE GEOMETRY ---
-        # The scale of the Yukawa potential is derived via Goldberger-Treiman
-        # using the global G_A (Axial Vector Coupling) purely in energy space
+        # The residual nuclear scale is derived geometrically using the Deuteron Boundary
+        # (Riemann noise degraded by the electromagnetic boundary) rather than empirical 
+        # phenomenological fields like Yukawa potentials.
         
         # 1. GMOR CONFINEMENT EQUATION
         self.m_pi = mp.sqrt(- ((self.m_u + self.m_d) * self.chiral_condensate) / (self.f_pi**2))
@@ -257,9 +258,14 @@ class CategoricalMachine:
                 if A_tot <= 1: return 0.0
                 
                 # Geometrically Derived Liquid Drop Model
-                # Multiplier converts base residual coupling into physical binding scales
-                vol = (6.0 / mp.pi) * A_tot
-                surf = mp.sqrt(5.0) * (A_tot ** (2.0/3.0))
+                # Uses the Deuteron geometric boundary to natively define surface tension
+                if hasattr(self, 'deuteron_binding'):
+                    vol = (6.0 / mp.pi) * A_tot
+                    # The Deuteron Binding Energy mathematically forms the Surface Tension Scalar!
+                    surf = self.deuteron_binding * (A_tot ** (2.0/3.0))
+                else:
+                    vol = (6.0 / mp.pi) * A_tot
+                    surf = mp.sqrt(5.0) * (A_tot ** (2.0/3.0))
                 coul = (12.0 * ALPHA) * Z * (Z - 1) / (A_tot ** (1.0/3.0)) if A_tot > 0 else 0.0
                 asym = (2.0 * mp.sqrt(2.0)) * ((N - Z) ** 2) / A_tot
                 
@@ -283,6 +289,31 @@ class CategoricalMachine:
         else:
             len_new_virtual = self._get_shielded_length(A) + self._get_shielded_length(B)
             return (optimal + get_virtual_count(A) + get_virtual_count(B) + len_new_virtual) - optimal
+
+
+    def calculate_entanglement(self, A: GrothendieckObject, B: GrothendieckObject) -> float:
+        import math
+        mag_A = Fraction(abs(A.signature)).limit_denominator(1000000000000000)
+        mag_B = Fraction(abs(B.signature)).limit_denominator(1000000000000000)
+        shared_matter = math.gcd(mag_A.numerator, mag_B.numerator)
+        shared_anti = math.gcd(mag_A.denominator, mag_B.denominator)
+        if shared_matter == 1 and shared_anti == 1: return 0.0
+        return float(shared_matter * shared_anti)
+
+    def deep_vacuum_bind(self, A: GrothendieckObject, B: GrothendieckObject, name: str) -> GrothendieckObject:
+        base_friction = self.calculate_friction(A, B)
+        total_friction = base_friction 
+        n = 2
+        current_correction = base_friction * float(WYLER_ALPHA)
+        while abs(current_correction) > 1e-15:
+            phase = (-1) ** n
+            total_friction += phase * current_correction
+            n += 1
+            current_correction *= float(WYLER_ALPHA)
+        binding_energy = total_friction * float(self.kappa_residual) if hasattr(self, 'kappa_residual') and self.kappa_residual else total_friction
+        ext = ExtensionClass(name, binding_energy=binding_energy, degree=n, source_node=A, target_node=B)
+        ext.virtual_nodes = list(A.factors) + list(B.factors)
+        return self.exact_sequence_reconstruction(A, B, ext)
 
     def confinement_bind(self, A: GrothendieckObject, B: GrothendieckObject, name: str) -> GrothendieckObject:
         """Natively binds simple objects using the GMOR-derived mass scale."""
@@ -336,18 +367,30 @@ class CategoricalMachine:
         return self.exact_sequence_reconstruction(A, B, ext)
 
     def calculate_residual_scale(self, emergent_nucleon_mass: float):
-        """2. GOLDBERGER-TREIMAN & YUKAWA RESIDUAL EQUATION"""
+        """
+        2. FIRST-PRINCIPLES GEOMETRIC RESIDUAL EQUATION (Replaces Goldberger-Treiman & Yukawa)
+        
+        Natively derives the nuclear friction scalar (kappa_residual) strictly from 
+        the Riemann Vacuum Noise and the fine-structure constant (ALPHA_INV).
+        
+        The Deuteron Binding Energy acts as the geometric boundary:
+        E_D = Noise^2 * (1 - Viscosity^-2 / sqrt(Alpha^-1)) * mu_0
+        """
         if self.pure_math_mode:
             self.kappa_residual = 1.0
             return
-        g_pi_nn = (G_A * emergent_nucleon_mass) / self.f_pi
-        g_sq_over_4pi = (g_pi_nn**2) / (4 * mp.pi)
+            
+        noise = mp.log(2 * mp.pi)
+        viscosity = 0.5
         
-        # Golden ratio phase boundary
-        yukawa_potential = - g_sq_over_4pi * self.m_pi * (mp.exp(-PHI) / PHI)
+        # 1. Geometric Deuteron Boundary (Emergent nuclear scale)
+        # Directly evaluating the pure topological noise disrupted by electromagnetic boundaries.
+        self.deuteron_binding = (noise ** 2) * (1.0 - (1.0 / (viscosity ** 2)) / mp.sqrt(ALPHA_INV)) * MU_0
         
-        # SU(3) Tensor Space Dimension (3^3 = 27)
-        self.kappa_residual = yukawa_potential / (3.0 ** 3) 
+        # 2. Kappa Residual (Base Categorical Friction Scalar)
+        # We project the localized Deuteron binding across the 4-dimensional spacetime 
+        # geometry (Viscosity^-2 = 4) to define the global residual friction scale.
+        self.kappa_residual = - (self.deuteron_binding * (1.0 / (viscosity ** 2)))
 
     def nuclear_bind(self, A: GrothendieckObject, B: GrothendieckObject, name: str) -> GrothendieckObject:
         """Natively synthesizes nuclei with accurate negative mass defects."""
@@ -527,9 +570,10 @@ def run_simulation(pure_math_mode: bool = False):
     proton = machine.confinement_bind(diquark, d1, "Proton")
     print(f"   Synthesized Proton: {proton}")
     
-    print("\n2. Bootstrapping Nuclear Physics (Goldberger-Treiman & Yukawa):")
+    print("\n2. Bootstrapping Nuclear Physics (Geometric Deuteron Boundary):")
     machine.calculate_residual_scale(proton.mass)
-    print(f"   Dynamic Coupling (g^2/4pi): {((G_A * proton.mass / machine.f_pi)**2 / (4*mp.pi)):.2f}")
+    print(f"   Geometric Deuteron Binding: {machine.deuteron_binding:.4f} MeV")
+    print(f"   Base Residual Friction (Kappa): {machine.kappa_residual:.4f} MeV")
     
     print("\n3. Synthesizing Helium-4:")
     p2 = machine.confinement_bind(machine.confinement_bind(machine.get_simple(3, color="red_p2"), machine.get_simple(3, color="blue_p2"), "DiQ"), machine.get_simple(5, color="green_p2"), "Proton 2")
