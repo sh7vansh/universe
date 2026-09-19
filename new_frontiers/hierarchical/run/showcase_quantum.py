@@ -1,7 +1,8 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'core')))
-import math
+from mpmath import mp
+mp.dps = 100
 from fractions import Fraction
 from quantum_engine import CategoricalMachine, GrothendieckObject, SimpleObject, ExtensionClass, ALPHA_INV
 
@@ -70,7 +71,7 @@ def discover_particles():
     print(f"    W+ Boson Morphism Signature: {w_plus_sig} (Up -> Down decay)")
     
     sin_sq_theta = 2.0 / 9.0
-    cos_theta = math.sqrt(1.0 - sin_sq_theta) # sqrt(7)/3
+    cos_theta = mp.sqrt(1.0 - sin_sq_theta) # sqrt(7)/3
     m_W = 80.377
     m_Z = m_W / cos_theta
     print(f"    Geometric Weinberg Angle: sin^2(θ) = 2/9")
@@ -88,7 +89,7 @@ def discover_particles():
 
     print("\n[+] Higgs Boson (Geometric Weak Coupling):")
     alpha = 1.0 / ALPHA_INV
-    g = 3.0 * math.sqrt(2.0 * math.pi * alpha)
+    g = 3.0 * mp.sqrt(2.0 * mp.pi * alpha)
     m_H = m_W / g
     print(f"    Geometric Weak Coupling (g): {g:.4f}")
     print(f"    Higgs Boson Mass (Predicted): {m_H:.3f} GeV")
