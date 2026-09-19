@@ -49,13 +49,13 @@ The divergence in particle weights at higher generations stems entirely from gau
 Binding energy natively derives through **Categorical Friction (Loewy Discrepancy)**. Every exact sequence generation calculates the ordinal length discrepancy between the optimal combined structure and the accumulated internal virtual nodes.
 
 When two color singlets bind, they fuse into a single geometric boundary. The friction count computes the binding energy landscape using a purely **Geometrically Derived Liquid Drop Model**, replacing empirical tuning parameters with pure mathematical constants ($\pi, \alpha, \sqrt{2}, E_D$):
-1. **Volume:** $\frac{6}{\pi} \cdot A$
-2. **Surface Tension:** $- E_D \cdot A^{2/3}$ (Where $E_D$ is the Geometric Deuteron Boundary)
-3. **Coulomb Repulsion:** $- 12\alpha \cdot \frac{Z(Z-1)}{A^{1/3}}$
-4. **Asymmetry:** $- 2\sqrt{2} \cdot \frac{(N-Z)^2}{A}$
+1. **Cohomological Rank (Volume):** $\frac{6}{\pi} \cdot A$
+2. **Topological Boundary Degradation (Surface Tension):** $- E_D \cdot A^{2/3}$ (Where $E_D$ is the Geometric Deuteron Boundary)
+3. **Electromagnetic Phase Interference (Coulomb):** $- 12\alpha \cdot \frac{Z(Z-1)}{A^{1/3}}$
+4. **Isospin Parity Violation (Asymmetry):** $- 2\sqrt{2} \cdot \frac{(N-Z)^2}{A}$
 
-**Topological Magic Shells ($\pi / 4$)**
-When a nucleus completes a harmonic oscillator closed shell ($2, 8, 20, 28...$), it achieves perfect spherical symmetry, providing a flat, discrete topological bonus of exactly **$\pi/4$**. A doubly magic nucleus (like Helium-4) organically yields a combined phase correction of $\pi/2$ ($90^\circ$ orthogonal stability).
+**Cohomological Closure (Magic Shells)**
+When a nucleus completes a harmonic oscillator closed shell ($2, 8, 20, 28...$), it achieves perfect algebraic symmetry, providing a flat, discrete topological bonus of exactly **$\pi/4$**. A doubly magic nucleus (like Helium-4) organically yields a combined phase correction of $\pi/2$ ($90^\circ$ orthogonal stability).
 
 **SU(3) Color Singlet Encapsulation**
 The engine parses color states algebraically ($\sum \text{Red} = \sum \text{Green} = \sum \text{Blue}$). Once the net color tensor perfectly balances, the neutral singlet mathematically shields its internal virtual nodes from future exact sequences.

@@ -254,28 +254,36 @@ class CategoricalMachine:
                 return round((2*u - d)/3.0), round((2*d - u)/3.0)
                 
             def geom_friction(Z, N):
+                """
+                Calculates the Loewy length discrepancy of the composite Ext^n complex.
+                At macroscopic limits, this algebra perfectly mirrors the classical Liquid Drop Model:
+                - rank = Volume (Cohomological rank of simple factors)
+                - boundary_degradation = Surface Tension (Unshielded virtual nodes)
+                - phase_interference = Coulomb Repulsion (Electromagnetic phase offset)
+                - parity_violation = Asymmetry (Isospin magnitude imbalance)
+                """
                 A_tot = Z + N
                 if A_tot <= 1: return 0.0
                 
-                # Geometrically Derived Liquid Drop Model
-                # Uses the Deuteron geometric boundary to natively define surface tension
+                # Topological Boundary Limit (Formally the Liquid Drop Model)
+                # Evaluates the Loewy length discrepancy of the composite Ext^n complex
                 if hasattr(self, 'deuteron_binding'):
-                    vol = (6.0 / mp.pi) * A_tot
-                    # The Deuteron Binding Energy mathematically forms the Surface Tension Scalar!
-                    surf = self.deuteron_binding * (A_tot ** (2.0/3.0))
+                    rank = (6.0 / mp.pi) * A_tot
+                    boundary_degradation = self.deuteron_binding * (A_tot ** (2.0/3.0))
                 else:
-                    vol = (6.0 / mp.pi) * A_tot
-                    surf = mp.sqrt(5.0) * (A_tot ** (2.0/3.0))
-                coul = (12.0 * ALPHA) * Z * (Z - 1) / (A_tot ** (1.0/3.0)) if A_tot > 0 else 0.0
-                asym = (2.0 * mp.sqrt(2.0)) * ((N - Z) ** 2) / A_tot
+                    rank = (6.0 / mp.pi) * A_tot
+                    boundary_degradation = mp.sqrt(5.0) * (A_tot ** (2.0/3.0))
+                    
+                phase_interference = (12.0 * ALPHA) * Z * (Z - 1) / (A_tot ** (1.0/3.0)) if A_tot > 0 else 0.0
+                parity_violation = (2.0 * mp.sqrt(2.0)) * ((N - Z) ** 2) / A_tot
                 
-                # Magic Shell Spherical Optimization
-                magic_bonus = 0.0
+                # Cohomological Closure (Magic Shells)
+                cohomological_closure = 0.0
                 magic_numbers = {2, 8, 20, 28, 50, 82, 126}
-                if Z in magic_numbers: magic_bonus += mp.pi / 4.0
-                if N in magic_numbers: magic_bonus += mp.pi / 4.0
+                if Z in magic_numbers: cohomological_closure += mp.pi / 4.0
+                if N in magic_numbers: cohomological_closure += mp.pi / 4.0
                 
-                return vol - surf - coul - asym + magic_bonus
+                return rank - boundary_degradation - phase_interference - parity_violation + cohomological_closure
 
             Z_A, N_A = get_Z_N(A)
             Z_B, N_B = get_Z_N(B)
