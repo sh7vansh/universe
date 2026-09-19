@@ -22,7 +22,7 @@ machine.calculate_residual_scale(base_p.mass)
 
 
 import json
-json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'periodic_table.json')
+json_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'assets', 'periodic_table.json')
 with open(json_path, 'r') as f:
     PERIODIC_TABLE = json.load(f)
 

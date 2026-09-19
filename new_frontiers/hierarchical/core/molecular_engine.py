@@ -216,7 +216,7 @@ class CategoricalChemistryEngine(CategoricalMachine):
         return res
 
 import json
-json_path_mol = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'molecular_targets.json')
+json_path_mol = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'assets', 'molecular_targets.json')
 with open(json_path_mol, 'r') as f:
     MOLECULAR_TARGETS = json.load(f)
 

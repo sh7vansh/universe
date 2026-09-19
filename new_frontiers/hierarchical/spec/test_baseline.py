@@ -1,5 +1,6 @@
 import sys
-sys.path.append('src/hierarchical')
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'core')))
 from molecular_engine import CategoricalChemistryEngine, parse_formula
 
 def test_h2o():
