@@ -7,7 +7,7 @@ import readline
 from fractions import Fraction
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from quantum_engine import CategoricalMachine, M_E, ALPHA
+from quantum_engine import CategoricalMachine, M_E, CONFIG
 
 # Global machine instance for standalone usage
 machine = CategoricalMachine()
@@ -52,7 +52,7 @@ def synthesize_element_core(name, Z, N, tag=None):
     
     # Calculate geometric Thomas-Fermi electron shell binding defect
     # Total atomic electron binding energy scales as Z^(7/3) * Rydberg
-    rydberg_energy = 0.5 * M_E * (ALPHA ** 2)
+    rydberg_energy = 0.5 * M_E * (CONFIG.alpha ** 2)
     total_electron_defect = -rydberg_energy * (Z ** (7.0 / 3.0))
     # Distribute equally per electron for the Ext^n tower mapping
     e_defect_per_particle = total_electron_defect / Z if Z > 0 else 0.0

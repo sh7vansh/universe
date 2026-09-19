@@ -9,27 +9,35 @@ from fractions import Fraction
 def round_complex(z, decimals=10):
     return z
 
+def factorize(n: int) -> List[int]:
+    factors, d = [], 2
+    while d * d <= n:
+        while (n % d) == 0:
+            factors.append(d)
+            n //= d
+        d += 1
+    if n > 1: factors.append(n)
+    return factors
+
+
+
 def mat_mul(m1: List[List[complex]], m2: List[List[complex]]) -> List[List[complex]]:
-    n = len(m1)
-    m = len(m2[0])
-    p = len(m2)
-    result = [[complex(0, 0)] * m for _ in range(n)]
-    for i in range(n):
-        for j in range(m):
-            for k in range(p):
-                result[i][j] += m1[i][k] * m2[k][j]
-    return result
+    return [[sum(m1[i][k] * m2[k][j] for k in range(len(m2))) for j in range(len(m2[0]))] for i in range(len(m1))]
 
 def mat_sub(m1: List[List[complex]], m2: List[List[complex]]) -> List[List[complex]]:
     return [[m1[i][j] - m2[i][j] for j in range(len(m1[0]))] for i in range(len(m1))]
 
-# Universal Geometric Constants
-MU_0 = 1.0
-WYLER_ALPHA = (9.0 / (16.0 * (mp.pi ** 3))) * ((mp.pi / 120.0) ** 0.25)
-ALPHA_INV = 1.0 / WYLER_ALPHA
-ALPHA = 1.0 / ALPHA_INV
-G_A = 7.0 ** (1.0 / 8.0)  # Axial vector coupling (Strange Prime rooted to Gluon space)
-PHI = (1.0 + mp.sqrt(5.0)) / 2.0  # The Golden Ratio
+
+@dataclass
+class PhysicsConfig:
+    mu_0: float = 1.0
+    wyler_alpha: float = (9.0 / (16.0 * (mp.pi ** 3))) * ((mp.pi / 120.0) ** 0.25)
+    alpha_inv: float = 1.0 / ((9.0 / (16.0 * (mp.pi ** 3))) * ((mp.pi / 120.0) ** 0.25))
+    alpha: float = ((9.0 / (16.0 * (mp.pi ** 3))) * ((mp.pi / 120.0) ** 0.25))
+    g_a: float = 7.0 ** (1.0 / 8.0)
+    phi: float = (1.0 + mp.sqrt(5.0)) / 2.0
+
+CONFIG = PhysicsConfig()
 
 def universal_mass(p: int, gauge_friction: float) -> float:
     """
@@ -42,31 +50,31 @@ def universal_mass(p: int, gauge_friction: float) -> float:
     if p in (0, 1):
         return 0.0
     bare_mass = (p - 1) / 2.0
-    return MU_0 * (bare_mass + gauge_friction)
+    return CONFIG.mu_0 * (bare_mass + gauge_friction)
 
 # Geometrically Derived Gauge Frictions
-F_E = 1.5 * ALPHA + ALPHA**2
+F_E = 1.5 * CONFIG.alpha + CONFIG.alpha**2
 F_U = 2.0 / mp.sqrt(3)
 F_D = 8.0 / 3.0
 
 # Higher Generation Gauge Frictions
 # Maps the Strange Quark. QED Vacuum shielded by Proton signature 45.
-F_STRANGE = ALPHA_INV - 45.0  
+F_STRANGE = CONFIG.alpha_inv - 45.0  
 
 F_CHARM = (mp.sqrt(3))**13  # SU(3) root lattice geometry raised to prime identifier 13.
-F_BOTTOM = F_STRANGE * (ALPHA_INV / 3.0)  # Strange friction scaled by QED vacuum anchor.
+F_BOTTOM = F_STRANGE * (CONFIG.alpha_inv / 3.0)  # Strange friction scaled by QED vacuum anchor.
 F_TOP = F_STRANGE ** F_D  # Generation 2 Strange friction raised to the Generation 1 Down friction
 
 # Lepton geometric derivations
 M_E = universal_mass(2, F_E)
 # Muon is the Electron scaled by QED dipole, plus inverse Golden Ratio self-energy.
-M_MUON = (M_E * 1.5 * ALPHA_INV) + (MU_0 / PHI)
-F_MUON = (M_MUON / MU_0) - (11 - 1) / 2.0
+M_MUON = (M_E * 1.5 * CONFIG.alpha_inv) + (CONFIG.mu_0 / CONFIG.phi)
+F_MUON = (M_MUON / CONFIG.mu_0) - (11 - 1) / 2.0
 
 # Tau is the QED vacuum scaled by Gen 2 prime 13, minus one Down Quark self-energy.
 M_D = universal_mass(5, F_D)
-M_TAU = (13.0 * ALPHA_INV * MU_0) - M_D
-F_TAU = (M_TAU / MU_0) - (17 - 1) / 2.0
+M_TAU = (13.0 * CONFIG.alpha_inv * CONFIG.mu_0) - M_D
+F_TAU = (M_TAU / CONFIG.mu_0) - (17 - 1) / 2.0
 
 class PauliExclusionError(Exception):
     pass
@@ -143,6 +151,90 @@ class GrothendieckObject:
             sig_str = "0"
         return f"GrothendieckObject(Signature={sig_str}, Mass={self.mass:.3f} MeV, Spin={self.spin}, Composition={comp})"
 
+def get_Z_N(obj: GrothendieckObject):
+    if not obj.factors: return 0, 0
+    u = sum(1 for f in obj.factors if f.identifier == 3)
+    d = sum(1 for f in obj.factors if f.identifier == 5)
+    return round((2*u - d)/3.0), round((2*d - u)/3.0)
+
+def geom_friction(Z: int, N: int, nucleon_condensate: Optional[float] = None) -> float:
+    """
+    Calculates the Loewy length discrepancy of the composite Ext^n complex.
+    This algebra matches the classical Liquid Drop Model at macroscopic limits.
+    Rank acts as volume. Boundary degradation acts as surface tension.
+    Phase interference acts as Coulomb repulsion. Parity violation acts as asymmetry.
+    Pairing bonus acts as topological singlet pairing. Cohomological closure acts as magic shells.
+    """
+    A_tot = Z + N
+    if A_tot <= 1: return 0.0
+    
+    # 1. RANK (VOLUME)
+    # Derived from the density of square-free integers. Scaled by the 1D phase circumference as states project into spatial volume.
+    square_free_density_projection = 6.0 / mp.pi
+    
+    # 2. BOUNDARY DEGRADATION (SURFACE TENSION)
+    # Evaluates the Loewy length discrepancy using the Nucleon Condensate
+    if nucleon_condensate is not None:
+        rank = square_free_density_projection * A_tot
+        boundary_degradation = nucleon_condensate * (A_tot ** (2.0/3.0))
+    else:
+        rank = square_free_density_projection * A_tot
+        boundary_degradation = mp.sqrt(5.0) * (A_tot ** (2.0/3.0))
+        
+    # 3. PHASE INTERFERENCE (COULOMB)
+    # Distributes the electromagnetic offset over the 3D Topological Kissing Number (12). Local exact sequences in 3D embedding max out at 12 adjacent states. Continuous physics uses a Z^(4/3) Pauli exchange volume. The Ext^n tower operates on discrete prime factors, so exact sequence discrete permutations govern phase interference.
+    topological_kissing_number = 12.0
+    phase_interference = (topological_kissing_number * CONFIG.alpha) * Z * (Z - 1) / (A_tot ** (1.0/3.0)) if A_tot > 0 else 0.0
+    
+    # 4. PARITY VIOLATION & SU(4) WIGNER ALIGNMENT
+    # The SU(2) Casimir invariant generates the quadratic asymmetry and the Wigner resonance penalty for breaking exact N=Z symmetry.
+    complex_orthogonality = 2.0 * mp.sqrt(2.0)
+    parity_violation = complex_orthogonality * ((N - Z) ** 2) / A_tot
+    su4_wigner = complex_orthogonality * abs(N - Z) / A_tot
+    
+    # 5. COHOMOLOGICAL CLOSURE (MAGIC SHELLS)
+    cohomological_closure = 0.0
+    
+    # Generates magic numbers from SU(3) Pronic shells and topological phase shifts.
+    magic_numbers = set()
+    cumulative = 0
+    for n in range(1, 8):
+        pronic = n * (n + 1)
+        cumulative += pronic
+        if n < 4:
+            magic_numbers.add(cumulative)
+        else:
+            prev_pronic = (n - 1) * n
+            magic_numbers.add(cumulative - prev_pronic)
+            
+    # 6. TOPOLOGICAL PAIRING, CHIRAL CURRENTS, & SU(4) CLUSTERING
+    # One paired state shields one quantum of Riemann Viscosity.
+    pairing_bonus = 0.0
+    chiral_current_bonus = 0.0
+    alpha_cluster_bonus = 0.0
+    if A_tot > 0:
+        riemann_viscosity = 0.5
+        
+        # 6a. Spin Pairing & Chiral Currents
+        if Z % 2 == 0 and N % 2 == 0:
+            pairing_bonus = riemann_viscosity / (A_tot ** 0.5)
+            # SU(4) Alpha Clustering and Cohomological Closure are mutually exclusive.
+            if Z == N and (Z not in magic_numbers):
+                alpha_cluster_bonus = (riemann_viscosity * 2.0) / (A_tot ** (1.0/3.0))
+        elif Z % 2 != 0 and N % 2 != 0:
+            pairing_bonus = -riemann_viscosity / (A_tot ** 0.5)
+        elif Z % 2 != 0 and N % 2 == 0:
+            # An unpaired proton creates an electromagnetic spin-orbit topological current on the boundary.
+            chiral_current_bonus = (riemann_viscosity * CONFIG.alpha) / (A_tot ** (1.0/3.0))
+    
+    volumetric_dampener = 1.0 / (A_tot ** (1.0/3.0)) if A_tot > 0 else 1.0
+    ext_tower_limit = mp.pi / 4.0
+    
+    if Z in magic_numbers: cohomological_closure += ext_tower_limit * volumetric_dampener
+    if N in magic_numbers: cohomological_closure += ext_tower_limit * volumetric_dampener
+    
+    return rank - boundary_degradation - phase_interference - parity_violation - su4_wigner + pairing_bonus + alpha_cluster_bonus + chiral_current_bonus + cohomological_closure
+
 class CategoricalMachine:
     """
     Runs categorical tracking, binding, and decay. Uses discrete algebraic operations, not continuous fields.
@@ -160,13 +252,13 @@ class CategoricalMachine:
         # First-principles base inputs
         self.m_u = universal_mass(3, F_U)       # Geometrically Derived Up Quark (MeV)
         self.m_d = universal_mass(5, F_D)       # Geometrically Derived Down Quark (MeV)
-        self.f_pi = F_STRANGE * MU_0            # Pion Decay Constant derived algebraically (alpha^-1 - 45)
+        self.f_pi = F_STRANGE * CONFIG.mu_0            # Pion Decay Constant derived algebraically (alpha^-1 - 45)
         
         # Mathematical vacuum density
         # Calculates chiral condensate vacuum density from number theory and QED constants.
         # X = 1/2 * pi * ln(2*pi) * alpha^-1 * sqrt((0.5 + 1.5*alpha + alpha^2) * mu_0^2)
-        geometric_scalar = 0.5 + 1.5 * ALPHA + ALPHA**2
-        vacuum_density = 0.5 * mp.pi * mp.log(2 * mp.pi) * ALPHA_INV * mp.sqrt(geometric_scalar * MU_0**2)
+        geometric_scalar = 0.5 + 1.5 * CONFIG.alpha + CONFIG.alpha**2
+        vacuum_density = 0.5 * mp.pi * mp.log(2 * mp.pi) * CONFIG.alpha_inv * mp.sqrt(geometric_scalar * CONFIG.mu_0**2)
         self.chiral_condensate = -(vacuum_density)**3
         
         # Strong force geometry
@@ -233,6 +325,11 @@ class CategoricalMachine:
             return 1
         return len(obj.factors)
 
+    def _get_virtual_count(self, obj: GrothendieckObject) -> int:
+        if self.is_color_singlet(obj): return 0
+        return sum(len(ext.virtual_nodes) for ext in obj.extensions)
+
+
     # ==========================================
     # 2. BASE RECONSTRUCTION & FRICTION
     # ==========================================
@@ -295,109 +392,22 @@ class CategoricalMachine:
 
     def calculate_friction(self, A: GrothendieckObject, B: GrothendieckObject) -> float:
         """Categorical friction equation."""
-        def get_virtual_count(obj):
-            if self.is_color_singlet(obj): return 0 
-            return sum(len(ext.virtual_nodes) for ext in obj.extensions)
-        
         optimal = len(A.factors) + len(B.factors)
         
         if self.is_color_singlet(A) and self.is_color_singlet(B):
-            def get_Z_N(obj):
-                if not obj.factors: return 0, 0
-                u = sum(1 for f in obj.factors if f.identifier == 3)
-                d = sum(1 for f in obj.factors if f.identifier == 5)
-                return round((2*u - d)/3.0), round((2*d - u)/3.0)
-                
-            def geom_friction(Z, N):
-                """
-                Calculates the Loewy length discrepancy of the composite Ext^n complex.
-                This algebra matches the classical Liquid Drop Model at macroscopic limits.
-                Rank acts as volume. Boundary degradation acts as surface tension.
-                Phase interference acts as Coulomb repulsion. Parity violation acts as asymmetry.
-                Pairing bonus acts as topological singlet pairing. Cohomological closure acts as magic shells.
-                """
-                A_tot = Z + N
-                if A_tot <= 1: return 0.0
-                
-                # 1. RANK (VOLUME)
-                # Derived from the density of square-free integers. Scaled by the 1D phase circumference as states project into spatial volume.
-                square_free_density_projection = 6.0 / mp.pi
-                
-                # 2. BOUNDARY DEGRADATION (SURFACE TENSION)
-                # Evaluates the Loewy length discrepancy using the Nucleon Condensate
-                if hasattr(self, 'nucleon_condensate'):
-                    rank = square_free_density_projection * A_tot
-                    boundary_degradation = self.nucleon_condensate * (A_tot ** (2.0/3.0))
-                else:
-                    rank = square_free_density_projection * A_tot
-                    boundary_degradation = mp.sqrt(5.0) * (A_tot ** (2.0/3.0))
-                    
-                # 3. PHASE INTERFERENCE (COULOMB)
-                # Distributes the electromagnetic offset over the 3D Topological Kissing Number (12). Local exact sequences in 3D embedding max out at 12 adjacent states. Continuous physics uses a Z^(4/3) Pauli exchange volume. The Ext^n tower operates on discrete prime factors, so exact sequence discrete permutations govern phase interference.
-                topological_kissing_number = 12.0
-                phase_interference = (topological_kissing_number * ALPHA) * Z * (Z - 1) / (A_tot ** (1.0/3.0)) if A_tot > 0 else 0.0
-                
-                # 4. PARITY VIOLATION & SU(4) WIGNER ALIGNMENT
-                # The SU(2) Casimir invariant generates the quadratic asymmetry and the Wigner resonance penalty for breaking exact N=Z symmetry.
-                complex_orthogonality = 2.0 * mp.sqrt(2.0)
-                parity_violation = complex_orthogonality * ((N - Z) ** 2) / A_tot
-                su4_wigner = complex_orthogonality * abs(N - Z) / A_tot
-                
-                # 5. COHOMOLOGICAL CLOSURE (MAGIC SHELLS)
-                cohomological_closure = 0.0
-                
-                # Generates magic numbers from SU(3) Pronic shells and topological phase shifts.
-                magic_numbers = set()
-                cumulative = 0
-                for n in range(1, 8):
-                    pronic = n * (n + 1)
-                    cumulative += pronic
-                    if n < 4:
-                        magic_numbers.add(cumulative)
-                    else:
-                        prev_pronic = (n - 1) * n
-                        magic_numbers.add(cumulative - prev_pronic)
-                        
-                # 6. TOPOLOGICAL PAIRING, CHIRAL CURRENTS, & SU(4) CLUSTERING
-                # One paired state shields one quantum of Riemann Viscosity.
-                pairing_bonus = 0.0
-                chiral_current_bonus = 0.0
-                alpha_cluster_bonus = 0.0
-                if A_tot > 0:
-                    riemann_viscosity = 0.5
-                    
-                    # 6a. Spin Pairing & Chiral Currents
-                    if Z % 2 == 0 and N % 2 == 0:
-                        pairing_bonus = riemann_viscosity / (A_tot ** 0.5)
-                        # SU(4) Alpha Clustering and Cohomological Closure are mutually exclusive.
-                        if Z == N and (Z not in magic_numbers):
-                            alpha_cluster_bonus = (riemann_viscosity * 2.0) / (A_tot ** (1.0/3.0))
-                    elif Z % 2 != 0 and N % 2 != 0:
-                        pairing_bonus = -riemann_viscosity / (A_tot ** 0.5)
-                    elif Z % 2 != 0 and N % 2 == 0:
-                        # An unpaired proton creates an electromagnetic spin-orbit topological current on the boundary.
-                        chiral_current_bonus = (riemann_viscosity * ALPHA) / (A_tot ** (1.0/3.0))
-                
-                volumetric_dampener = 1.0 / (A_tot ** (1.0/3.0)) if A_tot > 0 else 1.0
-                ext_tower_limit = mp.pi / 4.0
-                
-                if Z in magic_numbers: cohomological_closure += ext_tower_limit * volumetric_dampener
-                if N in magic_numbers: cohomological_closure += ext_tower_limit * volumetric_dampener
-                
-                return rank - boundary_degradation - phase_interference - parity_violation - su4_wigner + pairing_bonus + alpha_cluster_bonus + chiral_current_bonus + cohomological_closure
-
             Z_A, N_A = get_Z_N(A)
             Z_B, N_B = get_Z_N(B)
             
-            f_A = geom_friction(Z_A, N_A)
-            f_B = geom_friction(Z_B, N_B)
-            f_C = geom_friction(Z_A + Z_B, N_A + N_B)
+            condensate = getattr(self, 'nucleon_condensate', None)
+            f_A = geom_friction(Z_A, N_A, condensate)
+            f_B = geom_friction(Z_B, N_B, condensate)
+            f_C = geom_friction(Z_A + Z_B, N_A + N_B, condensate)
             
             # Return the incremental friction needed for the new composite
             return f_C - (f_A + f_B)
         else:
             len_new_virtual = self._get_shielded_length(A) + self._get_shielded_length(B)
-            return (optimal + get_virtual_count(A) + get_virtual_count(B) + len_new_virtual) - optimal
+            return (optimal + self._get_virtual_count(A) + self._get_virtual_count(B) + len_new_virtual) - optimal
 
     def calculate_entanglement(self, A: GrothendieckObject, B: GrothendieckObject) -> float:
         import math
@@ -479,7 +489,7 @@ class CategoricalMachine:
         
         # 1. Nucleon Condensate (Deuteron Boundary)
         # Evaluates pure topological noise disrupted by electromagnetic boundaries.
-        self.nucleon_condensate = (noise ** 2) * (1.0 - (1.0 / (viscosity ** 2)) / mp.sqrt(ALPHA_INV)) * MU_0
+        self.nucleon_condensate = (noise ** 2) * (1.0 - (1.0 / (viscosity ** 2)) / mp.sqrt(CONFIG.alpha_inv)) * CONFIG.mu_0
         
         # 2. Kappa Residual (Base Categorical Friction Scalar)
         # Projects the localized Nucleon Condensate across 4D spacetime geometry to define the global residual friction scale.
@@ -489,12 +499,12 @@ class CategoricalMachine:
         base_friction = self.calculate_friction(A, B)
         total_friction = base_friction 
         n = 1
-        current_correction = base_friction * float(WYLER_ALPHA)
+        current_correction = base_friction * float(CONFIG.wyler_alpha)
         while abs(current_correction) > 1e-15:
             phase = (-1) ** n
             total_friction += phase * current_correction
             n += 1
-            current_correction *= float(WYLER_ALPHA)
+            current_correction *= float(CONFIG.wyler_alpha)
         binding_energy = total_friction * float(self.kappa_residual) if hasattr(self, 'kappa_residual') and self.kappa_residual else total_friction
         ext = ExtensionClass(name, binding_energy=binding_energy)
         ext.virtual_nodes = list(A.factors) + list(B.factors)
@@ -530,16 +540,6 @@ class CategoricalMachine:
         mag_frac = Fraction(magnitude).limit_denominator(1000000000000000)
         if mag_frac == 1: return [self.get_simple(1)]
         
-        def factorize(n: int) -> List[int]:
-            factors, d = [], 2
-            while d * d <= n:
-                while (n % d) == 0:
-                    factors.append(d)
-                    n //= d
-                d += 1
-            if n > 1: factors.append(n)
-            return factors
-            
         num_factors = factorize(mag_frac.numerator)
         den_factors = factorize(mag_frac.denominator)
         
@@ -571,16 +571,6 @@ class CategoricalMachine:
         decoupled_objects = []
         available_factors = list(obj.factors)
         
-        def factorize(n: int) -> List[int]:
-            factors, d = [], 2
-            while d * d <= n:
-                while (n % d) == 0:
-                    factors.append(d)
-                    n //= d
-                d += 1
-            if n > 1: factors.append(n)
-            return factors
-            
         for target in target_signatures:
             target_val = target if isinstance(target, complex) else complex(float(target))
             target_mag = Fraction(abs(target_val)).limit_denominator(1000000000000000)
