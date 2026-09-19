@@ -7,7 +7,7 @@ import readline
 import sys
 import os
 
-from quantum_engine import CategoricalMachine, ExtensionClass, round_complex, GrothendieckObject, M_E, ALPHA_INV
+from quantum_engine import CategoricalMachine, ExtensionClass, round_complex, GrothendieckObject, M_E, CONFIG
 from atomic_engine import synthesize_element_core, machine
 
 class CategoricalChemistryEngine(CategoricalMachine):
@@ -19,7 +19,7 @@ class CategoricalChemistryEngine(CategoricalMachine):
         self.m_pi = machine.m_pi
         
         # Geometrically derived Rydberg Energy (using imported Electron Mass and Alpha)
-        alpha = 1.0 / ALPHA_INV
+        alpha = 1.0 / CONFIG.alpha_inv
         self.rydberg_energy = 0.5 * M_E * (alpha ** 2)
 
     def atomic_engine(self, symbol, tag):
@@ -164,7 +164,7 @@ class CategoricalChemistryEngine(CategoricalMachine):
                     
                     ionic_defect = float('inf')
                     if abs(n1['V'] - n2['V']) >= 4:
-                        alpha = 1.0 / ALPHA_INV
+                        alpha = 1.0 / CONFIG.alpha_inv
                         dipole_cost = self.rydberg_energy * alpha * (max(n1['V'], n2['V']) / max(1, min(n1['V'], n2['V'])))
                         
                         ionic_dist = dist * 1.5874
@@ -184,7 +184,7 @@ class CategoricalChemistryEngine(CategoricalMachine):
                         return (ionic_defect * polar_mixing) + ((attractive_defect + rep) * (1.0 - polar_mixing))
                         
                     if repulsive_friction == 0.0 and N_nodes > 2:
-                        alpha = 1.0 / ALPHA_INV
+                        alpha = 1.0 / CONFIG.alpha_inv
                         Z_axis_1 = max(1.0, n1['V'] - avg_bond)
                         Z_axis_2 = max(1.0, n2['V'] - avg_bond)
                         rep = self.rydberg_energy * (kissing_number * alpha) * (Z_axis_1 * Z_axis_2) / (volumetric_dampener * dist)
