@@ -1,5 +1,6 @@
-import cmath
-import math
+from mpmath import mp
+mp.dps = 100
+
 import copy
 import re
 import readline
@@ -101,14 +102,14 @@ class CategoricalChemistryEngine(CategoricalMachine):
             pi_1 = min(1.0, pi_bonds)
             pi_2 = max(0.0, pi_bonds - 1.0)
             
-            attractive_defect = -(sigma_bonds * kappa_mol) - (pi_1 * kappa_mol * (math.pi / 4.0)) - (pi_2 * kappa_mol * ((math.pi / 4.0) ** 2))
+            attractive_defect = -(sigma_bonds * kappa_mol) - (pi_1 * kappa_mol * (mp.pi / 4.0)) - (pi_2 * kappa_mol * ((mp.pi / 4.0) ** 2))
             
             if use_hypervalency:
                 attractive_defect *= 0.5
                 
             magic_bonus = 0.0
             if total_bonds > len(node_stats) and len(node_stats) >= 3:
-                magic_bonus = -(math.pi / 4.0) * kappa_mol
+                magic_bonus = -(mp.pi / 4.0) * kappa_mol
             
             total_repulsion = 0.0
             volumetric_dampener = (sum_A / 2.0) ** (1.0 / 3.0) if sum_A > 0 else 1.0
@@ -132,9 +133,9 @@ class CategoricalChemistryEngine(CategoricalMachine):
             if hub and hub['V'] <= 2:
                 geometry_mult = 2.0
             elif hub and hub['V'] == 3:
-                geometry_mult = math.sqrt(3.0)
+                geometry_mult = mp.sqrt(3.0)
             else:
-                geometry_mult = math.sqrt(8.0/3.0)
+                geometry_mult = mp.sqrt(8.0/3.0)
             
             for i in range(len(node_stats)):
                 for j in range(i + 1, len(node_stats)):
@@ -205,7 +206,7 @@ class CategoricalChemistryEngine(CategoricalMachine):
             sig = complex(1, 0)
             for f in obj.factors:
                 val = float(f.identifier) if not f.is_anti else 1.0/float(f.identifier)
-                sig *= round_complex(cmath.rect(val, math.pi * f.spin))
+                sig *= round_complex((val * mp.exp(1j * mp.pi * f.spin)))
             obj.signature = sig
             return obj
             
@@ -291,8 +292,7 @@ def main():
         print(f"   Quarks           : {total_quarks}")
         print(f"   Electrons        : {total_electrons}")
         
-        import cmath
-        phase = cmath.phase(molecule.signature)
+        phase = mp.phase(molecule.signature)
         print(f"\n [ Quantum State ]")
         print(f"   Net Spin         : {molecule.spin}")
         print(f"   Float Magnitude  : {abs(molecule.signature):.3e}")

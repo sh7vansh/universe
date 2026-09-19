@@ -1,7 +1,9 @@
+from mpmath import mp
+mp.dps = 100
+
 import sys
 import os
 import readline
-import cmath
 from fractions import Fraction
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -73,7 +75,7 @@ def synthesize_element(name, Z, N, true_u, quiet=False):
     d_quarks = sum(1 for f in atom.factors if f.identifier == 5)
     electrons = sum(1 for f in atom.factors if f.identifier == 2)
     
-    phase = cmath.phase(atom.signature)
+    phase = mp.phase(atom.signature)
     
     error_margin = None
     accuracy = None

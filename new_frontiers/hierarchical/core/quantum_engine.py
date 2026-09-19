@@ -1,14 +1,13 @@
-import cmath
-import math
+from mpmath import mp
+mp.dps = 100
+
 import copy
 from typing import List, Optional, Union
 from dataclasses import dataclass, field
 from fractions import Fraction
 
-def round_complex(z: complex, decimals: int = 10) -> complex:
-    r = z.real if abs(z.real) > 1e-12 else 0.0
-    i = z.imag if abs(z.imag) > 1e-12 else 0.0
-    return complex(r, i)
+def round_complex(z, decimals=10):
+    return z
 
 def mat_mul(m1: List[List[complex]], m2: List[List[complex]]) -> List[List[complex]]:
     n = len(m1)
@@ -26,11 +25,11 @@ def mat_sub(m1: List[List[complex]], m2: List[List[complex]]) -> List[List[compl
 
 # --- UNIVERSAL GEOMETRIC CONSTANTS ---
 MU_0 = 1.0
-WYLER_ALPHA = (9.0 / (16.0 * (math.pi ** 3))) * ((math.pi / 120.0) ** 0.25)
+WYLER_ALPHA = (9.0 / (16.0 * (mp.pi ** 3))) * ((mp.pi / 120.0) ** 0.25)
 ALPHA_INV = 1.0 / WYLER_ALPHA
 ALPHA = 1.0 / ALPHA_INV
 G_A = 7.0 ** (1.0 / 8.0)  # Axial vector coupling (Strange Prime rooted to Gluon space)
-PHI = (1.0 + math.sqrt(5.0)) / 2.0  # The Golden Ratio
+PHI = (1.0 + mp.sqrt(5.0)) / 2.0  # The Golden Ratio
 
 def universal_mass(p: int, gauge_friction: float) -> float:
     """
@@ -47,14 +46,14 @@ def universal_mass(p: int, gauge_friction: float) -> float:
 
 # Geometrically Derived Gauge Frictions
 F_E = 1.5 * ALPHA + ALPHA**2
-F_U = 2.0 / math.sqrt(3)
+F_U = 2.0 / mp.sqrt(3)
 F_D = 8.0 / 3.0
 
 # Higher Generation Gauge Frictions
 # Geometrically mapping the Strange Quark (QED Vacuum shielded by the Proton signature 45)
 F_STRANGE = ALPHA_INV - 45.0  
 
-F_CHARM = (math.sqrt(3))**13  # SU(3) root lattice geometry exponentiated to prime identifier (p=13)
+F_CHARM = (mp.sqrt(3))**13  # SU(3) root lattice geometry exponentiated to prime identifier (p=13)
 F_BOTTOM = F_STRANGE * (ALPHA_INV / 3.0)  # Strange friction scaled by QED vacuum anchor (alpha^-1) / N_c
 F_TOP = F_STRANGE ** F_D  # Generation 2 Strange friction raised to the Generation 1 Down friction
 
@@ -126,7 +125,7 @@ class GrothendieckObject:
     def spin(self) -> float:
         if abs(self.signature) < 1e-9:
             return 0.0
-        raw_spin = cmath.phase(self.signature) / math.pi
+        raw_spin = mp.phase(self.signature) / mp.pi
         rounded_spin = round(raw_spin, 5)
         if abs(rounded_spin) < 1e-9:
             return 0.0
@@ -169,7 +168,7 @@ class CategoricalMachine:
         # Derives the Chiral Condensate vacuum density purely from number theory and QED constants
         # X = 1/2 * pi * ln(2*pi) * alpha^-1 * sqrt((0.5 + 1.5*alpha + alpha^2) * mu_0^2)
         geometric_scalar = 0.5 + 1.5 * ALPHA + ALPHA**2
-        vacuum_density = 0.5 * math.pi * math.log(2 * math.pi) * ALPHA_INV * math.sqrt(geometric_scalar * MU_0**2)
+        vacuum_density = 0.5 * mp.pi * mp.log(2 * mp.pi) * ALPHA_INV * mp.sqrt(geometric_scalar * MU_0**2)
         self.chiral_condensate = -(vacuum_density)**3
         
         # --- STRONG FORCE GEOMETRY ---
@@ -177,7 +176,7 @@ class CategoricalMachine:
         # using the global G_A (Axial Vector Coupling) purely in energy space
         
         # 1. GMOR CONFINEMENT EQUATION
-        self.m_pi = math.sqrt(- ((self.m_u + self.m_d) * self.chiral_condensate) / (self.f_pi**2))
+        self.m_pi = mp.sqrt(- ((self.m_u + self.m_d) * self.chiral_condensate) / (self.f_pi**2))
 
         # 1.5 COLOR-MAGNETIC SPIN-SPIN INTERACTION
         # Derived purely geometrically: The confinement meson scale (m_pi) distributed across the SU(3) color permutations (3^2 = 9)
@@ -215,10 +214,10 @@ class CategoricalMachine:
             
         if is_anti:
             mag = 0 if prime == 0 else Fraction(1, prime)
-            sig = round_complex(cmath.rect(float(mag), math.pi * simp.spin)) if mag != 0 else 0j
+            sig = round_complex((float(mag) * mp.exp(1j * mp.pi * simp.spin))) if mag != 0 else 0j
             return GrothendieckObject(signature=sig, mass=simp.mass, factors=[simp], extensions=[], matrix=matrix)
         else:
-            sig = round_complex(cmath.rect(float(prime), math.pi * simp.spin)) if prime != 0 else 0j
+            sig = round_complex((float(prime) * mp.exp(1j * mp.pi * simp.spin))) if prime != 0 else 0j
             return GrothendieckObject(signature=sig, mass=simp.mass, factors=[simp], extensions=[], matrix=matrix)
 
     def is_color_singlet(self, obj: GrothendieckObject) -> bool:
@@ -259,16 +258,16 @@ class CategoricalMachine:
                 
                 # Geometrically Derived Liquid Drop Model
                 # Multiplier converts base residual coupling into physical binding scales
-                vol = (6.0 / math.pi) * A_tot
-                surf = math.sqrt(5.0) * (A_tot ** (2.0/3.0))
+                vol = (6.0 / mp.pi) * A_tot
+                surf = mp.sqrt(5.0) * (A_tot ** (2.0/3.0))
                 coul = (12.0 * ALPHA) * Z * (Z - 1) / (A_tot ** (1.0/3.0)) if A_tot > 0 else 0.0
-                asym = (2.0 * math.sqrt(2.0)) * ((N - Z) ** 2) / A_tot
+                asym = (2.0 * mp.sqrt(2.0)) * ((N - Z) ** 2) / A_tot
                 
                 # Magic Shell Spherical Optimization
                 magic_bonus = 0.0
                 magic_numbers = {2, 8, 20, 28, 50, 82, 126}
-                if Z in magic_numbers: magic_bonus += math.pi / 4.0
-                if N in magic_numbers: magic_bonus += math.pi / 4.0
+                if Z in magic_numbers: magic_bonus += mp.pi / 4.0
+                if N in magic_numbers: magic_bonus += mp.pi / 4.0
                 
                 return vol - surf - coul - asym + magic_bonus
 
@@ -296,16 +295,16 @@ class CategoricalMachine:
             parallel_scalar = 0.0
             for f1 in A.factors:
                 for f2 in B.factors:
-                    z1 = cmath.rect(1.0, math.pi * f1.spin)
-                    z2 = cmath.rect(1.0, math.pi * f2.spin)
+                    z1 = (1.0 * mp.exp(1j * mp.pi * f1.spin))
+                    z2 = (1.0 * mp.exp(1j * mp.pi * f2.spin))
                     parallel_scalar += (z1 * z2.conjugate()).real
             
             # Calculate anti-parallel scalar (if B flips its spin)
             anti_scalar = 0.0
             for f1 in A.factors:
                 for f2 in B.factors:
-                    z1 = cmath.rect(1.0, math.pi * f1.spin)
-                    z2 = cmath.rect(1.0, math.pi * (-f2.spin))
+                    z1 = (1.0 * mp.exp(1j * mp.pi * f1.spin))
+                    z2 = (1.0 * mp.exp(1j * mp.pi * (-f2.spin)))
                     anti_scalar += (z1 * z2.conjugate()).real
                     
             # Physics seeks the lowest energy ground state. 
@@ -342,10 +341,10 @@ class CategoricalMachine:
             self.kappa_residual = 1.0
             return
         g_pi_nn = (G_A * emergent_nucleon_mass) / self.f_pi
-        g_sq_over_4pi = (g_pi_nn**2) / (4 * math.pi)
+        g_sq_over_4pi = (g_pi_nn**2) / (4 * mp.pi)
         
         # Golden ratio phase boundary
-        yukawa_potential = - g_sq_over_4pi * self.m_pi * (math.exp(-PHI) / PHI)
+        yukawa_potential = - g_sq_over_4pi * self.m_pi * (mp.exp(-PHI) / PHI)
         
         # SU(3) Tensor Space Dimension (3^3 = 27)
         self.kappa_residual = yukawa_potential / (3.0 ** 3) 
@@ -408,8 +407,8 @@ class CategoricalMachine:
                             break
                     if found: break
                     
-                phase_shift = cmath.phase(val)
-                sig_C = round_complex(sig_C * cmath.rect(1.0, phase_shift))
+                phase_shift = mp.phase(val)
+                sig_C = round_complex(sig_C * (1.0 * mp.exp(1j * phase_shift)))
                 matrix_C = mat_mul(ext_copy.matrix, AB)
                 
             mass_C += ext_copy.binding_energy
@@ -530,7 +529,7 @@ def run_simulation(pure_math_mode: bool = False):
     
     print("\n2. Bootstrapping Nuclear Physics (Goldberger-Treiman & Yukawa):")
     machine.calculate_residual_scale(proton.mass)
-    print(f"   Dynamic Coupling (g^2/4pi): {((G_A * proton.mass / machine.f_pi)**2 / (4*math.pi)):.2f}")
+    print(f"   Dynamic Coupling (g^2/4pi): {((G_A * proton.mass / machine.f_pi)**2 / (4*mp.pi)):.2f}")
     
     print("\n3. Synthesizing Helium-4:")
     p2 = machine.confinement_bind(machine.confinement_bind(machine.get_simple(3, color="red_p2"), machine.get_simple(3, color="blue_p2"), "DiQ"), machine.get_simple(5, color="green_p2"), "Proton 2")
