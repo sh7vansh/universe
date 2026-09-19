@@ -50,7 +50,7 @@ Binding energy natively derives through **Categorical Friction (Loewy Discrepanc
 
 When two color singlets bind, they fuse into a single geometric boundary. The friction count computes the binding energy landscape using a purely **Geometrically Derived Liquid Drop Model**, replacing empirical tuning parameters with pure mathematical constants ($\pi, \alpha, \sqrt{2}, E_D$):
 1. **Cohomological Rank (Volume):** $\frac{6}{\pi} \cdot A$
-2. **Topological Boundary Degradation (Surface Tension):** $- E_D \cdot A^{2/3}$ (Where $E_D$ is the Geometric Deuteron Boundary)
+2. **Topological Boundary Degradation (Surface Tension):** $- E_D \cdot A^{2/3}$ (Where $E_D$ is the Nucleon Condensate / Deuteron Boundary)
 3. **Electromagnetic Phase Interference (Coulomb):** $- 12\alpha \cdot \frac{Z(Z-1)}{A^{1/3}}$
 4. **Isospin Parity Violation (Asymmetry):** $- 2\sqrt{2} \cdot \frac{(N-Z)^2}{A}$
 
@@ -73,7 +73,7 @@ $$
 m_\pi = \sqrt{- \frac{(m_u + m_d) \langle \bar{q}q \rangle}{f_\pi^2}}
 $$
 
-3. **Residual Binding (Geometric Deuteron Boundary)**: The engine abandons the phenomenological Goldberger-Treiman relation and the continuous Yukawa integral. Instead, residual strong friction is natively derived from the **Riemann Vacuum Noise** ($\ln(2\pi)$) and the **Viscosity** (0.5), degraded by the internal electromagnetic boundary ($\sqrt{\alpha^{-1}}$). This naturally yields the Geometric Deuteron Binding ($E_D \approx 2.2236 \text{ MeV}$).
+3. **Residual Binding (Nucleon Condensate)**: The engine abandons the phenomenological Goldberger-Treiman relation and the continuous Yukawa integral. Instead, residual strong friction is natively derived from the **Riemann Vacuum Noise** ($\ln(2\pi)$) and the **Viscosity** (0.5), degraded by the internal electromagnetic boundary ($\sqrt{\alpha^{-1}}$). This naturally yields the Nucleon Condensate ($E_D \approx 2.2236 \text{ MeV}$), which is physically equivalent to the Deuteron Binding Energy.
 
 $$
 E_D = (\ln(2\pi))^2 \cdot \left( 1 - \frac{(0.5)^{-2}}{\sqrt{\alpha^{-1}}} \right) \cdot \mu_0

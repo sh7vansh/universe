@@ -267,9 +267,9 @@ class CategoricalMachine:
                 
                 # Topological Boundary Limit (Formally the Liquid Drop Model)
                 # Evaluates the Loewy length discrepancy of the composite Ext^n complex
-                if hasattr(self, 'deuteron_binding'):
+                if hasattr(self, 'nucleon_condensate'):
                     rank = (6.0 / mp.pi) * A_tot
-                    boundary_degradation = self.deuteron_binding * (A_tot ** (2.0/3.0))
+                    boundary_degradation = self.nucleon_condensate * (A_tot ** (2.0/3.0))
                 else:
                     rank = (6.0 / mp.pi) * A_tot
                     boundary_degradation = mp.sqrt(5.0) * (A_tot ** (2.0/3.0))
@@ -391,14 +391,14 @@ class CategoricalMachine:
         noise = mp.log(2 * mp.pi)
         viscosity = 0.5
         
-        # 1. Geometric Deuteron Boundary (Emergent nuclear scale)
+        # 1. Nucleon Condensate (Deuteron Boundary)
         # Directly evaluating the pure topological noise disrupted by electromagnetic boundaries.
-        self.deuteron_binding = (noise ** 2) * (1.0 - (1.0 / (viscosity ** 2)) / mp.sqrt(ALPHA_INV)) * MU_0
+        self.nucleon_condensate = (noise ** 2) * (1.0 - (1.0 / (viscosity ** 2)) / mp.sqrt(ALPHA_INV)) * MU_0
         
         # 2. Kappa Residual (Base Categorical Friction Scalar)
-        # We project the localized Deuteron binding across the 4-dimensional spacetime 
+        # We project the localized Nucleon Condensate across the 4-dimensional spacetime 
         # geometry (Viscosity^-2 = 4) to define the global residual friction scale.
-        self.kappa_residual = - (self.deuteron_binding * (1.0 / (viscosity ** 2)))
+        self.kappa_residual = - (self.nucleon_condensate * (1.0 / (viscosity ** 2)))
 
     def nuclear_bind(self, A: GrothendieckObject, B: GrothendieckObject, name: str) -> GrothendieckObject:
         """Natively synthesizes nuclei with accurate negative mass defects."""
@@ -578,9 +578,9 @@ def run_simulation(pure_math_mode: bool = False):
     proton = machine.confinement_bind(diquark, d1, "Proton")
     print(f"   Synthesized Proton: {proton}")
     
-    print("\n2. Bootstrapping Nuclear Physics (Geometric Deuteron Boundary):")
+    print("\n2. Bootstrapping Nuclear Physics (Nucleon Condensate):")
     machine.calculate_residual_scale(proton.mass)
-    print(f"   Geometric Deuteron Binding: {machine.deuteron_binding:.4f} MeV")
+    print(f"   Nucleon Condensate (Deuteron Boundary): {machine.nucleon_condensate:.4f} MeV")
     print(f"   Base Residual Friction (Kappa): {machine.kappa_residual:.4f} MeV")
     
     print("\n3. Synthesizing Helium-4:")
