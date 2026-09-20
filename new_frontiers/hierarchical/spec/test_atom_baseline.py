@@ -1,12 +1,11 @@
-import sys
-import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'core')))
-from atomic_engine import synthesize_element, machine, make_nucleon
+import unittest
+from core.atomic_engine import synthesize_element, machine, make_nucleon
 
-def test_oxygen():
-    base_p = make_nucleon(True, "base")
-    machine.calculate_residual_scale(base_p.mass)
-    res = synthesize_element("Oxygen-16", 8, 8, 15.994915, quiet=True)
-    print(f"Oxygen-16 Pred Mass: {res['mass']:.3f} MeV, Error: {res['error']:.3f} MeV")
+class TestAtomBaseline(unittest.TestCase):
+    def test_oxygen(self):
+        base_p = make_nucleon(True, "base")
+        res = synthesize_element("Oxygen-16", 8, 8, 15.994915, quiet=True)
+        self.assertLess(res['error'], 1.0)
 
-test_oxygen()
+if __name__ == "__main__":
+    unittest.main()
