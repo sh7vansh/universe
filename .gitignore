@@ -6,3 +6,6 @@ build/
 
 *.olean
 *.ilean
+
+# Wayfinder
+*wayfinder*

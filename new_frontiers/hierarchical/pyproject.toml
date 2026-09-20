@@ -15,9 +15,3 @@ dependencies = [
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["core*"]
-
-[project.optional-dependencies]
-tui = [
-    "textual>=0.70.0",
-]
-
