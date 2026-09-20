@@ -84,3 +84,6 @@ open OntologicalFriction
 #print axioms OntologicalFriction.log_bound_fails
 #print axioms OntologicalFriction.fixed_priority_violates_submodular_bound
 #print axioms OntologicalFriction.randomized_expected_bound
+
+import MathProject.YonedaExtension
+#print axioms CategoricalMachine.cellular_shortExact

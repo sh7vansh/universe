@@ -4,3 +4,4 @@ import MathProject.CategoricalMachine
 import MathProject.CategoricalColimits
 import MathProject.LoewyLength
 import MathProject.Friction
+import MathProject.YonedaExtension
