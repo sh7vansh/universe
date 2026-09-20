@@ -80,7 +80,6 @@ SIMPLE_OBJECTS = {
 class ExtensionClass:
     name: str
     binding_energy: float 
-    matrix: Optional[List[List[complex]]] = None
     virtual_nodes: List[SimpleObject] = field(default_factory=list)
 
 @dataclass
