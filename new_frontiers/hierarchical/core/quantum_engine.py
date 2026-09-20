@@ -12,11 +12,14 @@ def mat_mul(m1: List[List[complex]], m2: List[List[complex]]) -> List[List[compl
 @dataclass
 class PhysicsConfig:
     mu_0: float = 1.0
-    wyler_alpha: float = (9.0 / (16.0 * (mp.pi ** 3))) * ((mp.pi / 120.0) ** 0.25)
-    alpha_inv: float = 1.0 / ((9.0 / (16.0 * (mp.pi ** 3))) * ((mp.pi / 120.0) ** 0.25))
-    alpha: float = ((9.0 / (16.0 * (mp.pi ** 3))) * ((mp.pi / 120.0) ** 0.25))
-    g_a: float = 7.0 ** (1.0 / 8.0)
+    alpha: float = (9.0 / (16.0 * (mp.pi ** 3))) * ((mp.pi / 120.0) ** 0.25)
+    wyler_alpha: float = field(init=False)
+    alpha_inv: float = field(init=False)
     phi: float = (1.0 + mp.sqrt(5.0)) / 2.0
+
+    def __post_init__(self):
+        self.wyler_alpha = self.alpha
+        self.alpha_inv = 1.0 / self.alpha
 
 CONFIG = PhysicsConfig()
 
@@ -34,11 +37,18 @@ F_BOTTOM = F_STRANGE * (CONFIG.alpha_inv / 3.0)
 F_TOP = F_STRANGE ** F_D
 
 M_E = universal_mass(2, F_E)
+M_U = universal_mass(3, F_U)
+M_D = universal_mass(5, F_D)
 M_MUON = (M_E * 1.5 * CONFIG.alpha_inv) + (CONFIG.mu_0 / CONFIG.phi)
 F_MUON = (M_MUON / CONFIG.mu_0) - (11 - 1) / 2.0
-M_D = universal_mass(5, F_D)
 M_TAU = (13.0 * CONFIG.alpha_inv * CONFIG.mu_0) - M_D
 F_TAU = (M_TAU / CONFIG.mu_0) - (17 - 1) / 2.0
+
+F_PI = F_STRANGE * CONFIG.mu_0
+GEOMETRIC_SCALAR = 0.5 + 1.5 * CONFIG.alpha + CONFIG.alpha**2
+VACUUM_DENSITY = 0.5 * mp.pi * mp.log(2 * mp.pi) * CONFIG.alpha_inv * mp.sqrt(GEOMETRIC_SCALAR * CONFIG.mu_0**2)
+CHIRAL_CONDENSATE = -(VACUUM_DENSITY)**3
+M_PI = mp.sqrt(- ((M_U + M_D) * CHIRAL_CONDENSATE) / (F_PI**2))
 
 class PauliExclusionError(Exception):
     pass
@@ -139,14 +149,7 @@ def geom_friction(Z: int, N: int, nucleon_condensate: Optional[float] = None) ->
     # 3. Volume Rank with Level 2 A3 Root Lattice Vertex Deficit (for multi-cell clusters A > 4)
     rank = (6.0 / mp.pi) * A_tot
     if A_tot > 4:
-        # m_pi derived from chiral condensate vacuum density
-        geometric_scalar = 0.5 + 1.5 * CONFIG.alpha + CONFIG.alpha**2
-        vac_density = 0.5 * mp.pi * mp.log(2 * mp.pi) * CONFIG.alpha_inv * mp.sqrt(geometric_scalar * CONFIG.mu_0**2)
-        m_u = universal_mass(3, F_U)
-        m_d = universal_mass(5, F_D)
-        f_pi = F_STRANGE * CONFIG.mu_0
-        m_pi = float(mp.sqrt(((m_u + m_d) * (vac_density**3)) / (f_pi**2)))
-        e_nuc = 5.0 * m_pi - (44.0 / 27.0)
+        e_nuc = 5.0 * float(M_PI) - (44.0 / 27.0)
         delta_a3 = float(1.0 - mp.sqrt(3.0 / 8.0))
         eff_scale = wyler_factor * (float(cond) * 4.0) * float(CONFIG.mu_0)
         a3_friction_per_nuc = (float(CONFIG.alpha) * delta_a3 * (e_nuc / 4.0)) / eff_scale
@@ -197,15 +200,11 @@ def geom_friction(Z: int, N: int, nucleon_condensate: Optional[float] = None) ->
 class CategoricalMachine:
     def __init__(self):
         self.generators = SIMPLE_OBJECTS
-        self.m_u = universal_mass(3, F_U)
-        self.m_d = universal_mass(5, F_D)
-        self.f_pi = F_STRANGE * CONFIG.mu_0
-
-        geometric_scalar = 0.5 + 1.5 * CONFIG.alpha + CONFIG.alpha**2
-        vacuum_density = 0.5 * mp.pi * mp.log(2 * mp.pi) * CONFIG.alpha_inv * mp.sqrt(geometric_scalar * CONFIG.mu_0**2)
-        self.chiral_condensate = -(vacuum_density)**3
-
-        self.m_pi = mp.sqrt(- ((self.m_u + self.m_d) * self.chiral_condensate) / (self.f_pi**2))
+        self.m_u = M_U
+        self.m_d = M_D
+        self.f_pi = F_PI
+        self.chiral_condensate = CHIRAL_CONDENSATE
+        self.m_pi = M_PI
         self.kappa_spin = self.m_pi / 9.0
         self.kappa_em = 11.0 / 3.0
         self.kappa_confinement = self.m_pi
@@ -271,7 +270,6 @@ class CategoricalMachine:
         )
 
     def calculate_friction(self, A: GrothendieckObject, B: GrothendieckObject) -> float:
-        optimal = len(A.factors) + len(B.factors)
         if self.is_color_singlet(A) and self.is_color_singlet(B):
             Z_A, N_A = get_Z_N(A)
             Z_B, N_B = get_Z_N(B)
@@ -316,14 +314,7 @@ class CategoricalMachine:
 
 
     def nuclear_bind(self, A: GrothendieckObject, B: GrothendieckObject, name: str) -> GrothendieckObject:
-        base_friction = self.calculate_friction(A, B)
-        total_friction = base_friction 
-        n = 1
-        current_correction = base_friction * float(CONFIG.wyler_alpha)
-        while abs(current_correction) > 1e-15:
-            total_friction += ((-1) ** n) * current_correction
-            n += 1
-            current_correction *= float(CONFIG.wyler_alpha)
+        total_friction = self.calculate_friction(A, B) / (1.0 + float(CONFIG.alpha))
         binding_energy = total_friction * float(self.kappa_residual)
         ext = ExtensionClass(name, binding_energy=binding_energy, virtual_nodes=list(A.factors) + list(B.factors))
         return self.exact_sequence_reconstruction(A, B, ext)
