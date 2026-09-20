@@ -115,9 +115,9 @@ def geom_friction(Z: int, N: int, nucleon_condensate: Optional[float] = None) ->
     Calculates the discrete lattice contact graph friction for an (A3/FCC) root lattice.
     - Deuteron (Z=1, N=1): Fundamental isospin-singlet contact bond (E_D = nucleon_condensate).
     - Dimension embedding: Simplex dimension d = min(A - 1, 3); boundary exponent = (d - 1)/d.
-    - Volume rank: 6/pi * A (density of square-free Pauli states).
+    - Volume rank: 6/pi * A with Level 2 A3 Root Lattice Vertex Deficit screening for A > 4.
     - Boundary: Unshielded boundary facets scaled by the geometric nucleon condensate.
-    - Closed shells: Doubly-magic saturation with zero valence pairing.
+    - Closed shells: Cohomological shell closure and alpha clustering.
     """
     A_tot = Z + N
     if A_tot <= 1:
@@ -126,7 +126,7 @@ def geom_friction(Z: int, N: int, nucleon_condensate: Optional[float] = None) ->
     w_alpha = float(CONFIG.wyler_alpha)
     wyler_factor = 1.0 - w_alpha + w_alpha**2 - w_alpha**3
 
-    # 1. Fundamental Isospin-Singlet Contact Bond (Deuteron, A=2, Z=1, N=1)
+    # 1. Fundamental Isospin-Singlet Contact Bond (Deuteron, A=2)
     if Z == 1 and N == 1:
         return 0.25 / wyler_factor
 
@@ -134,20 +134,32 @@ def geom_friction(Z: int, N: int, nucleon_condensate: Optional[float] = None) ->
     dim = min(A_tot - 1, 3)
     boundary_exponent = (dim - 1.0) / dim if dim > 0 else 0.0
 
-    rank = (6.0 / mp.pi) * A_tot
     cond = nucleon_condensate if nucleon_condensate is not None else mp.sqrt(5.0)
-    boundary_degradation = cond * (A_tot ** boundary_exponent)
 
-    # 3. Discrete Phase Interference (Coulomb)
+    # 3. Volume Rank with Level 2 A3 Root Lattice Vertex Deficit (for multi-cell clusters A > 4)
+    rank = (6.0 / mp.pi) * A_tot
+    if A_tot > 4:
+        # m_pi derived from chiral condensate vacuum density
+        geometric_scalar = 0.5 + 1.5 * CONFIG.alpha + CONFIG.alpha**2
+        vac_density = 0.5 * mp.pi * mp.log(2 * mp.pi) * CONFIG.alpha_inv * mp.sqrt(geometric_scalar * CONFIG.mu_0**2)
+        m_u = universal_mass(3, F_U)
+        m_d = universal_mass(5, F_D)
+        f_pi = F_STRANGE * CONFIG.mu_0
+        m_pi = float(mp.sqrt(((m_u + m_d) * (vac_density**3)) / (f_pi**2)))
+        e_nuc = 5.0 * m_pi - (44.0 / 27.0)
+        delta_a3 = float(1.0 - mp.sqrt(3.0 / 8.0))
+        eff_scale = wyler_factor * (float(cond) * 4.0) * float(CONFIG.mu_0)
+        a3_friction_per_nuc = (float(CONFIG.alpha) * delta_a3 * (e_nuc / 4.0)) / eff_scale
+        rank -= A_tot * a3_friction_per_nuc
+
+    boundary_degradation = cond * (A_tot ** boundary_exponent)
     topological_kissing_number = 12.0
     phase_interference = (topological_kissing_number * CONFIG.alpha) * Z * (Z - 1) / (A_tot ** (1.0 / 3.0)) if A_tot > 0 else 0.0
 
-    # 4. Parity Violation & SU(4) Wigner Symmetry
     complex_orthogonality = 2.0 * mp.sqrt(2.0)
     parity_violation = complex_orthogonality * ((N - Z) ** 2) / A_tot
     su4_wigner = complex_orthogonality * abs(N - Z) / A_tot
 
-    # 5. Cohomological Shell Closures & Alpha Clustering
     magic_numbers = set()
     cumulative = 0
     for n in range(1, 8):
@@ -163,27 +175,22 @@ def geom_friction(Z: int, N: int, nucleon_condensate: Optional[float] = None) ->
     chiral_current_bonus = 0.0
     cohomological_closure = 0.0
 
-    is_doubly_magic = (Z in magic_numbers) and (N in magic_numbers) and (A_tot > 4)
+    if Z % 2 == 0 and N % 2 == 0:
+        pairing_bonus = riemann_viscosity / (A_tot ** 0.5)
+        if Z == N and (Z not in magic_numbers or A_tot == 4):
+            alpha_cluster_bonus = (riemann_viscosity * 2.0) / (A_tot ** (1.0 / 3.0))
+    elif Z % 2 != 0 and N % 2 != 0:
+        pairing_bonus = -riemann_viscosity / (A_tot ** 0.5)
+    elif Z % 2 != 0 and N % 2 == 0:
+        chiral_current_bonus = (riemann_viscosity * CONFIG.alpha) / (A_tot ** (1.0 / 3.0))
 
-    if is_doubly_magic:
-        pairing_bonus = 0.0
-        cohomological_closure = 0.0
+    if A_tot == 4:
+        cohomological_closure = ext_tower_limit * volumetric_dampener
     else:
-        if Z % 2 == 0 and N % 2 == 0:
-            pairing_bonus = riemann_viscosity / (A_tot ** 0.5)
-            if Z == N and (Z not in magic_numbers or A_tot == 4):
-                alpha_cluster_bonus = (riemann_viscosity * 2.0) / (A_tot ** (1.0 / 3.0))
-        elif Z % 2 != 0 and N % 2 != 0:
-            pairing_bonus = -riemann_viscosity / (A_tot ** 0.5)
-        elif Z % 2 != 0 and N % 2 == 0:
-            chiral_current_bonus = (riemann_viscosity * CONFIG.alpha) / (A_tot ** (1.0 / 3.0))
-
-        if (Z in magic_numbers) and (N not in magic_numbers):
+        if Z in magic_numbers:
             cohomological_closure += ext_tower_limit * volumetric_dampener
-        elif (N in magic_numbers) and (Z not in magic_numbers):
+        if N in magic_numbers:
             cohomological_closure += ext_tower_limit * volumetric_dampener
-        elif A_tot == 4:
-            cohomological_closure = ext_tower_limit * volumetric_dampener
 
     return rank - boundary_degradation - phase_interference - parity_violation - su4_wigner + pairing_bonus + alpha_cluster_bonus + chiral_current_bonus + cohomological_closure
 
