@@ -15,8 +15,9 @@ def make_nucleon(is_proton: bool, suffix: str):
     q3 = machine.get_simple(5 if is_proton else 5, color=f"green_{suffix}")
     return machine.confinement_bind(machine.confinement_bind(q1, q2, "DiQ"), q3, "Nuc")
 
-# Pre-materialized base nucleon
-base_p = make_nucleon(True, "base")
+# Pre-materialized base nucleons
+base_p = make_nucleon(True, "base_p")
+base_n = make_nucleon(False, "base_n")
 
 JSON_PATH = Path(__file__).resolve().parents[1] / "assets" / "periodic_table.json"
 with open(JSON_PATH, "r") as f:
@@ -63,7 +64,7 @@ def calculate_prime_composite(factors):
 def synthesize_element(name: str, Z: int, N: int, true_u: float = None, quiet: bool = False):
     atom = synthesize_element_core(name, Z, N)
 
-    parts_mass = (Z * 938.346) + (N * 939.635) + (Z * 0.511)
+    parts_mass = (Z * base_p.mass) + (N * base_n.mass) + (Z * M_E)
     mass_defect = atom.mass - parts_mass
     prime_comp = calculate_prime_composite(atom.factors)
 

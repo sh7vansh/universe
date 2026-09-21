@@ -269,12 +269,18 @@ class CategoricalMachine:
         )
 
     def calculate_friction(self, A: GrothendieckObject, B: GrothendieckObject) -> float:
+        # THE PHASE TRANSITION (Homological Boundary Check)
+        # If both objects are Color Singlets, their topological boundary is closed (∂ = 0).
+        # Two closed spheres cannot merge topologically; they must stack. 
+        # This triggers the collapse from fluid quantum topology into a rigid A3 Contact Lattice.
         if self.is_color_singlet(A) and self.is_color_singlet(B):
             Z_A, N_A = get_Z_N(A)
             Z_B, N_B = get_Z_N(B)
             cond = getattr(self, 'nucleon_condensate', None)
             return geom_friction(Z_A + Z_B, N_A + N_B, cond) - (geom_friction(Z_A, N_A, cond) + geom_friction(Z_B, N_B, cond))
         else:
+            # If the boundary is open (unmatched color), it remains a fluid topological flux tube.
+            # The friction is simply the sum of exposed virtual nodes (Rubber band tension).
             len_A = 1 if self.is_color_singlet(A) else len(A.factors)
             len_B = 1 if self.is_color_singlet(B) else len(B.factors)
             virt_A = 0 if self.is_color_singlet(A) else sum(len(e.virtual_nodes) for e in A.extensions)
