@@ -36,10 +36,10 @@ In classical algebra, a lattice is a static set $(L, \wedge, \vee, \le)$. In thi
 | **Closed Elements** $\mathrm{Fix}(\mathrm{cl})$ | Eilenberg–Moore Category $L^T$ | Reflective subcategory of algebras |
 | **Subobject Poset** $\mathrm{Sub}_{\mathcal{A}}(X)$ | Thin Modular Subcategory | Skeletal thin category of subobjects in $\mathcal{A}$ |
 
-### Formal Properties of Thin Categories (Lean 4 Verified)
-1. **Subsingleton Hom-sets:** For all $x, y$, `Subsingleton (x ⟶ y)`. Parallel arrows are strictly equal ($f = g$).
-2. **All Morphisms are Monic and Epic:** For any $f: x \to y$, `Mono f` and `Epi f` hold unconditionally.
-3. **Derived Flatness:** $\mathrm{Ext}_L^{\ge 1}(A, B) = 0$ and $\mathrm{Tor}_{\ge 1}^L(A, B) = 0$. The internal thin category is completely flat; all extensions and intersections split cleanly within the lattice order.
+> [!THEOREM] Formal Properties of Thin Categories (Lean 4 Verified)
+> 1. **Subsingleton Hom-sets:** For all $x, y$, `Subsingleton (x ⟶ y)`. Parallel arrows are strictly equal ($f = g$).
+> 2. **All Morphisms are Monic and Epic:** For any $f: x \to y$, `Mono f` and `Epi f` hold unconditionally.
+> 3. **Derived Flatness:** $\mathrm{Ext}_L^{\ge 1}(A, B) = 0$ and $\mathrm{Tor}_{\ge 1}^L(A, B) = 0$. The internal thin category is completely flat; all extensions and intersections split cleanly within the lattice order.
 
 ---
 
@@ -47,20 +47,15 @@ In classical algebra, a lattice is a static set $(L, \wedge, \vee, \le)$. In thi
 
 When the thin skeleton $\mathrm{Sub}(X)$ is lifted into an ambient abelian/derived category $\mathcal{A}$, the homological degrees of freedom re-emerge via three measuring functors:
 
-```
-                               THE TRIAD OF FUNCTORS
+```mermaid
+flowchart TD
+    Ext["Functor 1: Ext*<br/><b>Assembly / Upward Gluing</b><br/>(Stasheff Associahedra & Cellular Tower)"]
+    Tor["Functor 2: Tor*<br/><b>Collision / Manifold Strain</b><br/>(Submodular Friction Gap Δ)"]
+    T["Functor 3: 𝕋<br/><b>Travel Experience / Holonomy</b><br/>(Lagrangian Action S + Unipotent Trans)"]
 
-                     [ Functor 1: Ext* ]
-                  Assembly / Upward Gluing
-                   (Stasheff Associahedra)
-                           ▲
-                          ╱ ╲
-                         ╱   ╲
-                        ╱     ╲
-                       ▼       ▼
-       [ Functor 2: Tor* ] ◄───► [ Functor 3: 𝕋 ]
-     Collision / Manifold Strain   Travel Experience / Holonomy
-       (Submodular Friction)        (Action S + Unipotent Trans)
+    Ext <-->|"Dual Homological Pair"| Tor
+    Ext -->|"Assembly Obstructions"| T
+    Tor -->|"Elastic Strain Damping"| T
 ```
 
 ---
@@ -108,7 +103,9 @@ $\mathrm{Tor}_*$ measures the **homological collision** when two subobjects meet
   \dim \mathbf{Tor}_1(X/A, X/B) = \big[\mathrm{rk}(A) + \mathrm{rk}(B)\big] - \big[\mathrm{rk}(A \vee B) + \mathrm{rk}(A \wedge B)\big] = \Delta(A, B) \ge 0
   $$
 
-* **Modularity as Zero-Strain Equilibrium:** A lattice is modular if and only if the $\mathrm{Tor}_1$ friction defect vanishes identically ($\Delta \equiv 0$).
+> [!DEFINITION] Modularity as Zero-Strain Equilibrium
+> A lattice is modular if and only if the $\mathrm{Tor}_1$ friction defect vanishes identically ($\Delta \equiv 0$). Non-zero $\mathrm{Tor}_1$ directly measures derived geometric friction and search non-linearities.
+
 * **Higher $\mathrm{Tor}_{\ge 2}$:** Compute derived intersection multiplicities and higher-order tangency corrections (Serre's intersection formula).
 
 ---
@@ -148,20 +145,16 @@ $$
 
 The higher compositions of $\mathrm{Ext}^*$ and $\mathrm{Tor}_*$ unfold into an infinite, rigid polyhedral tower of **Stasheff Associahedra $K_n$**, corresponding to the **$A_{n-2}$ Cartan-Killing Root Systems**:
 
-$$
-\begin{array}{ccccll}
-\mathbf{Level} & \mathbf{Dimension} & \mathbf{Vertices \; (Catalan)} & \mathbf{Lie \; Root} & \mathbf{Boundary \; Facets} & \mathbf{Physical \; Interpretation} \\
-\hline
-K_0 / K_1 & \varnothing & 1 & A_0 & 0 & \text{Vacuum / Standing Still } (0, \mathbf{1}) \\
-K_2 & 0\text{D} & 1 & A_1 & 0 & \text{0D Point (Elementary 1-Step)} \\
-K_3 & 1\text{D} & 2 & A_1 & 2 \text{ Vertices} & \text{1D Line Segment } [0, 1] \\
-K_4 & \mathbf{2D} & \mathbf{5} & \mathbf{A_2} & \mathbf{5 \text{ Edges}} & \mathbf{2D \; Stasheff \; Pentagon \; (Tamari } \mathcal{T}_4) \\
-K_5 & \mathbf{3D} & \mathbf{14} & \mathbf{A_3} & \mathbf{9 \text{ Facets (6 Pent + 3 Sq)}} & \mathbf{3D \; Associahedron \; (Cartan Strain)} \\
-K_6 & \mathbf{4D} & \mathbf{42} & \mathbf{A_4} & \mathbf{14 \text{ 3D Cells}} & \mathbf{4D \; Spacetime \; Cluster \; Polytope} \\
-K_7 & 5\text{D} & 132 & A_5 & 20 \text{ 4D Cells} & 5\text{D Hyper-Polytope} \\
-K_n & (n-2)\text{D} & C_{n-1} = \frac{1}{n}\binom{2n-2}{n-1} & A_{n-2} & \text{Cluster Vars} & (n-2)\text{D Universal } A_\infty \text{ Operad}
-\end{array}
-$$
+| Level | Dimension | Vertices (Catalan) | Lie Root | Boundary Facets | Physical Interpretation |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **$K_0 / K_1$** | $\varnothing$ | $1$ | $A_0$ | $0$ | Vacuum / Standing Still $(0, \mathbf{1})$ |
+| **$K_2$** | $0$D | $1$ | $A_1$ | $0$ | $0$D Point (Elementary 1-Step) |
+| **$K_3$** | $1$D | $2$ | $A_1$ | $2$ Vertices | $1$D Line Segment $[0, 1]$ |
+| **$K_4$** | **$2$D** | **$5$** | **$A_2$** | **$5$ Edges** | **$2$D Stasheff Pentagon (Tamari $\mathcal{T}_4$)** |
+| **$K_5$** | **$3$D** | **$14$** | **$A_3$** | **$9$ Facets (6 Pent + 3 Sq)** | **$3$D Associahedron (Cartan Strain)** |
+| **$K_6$** | **$4$D** | **$42$** | **$A_4$** | **$14$ 3D Cells** | **$4$D Spacetime Cluster Polytope** |
+| **$K_7$** | $5$D | $132$ | $A_5$ | $20$ 4D Cells | $5$D Hyper-Polytope |
+| **$K_n$** | $(n-2)$D | $C_{n-1} = \frac{1}{n}\binom{2n-2}{n-1}$ | $A_{n-2}$ | Cluster Variables | $(n-2)$D Universal $A_\infty$ Operad |
 
 ### The $A_3$ Root System Correspondence on $K_5$ (Lean 4 Verified)
 The 3D Associahedron $K_5$ (governing 4-step / $\mathrm{Ext}^4$ compositions) has **exactly 9 boundary facets**, bijective to the 9 almost-positive roots of the $A_3$ Lie algebra:
@@ -194,20 +187,16 @@ $$
 - Off-diagonal shear strain: $\langle \alpha_1, \alpha_2 \rangle = -1$ (mutual $120^\circ$ pull).
 - Orthogonal decoupling: $\langle \alpha_1, \alpha_3 \rangle = 0$ (independent subobjects).
 
-### Holographic Boundary Law & Linear Geodesic Diameter
-1. **Holographic Boundary Law:** The boundary of any associahedron decomposes into products of lower-dimensional associahedra:
-
-   $$
-   \partial K_n = \bigcup_{i + j = n + 1} K_i \times K_j
-   $$
-
-2. **Sleator–Tarjan–Thurston Linear Bound:** While vertex count grows exponentially as Catalan numbers $C_n \sim \frac{4^n}{n^{3/2}\sqrt{\pi}}$, the **shortest path distance (graph diameter) across $K_n$ is strictly linear**:
-
-   $$
-   \mathrm{Diameter}(K_n) \le 2n - 6 \quad (\forall \, n \ge 16)
-   $$
-
-   This guarantees that greedy algorithmic navigation across the crystalline tower scales linearly $O(n)$ in path length.
+> [!THEOREM] Holographic Boundary Law & Linear Geodesic Diameter
+> 1. **Holographic Boundary Law:** The boundary of any associahedron decomposes into products of lower-dimensional associahedra:
+>    $$
+>    \partial K_n = \bigcup_{i + j = n + 1} K_i \times K_j
+>    $$
+> 2. **Sleator–Tarjan–Thurston Linear Bound:** While vertex count grows exponentially as Catalan numbers $C_n \sim \frac{4^n}{n^{3/2}\sqrt{\pi}}$, the **shortest path distance (graph diameter) across $K_n$ is strictly linear**:
+>    $$
+>    \mathrm{Diameter}(K_n) \le 2n - 6 \quad (\forall \, n \ge 16)
+>    $$
+>    Greedy algorithmic navigation across the crystalline tower scales linearly $O(n)$ in path length.
 
 ---
 
@@ -215,13 +204,25 @@ $$
 
 The three functors and the thin category substrate power the three algorithmic engines of the repository:
 
-```
-[ Alg 1: Basis Discovery ]      [ Alg 2: Friction Sieve ]      [ Alg 3: Decoupling ]
-  ontologicalmachine.md                friction.md              categoricalmachine.md
-   Idempotent Monad T             Submodular Damping Δ           Loewy Colimit Tower
-            │                              │                              │
-            ▼                              ▼                              ▼
-  Irreducible Generators          Bounded Search Out-Degree      Ext¹ Cellular Reconstruction
+```mermaid
+flowchart TD
+    subgraph Alg1 ["Algorithm 1: Basis Discovery"]
+        OM["ontologicalmachine.md<br/>BasisDiscovery.lean"]
+        M["Idempotent Monad T"] --> G["Irreducible Basis Generators"]
+    end
+
+    subgraph Alg2 ["Algorithm 2: Friction Sieve"]
+        FS["friction.md<br/>TorFrictionStrain.lean"]
+        D["Submodular Damping Δ ≥ 0"] --> B["Bounded Search Out-Degree"]
+    end
+
+    subgraph Alg3 ["Algorithm 3: Decoupling"]
+        CM["categoricalmachine.md<br/>CategoricalColimits.lean"]
+        L["Loewy Filtration Tower"] --> R["Ext¹ Directed Colimit Reconstruction"]
+    end
+
+    Alg1 -->|"Minimal Coordinate Frame"| Alg2
+    Alg2 -->|"Friction-Free Stratification"| Alg3
 ```
 
 1. **Basis Discovery Algorithm ([`ontologicalmachine.md`](ontologicalmachine.md) / [`BasisDiscovery.lean`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/BasisDiscovery.lean)):**
@@ -242,17 +243,17 @@ The three functors and the thin category substrate power the three algorithmic e
 
 All core components are compiled and verified with **zero `sorry` placeholders** under standard Lean 4 core axioms (`propext`, `Classical.choice`, `Quot.sound`):
 
-| File | Formalized Theorems & Constructs | Axiom Count |
-| :--- | :--- | :--- |
-| [`MathProject/ThinCategoryLattice.lean`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/ThinCategoryLattice.lean) | Thin subsingleton hom-sets, monic/epic equivalence, meet/join universal product/coproduct properties, idempotent monad functors, Ext-collapse trivial splitting, Tamari lattice $\mathcal{T}_4$ order and cardinality ($C_3=5$), and the bijection $\mathrm{RootA3} \simeq \mathrm{FacetK5}$ (9 elements). | Core |
-| [`MathProject/A3ManifoldStrain.lean`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/A3ManifoldStrain.lean) | $A_3$ Cartan metric bilinear form, sum-of-squares positive definiteness, invariant positive root squared norms ($=2$), off-diagonal shear couplings ($\langle \alpha_1, \alpha_2 \rangle = -1$), and composite strain energy. | Core |
-| [`MathProject/TorFrictionStrain.lean`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/TorFrictionStrain.lean) | Submodular rank structures, Tor₁ friction defect $\Delta(A, B)$, non-negativity of defect ($\Delta \ge 0$), modularity as zero-strain equilibrium ($\Delta = 0$), and $\mathrm{Tor}_0$ meet properties. | Core |
-| [`MathProject/TravelFunctor.lean`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/TravelFunctor.lean) | Unipotent 2x2 shear groupoid, TravelExperience monoid (Action $+$ Holonomy), associativity of travel composition, identity preservation, path action additivity, and strict action accumulation (No Free Travel). | Core |
-| [`MathProject/LoewyLength.lean`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/LoewyLength.lean) | Well-founded induction on subobject lattices, existence and finiteness of Loewy length $L(X)$, length of simple objects ($=1$), and strict length inequality. | Core |
-| [`MathProject/CategoricalColimits.lean`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/CategoricalColimits.lean) | Transfinite Loewy sequences, stabilization at ordinal Loewy length, and cellular colimit reconstruction in abelian categories. | Core |
-| [`MathProject/BasisDiscovery.lean`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/BasisDiscovery.lean) | Finite closure space greedy extraction, novelty priority invariant, uniqueness of irreducible basis, and logarithmic matroid optimality. | Core |
-| [`MathProject/Friction.lean`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/Friction.lean) | Upper covering relations, atomic submodularity bounds, and algorithmic friction complexity bounds. | Core |
-| [`MathProject/YonedaExtension.lean`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/YonedaExtension.lean) | Short exact sequences, Yoneda extension classes, split short exact sequence criterion, and 2-tier extension reconstruction. | Core |
+| File | Key Formalized Declarations | Mathematical Construct | Axioms |
+| :--- | :--- | :--- | :--- |
+| [`MathProject/ThinCategoryLattice.lean`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/ThinCategoryLattice.lean) | `thin_hom_subsingleton`, `thin_mono`, `thin_epi`, `thin_extension_splits`, `tamari4_card`, `rootA3_facetK5_equiv` | Subsingleton Hom-sets, epic/monic collapse, Tamari lattice $\mathcal{T}_4$ ($C_3=5$), and $A_3 \simeq K_5$ bijection (9 facets) | Core |
+| [`MathProject/A3ManifoldStrain.lean`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/A3ManifoldStrain.lean) | `cartanForm_pos_def`, `cartanForm_sum_of_squares`, `norm_alpha1`, `strain_adjacent_12`, `strain_orthogonal_13` | $A_3$ Cartan metric, positive-definite sum-of-squares, root norms ($=2$), off-diagonal coupling ($-1$), and orthogonal shear ($0$) | Core |
+| [`MathProject/TorFrictionStrain.lean`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/TorFrictionStrain.lean) | `submodularDefect`, `defect_nonneg`, `defect_zero_iff_modular`, `tor0_comm`, `tor0_universal` | $\mathrm{Tor}_1$ friction defect $\Delta(A, B) \ge 0$, modularity zero-strain equilibrium ($\Delta = 0$), and $\mathrm{Tor}_0$ meet | Core |
+| [`MathProject/TravelFunctor.lean`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/TravelFunctor.lean) | `TravelExperience`, `comp_assoc`, `path_action_additive`, `path_shear_additive`, `action_strictly_increases` | Unipotent $\mathbf{GL}_2(\mathbb{Z})$ holonomy, path action additivity, and strict action accumulation (No Free Travel) | Core |
+| [`MathProject/LoewyLength.lean`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/LoewyLength.lean) | `IsSemiArtinian`, `lt_cellular`, `le_nextLoewy`, `loewySequence_limit` | Well-founded induction on subobject lattices, Loewy length finiteness $L(X)$, and strict chain inequality | Core |
+| [`MathProject/CategoricalColimits.lean`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/CategoricalColimits.lean) | `loewyObj_limit`, `loewyFunctor_map_mono`, `loewyObj_strict_mono` | Transfinite Loewy sequence stabilization at ordinal length, and cellular colimit reconstruction | Core |
+| [`MathProject/BasisDiscovery.lean`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/BasisDiscovery.lean) | `IsGenerated`, `candidates_nonempty`, `novelty_of_fixedPriorityPhi` | Finite closure space greedy extraction, novelty priority invariant, and minimal irreducible basis | Core |
+| [`MathProject/Friction.lean`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/Friction.lean) | `MacLaneSteinitz`, `GeometricFriction`, `SemimodularFriction`, `rank_collapse` | Upper covering relations, atomic submodularity bounds, and algorithmic friction complexity bounds | Core |
+| [`MathProject/YonedaExtension.lean`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/YonedaExtension.lean) | `cellular_comm`, `cellular_exact`, `cellular_shortExact`, `cellularLift_uniq` | Short exact sequences, Yoneda extension classes, and 2-tier extension reconstruction | Core |
 
 ---
 
