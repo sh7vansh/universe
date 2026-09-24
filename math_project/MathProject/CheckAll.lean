@@ -4,9 +4,25 @@ import MathProject.BasisDiscovery
 import MathProject.Friction
 import MathProject.CategoricalMachine
 import MathProject.LoewyLength
+import MathProject.ThinCategoryLattice
+import MathProject.A3ManifoldStrain
+import MathProject.TorFrictionStrain
+import MathProject.TravelFunctor
 
 #print axioms BasisDiscovery.novelty_of_fixedPriorityPhi
 #print axioms CategoricalMachine.loewy_length_exists
 #print axioms CategoricalMachine.reconstruction
 #print axioms CategoricalMachine.categorical_friction_bound
 #print axioms rank_collapse
+#print axioms ThinCategoryLattice.thin_mono
+#print axioms ThinCategoryLattice.subobject_mono
+#print axioms ThinCategoryLattice.thin_extension_splits
+#print axioms ThinCategoryLattice.tamari4_card
+#print axioms ThinCategoryLattice.rootA3_facetK5_equiv
+#print axioms ThinCategoryLattice.a3_facet_count
+#print axioms A3ManifoldStrain.cartanForm_pos_def
+#print axioms A3ManifoldStrain.coupled_strain_alpha12
+#print axioms TorFrictionStrain.defect_nonneg
+#print axioms TorFrictionStrain.modular_defect_zero
+#print axioms TravelFunctor.TravelExperience.comp_assoc
+#print axioms TravelFunctor.action_strictly_increases

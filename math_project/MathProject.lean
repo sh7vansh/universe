@@ -5,3 +5,7 @@ import MathProject.CategoricalColimits
 import MathProject.LoewyLength
 import MathProject.Friction
 import MathProject.YonedaExtension
+import MathProject.ThinCategoryLattice
+import MathProject.A3ManifoldStrain
+import MathProject.TorFrictionStrain
+import MathProject.TravelFunctor
