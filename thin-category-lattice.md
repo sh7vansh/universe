@@ -267,13 +267,43 @@ All core components are compiled and verified with **zero `sorry` placeholders**
 
 ## 6. Summary
 
-The framework establishes that:
-$$
-\boxed{\begin{array}{c}
-\mathbf{Thin\;Category}\;(L, \le) \quad\xrightarrow{\quad\mathbb{T} = (\mathcal{S}, \mathbf{Trans})\quad}\quad \mathbf{Crystalline\;Tower}\;(K_2 \to K_n) \\[6pt]
-\big\updownarrow \;\text{\small Dual Pair} \\[6pt]
-\mathbf{Ext}^* \text{ (Assembly Stress)} \;\longleftrightarrow\; \mathbf{Tor}_* \text{ (Collision Strain / Friction Defect } \Delta)
-\end{array}}
-$$
+```mermaid
+flowchart TD
+    subgraph Substrate ["1. The Substrate: Thin Category"]
+        L["<b>Poset / Lattice Category (L, ≤)</b><br/>• Subsingleton Hom-sets & Monic/Epic Collapse<br/>• Products (∧) & Coproducts (∨)<br/>• Base Elements K₀ (⊥) & K₁ (id)"]
+    end
+
+    subgraph Functors ["2. The Three Fundamental Functors"]
+        Ext["<b>Ext* (Assembly & Internal Stress)</b><br/>Yoneda Extensions & Loewy Tower"]
+        Tor["<b>Tor* (Collision & Manifold Strain)</b><br/>Submodular Friction Defect Δ ≥ 0"]
+        T["<b>Travel Functor 𝕋 = (𝒮, Trans)</b><br/>Lagrangian Friction Action + Unipotent Shear"]
+
+        Ext <-->|"Dual Homological Pair"| Tor
+        Ext -->|"Shear Obstructions"| T
+        Tor -->|"Elastic Strain Damping"| T
+    end
+
+    subgraph Geometry ["3. The Crystalline Tower (Operad)"]
+        Tower["<b>Stasheff Associahedra (K₀ → K_∞)</b><br/>• K₂ (Step) → K₄ (Tamari 𝒯₄) → K₅ (A₃ Roots)<br/>• Polyhedral boundary faces ∂K_n = ⋃ K_i × K_j<br/>• Linear Geodesic Diameter O(n)"]
+    end
+
+    subgraph Algorithms ["4. Algorithmic Decomposition (Lean 4 Verified)"]
+        A1["<b>Basis Discovery</b><br/>Colimit-irreducibles & Closure Monad"]
+        A2["<b>Algorithmic Friction Sieve</b><br/>Submodular Damping & Polynomial Bounds"]
+        A3["<b>Decoupling Algorithm</b><br/>Finite Loewy Colimit Reconstruction"]
+    end
+
+    L -->|"Path Functor 𝒫(L)"| T
+    L -->|"Upward Gluing"| Ext
+    L -->|"Derived Intersections"| Tor
+
+    T -->|"Trajectories"| Tower
+    Ext -->|"Cellular Faces"| Tower
+    Tor -->|"Cartan Metric Metric Strain"| Tower
+
+    Tower --> A1
+    Tower --> A2
+    Tower --> A3
+```
 
 Discrete lattice algorithms and continuous derived categories are two projections of a single, coherent, machine-verified crystalline geometry.
