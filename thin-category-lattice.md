@@ -145,16 +145,24 @@ $$
 
 The higher compositions of $\mathrm{Ext}^*$ and $\mathrm{Tor}_*$ unfold into an infinite, rigid polyhedral tower of **Stasheff Associahedra $K_n$**, corresponding to the **$A_{n-2}$ Cartan-Killing Root Systems**:
 
-| Level | Dimension | Vertices (Catalan) | Lie Root | Boundary Facets | Physical Interpretation |
+| Level | Discrete Chain Length | Vertices (Catalan) | Lie Root | Boundary Facets | Order-Theoretic & Categorical Meaning |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **$K_0 / K_1$** | $\varnothing$ | $1$ | $A_0$ | $0$ | Vacuum / Standing Still $(0, \mathbf{1})$ |
-| **$K_2$** | $0$D | $1$ | $A_1$ | $0$ | $0$D Point (Elementary 1-Step) |
-| **$K_3$** | $1$D | $2$ | $A_1$ | $2$ Vertices | $1$D Line Segment $[0, 1]$ |
-| **$K_4$** | **$2$D** | **$5$** | **$A_2$** | **$5$ Edges** | **$2$D Stasheff Pentagon (Tamari $\mathcal{T}_4$)** |
-| **$K_5$** | **$3$D** | **$14$** | **$A_3$** | **$9$ Facets (6 Pent + 3 Sq)** | **$3$D Associahedron (Cartan Strain)** |
-| **$K_6$** | **$4$D** | **$42$** | **$A_4$** | **$14$ 3D Cells** | **$4$D Spacetime Cluster Polytope** |
-| **$K_7$** | $5$D | $132$ | $A_5$ | $20$ 4D Cells | $5$D Hyper-Polytope |
-| **$K_n$** | $(n-2)$D | $C_{n-1} = \frac{1}{n}\binom{2n-2}{n-1}$ | $A_{n-2}$ | Cluster Variables | $(n-2)$D Universal $A_\infty$ Operad |
+| **$K_0$** | **0-Chain** ($\varnothing$) | $1$ | $A_0$ | $0$ | **Initial Object $\bot$** (Empty chain $\varnothing$, initial cone) |
+| **$K_1$** | **1-Chain** $\{x_0\}$ | $1$ | $A_0$ | $0$ | **Identity Morphism $\mathrm{id}_{x_0}$** (0-step path, identity transport $(0, \mathbf{I})$) |
+| **$K_2$** | **2-Chain** $\{x_0 \le x_1\}$ | $1$ | $A_1$ | $0$ | **Covering Arrow ($x_0 \lessdot x_1$)** (Single morphism / 1-step gluing $m_2$) |
+| **$K_3$** | **3-Chain** $\{x_0 \le x_1 \le x_2\}$ | $2$ | $A_1$ | $2$ Vertices | **Composed Path $[0, 1]$** (2 bracketings of composition / homotopy $m_3$) |
+| **$K_4$** | **4-Chain** | **$5$** | **$A_2$** | **$5$ Edges** | **Tamari Lattice $\mathcal{T}_4$** (5 bracketings of 4 elements / $\mathrm{Ext}^3$ Massey) |
+| **$K_5$** | **5-Chain** | **$14$** | **$A_3$** | **$9$ Facets (6 Pent + 3 Sq)** | **3D Associahedron** (14 bracketings / $A_3$ Cartan root space) |
+| **$K_6$** | 6-Chain | **$42$** | **$A_4$** | **$14$ 3D Cells** | **4D Cluster Polytope** |
+| **$K_7$** | 7-Chain | **$132$** | **$A_5$** | **$20$ 4D Cells** | **5D Hyper-Polytope** |
+| **$K_n$** | $n$-Chain | $C_{n-1} = \frac{1}{n}\binom{2n-2}{n-1}$ | $A_{n-2}$ | Cluster Variables | $(n-2)$D Universal Discrete $A_\infty$ Operad |
+
+### Base Elements, Closure Operators, and Identity Paths ($K_0 \to K_1$)
+In discrete lattice theory and category theory, the base levels $K_0$ and $K_1$ establish the algebraic foundations:
+1. **Initial Object ($K_0$):** The bottom element $\bot \in L$ (the 0-chain $\varnothing$). In the thin category $\mathcal{C}_L$, it is the initial object $\mathbf{0}$ characterized by the universal property $|\mathrm{Hom}_L(\bot, x)| = 1$ for all $x \in L$.
+2. **Identity Morphisms ($K_1$):** A 1-chain $\{x_0\}$ corresponds to the trivial 0-step path $\mathrm{id}_{x_0} : x_0 \to x_0$. Under the Travel Functor, $\mathbb{T}(\mathrm{id}_{x_0}) = (0, \mathbf{I})$ (zero friction cost, identity unipotent shear matrix).
+3. **Closure Base ($\mathrm{cl}(\bot) \ge \bot$):** For an idempotent closure operator (monad) $\mathrm{cl} : L \to L$, the reflective subcategory of closed elements has initial object $\mathrm{cl}(\bot)$. Subobjects $x \le \mathrm{cl}(\bot)$ contract onto this base in the Eilenberg–Moore category of algebras $L^{\mathrm{cl}}$.
+4. **Quiver Atom Fan-Out ($|\mathrm{Cov}^+(\bot)|$):** The upper cover cardinality $|\mathrm{Cov}^+(\bot)|$ measures the number of atoms (minimal non-zero elements) in $L$, determining the initial branching degree of the covering quiver.
 
 ### The $A_3$ Root System Correspondence on $K_5$ (Lean 4 Verified)
 The 3D Associahedron $K_5$ (governing 4-step / $\mathrm{Ext}^4$ compositions) has **exactly 9 boundary facets**, bijective to the 9 almost-positive roots of the $A_3$ Lie algebra:
