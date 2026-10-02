@@ -63,7 +63,10 @@ namespace FunctorialGeometry
 
 open CategoryTheory Limits Classical
 
-/-! ==============================================================================
+/-! ##############################################################################
+    PART I: CATEGORICAL FOUNDATIONS AND ORDER DEFECTS
+    ##############################################################################
+
     SECTION 1: POSETS AND SUBOBJECT LATTICES AS THIN CATEGORIES
     ============================================================================== -/
 
@@ -235,7 +238,10 @@ theorem tor0_universal {A B C : L} (hCA : C ≤ A) (hCB : C ≤ B) :
 
 end TorFriction
 
-/-! ==============================================================================
+/-! ##############################################################################
+    PART II: TRANSFINITE FILTRATIONS AND SUBOBJECT RECONSTRUCTION
+    ##############################################################################
+
     SECTION 3: THE TRAVEL EXPERIENCE MONOID
     ============================================================================== -/
 
@@ -834,11 +840,50 @@ theorem sieveOutput_is_lub (x : L) : sieveOutput embed ≤ x ↔ ∀ (o : Ordina
 
 end BasisDiscovery
 
-/-! ==============================================================================
+/-! ##############################################################################
+    PART III: HIGHER ASSOCIATIVITY, ASSOCIAHEDRA, AND ROOT GEOMETRY
+    ##############################################################################
+
     SECTION 5: HIGHER ASSOCIATIVITY AND THE A₃ ≅ K₅ DUALITY
     ============================================================================== -/
 
 section AssociahedraDuality
+
+/-- The 1 parenthesization of 2 letters (vertex of Tamari 𝒯₂ / Stasheff K₂ = 0D point). -/
+inductive Tree2 : Type
+  | t1 : Tree2 -- (ab)
+  deriving DecidableEq, Repr
+
+instance : Fintype Tree2 where
+  elems := {Tree2.t1}
+  complete := by intro x; cases x; simp
+
+theorem tamari2_card : (Fintype.elems : Finset Tree2).card = 1 := rfl
+
+/-- The 2 parenthesizations of 3 letters (vertices of Tamari 𝒯₃ / Stasheff K₃ = 1D interval). -/
+inductive Tree3 : Type
+  | t1 : Tree3 -- ((ab)c)
+  | t2 : Tree3 -- (a(bc))
+  deriving DecidableEq, Repr
+
+def tamari3_le : Tree3 → Tree3 → Prop
+  | Tree3.t1, _ => True
+  | Tree3.t2, Tree3.t2 => True
+  | _, _ => False
+
+instance : LE Tree3 where le := tamari3_le
+
+instance : PartialOrder Tree3 where
+  le := tamari3_le
+  le_refl := by intro x; cases x <;> trivial
+  le_trans := by intro a b c; cases a <;> cases b <;> cases c <;> simp [tamari3_le]
+  le_antisymm := by intro a b; cases a <;> cases b <;> simp [tamari3_le]
+
+instance : Fintype Tree3 where
+  elems := {Tree3.t1, Tree3.t2}
+  complete := by intro x; cases x <;> simp
+
+theorem tamari3_card : (Fintype.elems : Finset Tree3).card = 2 := rfl
 
 /-- The 5 parenthesizations of 4 letters (vertices of Tamari 𝒯₄ / Stasheff K₄). -/
 inductive Tree4 : Type

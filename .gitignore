@@ -10,3 +10,5 @@ build/
 # Wayfinder
 *wayfinder*
 node_modules/
+
+.pi/

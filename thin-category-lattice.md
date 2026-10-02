@@ -22,17 +22,22 @@ All definitions, constructions, and theorems are formally machine-checked in Lea
 
 Partially ordered sets $(L, \le)$ and subobject lattices $\mathrm{Sub}(X)$ are foundational objects across algebra, order theory, and representation theory. While lattices are classically studied through algebraic binary operations $(\wedge, \vee)$, many of their structural features—universal bounds, chain compositions, submodular defects, transfinite filtrations, and higher associativity—are naturally expressed through category theory and geometric combinatorics.
 
-This paper presents a formal categorical and geometric study of subobject lattices, organized around five key components:
+This paper presents a formal categorical and geometric study of subobject lattices, structured across three major mathematical stages:
 
-1. **Thin Categories and Universal Properties (§2):** We formulate a poset as a thin category $\mathcal{C}_L$, translating order-theoretic meets, joins, and closure operators into categorical products, coproducts, and fully coherent idempotent monads (`CategoryTheory.Monad`).
-2. **Submodular Defects and Modularity (§3):** We analyze submodular rank functions $\mathrm{rk} : L \to \mathbb{Z}$ via their defect $\Delta(A, B) = \mathrm{rk}(A) + \mathrm{rk}(B) - \mathrm{rk}(A \vee B) - \mathrm{rk}(A \wedge B)$, proving that non-negativity $\Delta \ge 0$ characterizes submodularity and that $\Delta \equiv 0$ characterizes modular valuations. We observe that in thin categories, higher derived functors vanish, and $\mathrm{Tor}_0$ reduces to the categorical meet.
-3. **Path Valuations and the Travel Monoid (§4):** On directed step sequences (covering chains in quivers), we define a path valuation taking values in $(\mathbb{N}, +) \times \mathbf{U}_2(\mathbb{Z})$, pairing traversal length with unipotent shear cocycles in $\mathbf{U}_2(\mathbb{Z}) \cong (\mathbb{Z}, +)$, and prove functorial concatenation and strict growth.
-4. **Transfinite Cellular Filtrations and Basis Discovery (§5):** To handle colimits without size collapse (Freyd's Theorem), we formulate abelian categories with universe stratification $\mathcal{A} : \mathrm{Type}(u+1)$ with $\mathrm{Type}(u)$ morphisms. For semi-Artinian objects, we construct transfinite cellular filtrations (fine composition series refining the Loewy series) where each step is a short exact sequence $0 \to C_\alpha \to C_{\alpha+1} \to a \to 0$ attaching a single simple cell. We prove ordinal stabilization at cellular length $\Omega$, top reconstruction, and vanishing residual colimits on the filtered interval category $\mathrm{OrdinalInterval}(\Omega)$.
-5. **Polyhedral Duality and the $A_n$ Cartan Metric (§6–§7):** We construct a machine-checked, two-sided constructive equivalence $\mathrm{Root}_{A_n} \simeq \mathrm{Facet}_{K_{n+2}} \simeq \mathrm{Diagonal}(n)$ between almost-positive roots of type $A_n$, boundary facets of Stasheff associahedra $K_{n+2}$, and polygon diagonals, formalizing the classical cluster/associahedron correspondence (Fomin–Zelevinsky, Stasheff). For $n=3$, we mechanically classify roots into 6 pentagons and 3 squares, proving that the $A_n$ Cartan quadratic form acts as a discrete Dirichlet energy on $\mathbb{Z}^n$ with positive definiteness and root norm invariance $\langle v, v \rangle = 2$.
+- **Stage I: Categorical Foundations & Order Defects (Part I, §§2–3):**
+  We formulate posets as thin categories $\mathcal{C}_L$, translating meets and joins into universal categorical products and coproducts, and closure operators into fully coherent idempotent monads (`CategoryTheory.Monad`). We analyze submodular rank functions $\mathrm{rk} : L \to \mathbb{Z}$ via their defect $\Delta(A, B) = \mathrm{rk}(A) + \mathrm{rk}(B) - \mathrm{rk}(A \vee B) - \mathrm{rk}(A \wedge B)$, showing non-negativity $\Delta \ge 0$ characterizes submodularity and $\Delta \equiv 0$ characterizes modular valuations, with zero-order interaction $\mathrm{Tor}_0(A, B)$ realizing the categorical meet.
+
+- **Stage II: Transfinite Filtrations & Cellular Reconstruction (Part II, §§4–5):**
+  On covering quivers, we define functorial path valuations into the monoid $(\mathbb{N}, +) \times \mathbf{U}_2(\mathbb{Z})$ tracking path action alongside integer shear cocycles. In universe-stratified abelian categories ($\mathcal{A} : \mathrm{Type}(u+1)$ with $\mathrm{Type}(u)$ morphisms, avoiding Freyd's size collapse), we build fine transfinite cellular filtrations for semi-Artinian objects attaching single simple cells via short exact sequences $0 \to C_\alpha \to C_{\alpha+1} \to a \to 0$. We prove ordinal stabilization at length $\Omega$, top reconstruction $C_\Omega = \top$, and vanishing residual cokernel colimits over $\mathrm{OrdinalInterval}(\Omega)$.
+
+- **Stage III: Associahedra, Higher Associativity & Root Geometry (Part III, §§6–7):**
+  We formalize the Stasheff associahedra $K_{n+2}$ and establish a machine-checked, two-sided constructive equivalence $\mathrm{Root}_{A_n} \simeq \mathrm{Facet}_{K_{n+2}} \simeq \mathrm{Diagonal}(n)$ between almost-positive roots, associahedron facets, and polygon diagonals. For $n=3$, we mechanically classify roots into 6 pentagons and 3 squares by cyclic chord length. Finally, we formalize the $A_n$ Cartan form as a discrete 1D Dirichlet energy on $\mathbb{Z}^n$ with Dirichlet boundary conditions, proving positive definiteness and intrinsic norm invariance $\langle v, v \rangle = 2$.
 
 All mathematical statements are machine-verified in Lean 4 without `sorry` placeholders, relying exclusively on Lean's core foundational axioms (`propext`, `Classical.choice`, `Quot.sound`).
 
 ---
+
+# Part I: Categorical Foundations and Order Defects
 
 ## 2. Posets as Thin Categories
 
@@ -105,6 +110,8 @@ The submodular defect $\Delta(A, B)$ can thus be interpreted as measuring the al
 
 ---
 
+# Part II: Transfinite Filtrations and Subobject Reconstruction
+
 ## 4. Path Valuations on Step Sequences and Covering Quivers
 
 ### 4.1 Step Sequences and the Travel Monoid
@@ -169,6 +176,8 @@ is well-defined for all $x < \top$. It satisfies the **novelty property**: $e(\p
 
 ---
 
+# Part III: Higher Associativity, Associahedra, and Root Geometry
+
 ## 6. Higher Associativity Polytopes and the $A_n \cong K_{n+2}$ Duality
 
 ### 6.1 The Stasheff Associahedra Family
@@ -177,13 +186,21 @@ Higher compositions of arrows in category theory assemble into the Stasheff asso
 
 | Polytope | Input Objects | Composable Arrows | Bracketings ($C_{n-1}$) | Dimension | Almost-Positive Roots | Boundary Facets | Categorical Meaning |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **$K_0$** | $1$ ($x_0$) | $0$ (nullary) | — | $\emptyset$ (empty) | — | $0$ | **Nullary / Unit Object** (ground state) |
+| **$K_1$** | $2$ ($x_0, x_1$) | $1$ ($x_0 \xrightarrow{f} x_1$) | $C_0 = 1$ | $-1$ (degenerate) | — | $0$ | **Unary Arrow** (identity $\mathbb{1}_X$) |
+| **$K_2$** | $3$ ($x_0, x_1, x_2$) | $2$ ($x_0 \xrightarrow{f} x_1 \xrightarrow{g} x_2$) | $C_1 = 1$ | 0D (point) | $A_0$ ($0$ roots) | $0$ | **Binary Composition** ($(gf)$) |
 | **$K_3$** | $4$ ($x_0, \dots, x_3$) | $3$ ($x_0 \xrightarrow{f} x_1 \xrightarrow{g} x_2 \xrightarrow{h} x_3$) | $C_2 = 2$ | 1D (interval) | $A_1$ ($2$ roots) | $2$ Points | **Ternary Associativity** ($h(gf) \leftrightarrow (hg)f$) |
 | **$K_4$** | $5$ ($x_0, \dots, x_4$) | $4$ (4 arrows) | $C_3 = 5$ | 2D (pentagon) | $A_2$ ($5$ roots) | $5$ Edges | **Stasheff Pentagon** (Tamari $\mathcal{T}_4$) |
 | **$K_5$** | $6$ ($x_0, \dots, x_5$) | $5$ (5 arrows) | $C_4 = 14$ | 3D (polyhedron) | $A_3$ ($9$ roots) | **$9$ Facets (6 Pent + 3 Sq)** | **3D Associahedron** ($K_5 \leftrightarrow A_3$) |
 | **$K_6$** | $7$ ($x_0, \dots, x_6$) | $6$ (6 arrows) | $C_5 = 42$ | 4D (polytope) | $A_4$ ($14$ roots) | $14$ Facets | **4D Associahedron** |
 | **$K_{n+2}$** | $n+3$ objects | $n+2$ arrows | $C_{n+1}$ | $n$-dimensional | $A_n$ ($\frac{n(n+3)}{2}$ roots) | $\frac{n(n+3)}{2}$ Facets | **Higher $n$-Associativity** |
 
-In Lean 4, the 5 parenthesizations of 4 letters (`Tree4`) form the Tamari poset $\mathcal{T}_4$ under rotation ordering (`tamari_le`), mechanically verified to have Catalan cardinality $C_3 = 5$ (`tamari4_card`).
+The lower polytopes $K_0, K_1, K_2$ form the categorical bedrock of the hierarchy:
+- **$K_0$ (Ground State / 0-cells):** Encodes nullary operations and ground objects (in lattices, the zero/bottom element $\bot$).
+- **$K_1$ (Unary Morphisms / Rigidity):** Parametrizes 1-ary arrows and differentials. In thin categories, $K_1$ enforces canonical rigidity: parallel arrows collapse into subsingletons and every endomorphism is the identity (`thin_end_is_id`).
+- **$K_2$ (Binary Operations / Atomic Simplex):** Parametrizes binary composition $g \circ f$ and lattice operations $\wedge, \vee$. As a 0D point ($C_1 = 1$), composition is strictly single-valued. In root/cluster geometry ($n=0$, $A_0$), $K_2$ represents the base triangle ($3$-gon) with zero diagonals, the fundamental 2-simplex from which all triangulations are generated.
+
+In Lean 4, parenthesizations for $K_2$ (`Tree2`, $C_1 = 1$), $K_3$ (`Tree3`, $C_2 = 2$), and $K_4$ (`Tree4`, $C_3 = 5$) are formalized constructively, with Catalan cardinalities machine-checked (`tamari2_card`, `tamari3_card`, `tamari4_card`).
 
 ### 6.2 Universal $N$-Dimensional Associahedron-Root Equivalence ($K_{n+2} \cong A_n$)
 
@@ -210,8 +227,8 @@ For $n=3$, the associahedron $K_5$ is a 3-dimensional polyhedron with 14 vertice
 
 **Theorem 6.3 (A₃ Root Classification by Cyclic Length).**  
 *The constructive equivalence $\Phi_{\ge -1}(A_3) \simeq \mathrm{Facets}(K_5)$ (`rootA3_facetK5_equiv`) classifies the 9 roots into two distinct geometric orbits:*
-1. *Pentagonal Facets (6 Roots):* The 6 roots $\{\alpha_1, \alpha_2, \alpha_3, \alpha_{12}, \alpha_{23}, -\alpha_2\}$ map to chords of cyclic length $2$ (`rootA3_cyclic_length_pentagon`), corresponding to pentagonal boundary faces of $K_5$.
-2. *Square Facets (3 Roots):* The 3 roots $\{\alpha_{123}, -\alpha_1, -\alpha_3\}$ map to chords of cyclic length $3$ (`rootA3_cyclic_length_square`), corresponding to square boundary faces of $K_5$.
+1. *Pentagonal Facets (6 Roots):* The 6 roots $\{\alpha_1, \alpha_2, \alpha_3, \alpha_{123}, -\alpha_1, -\alpha_3\}$ map to chords of cyclic length $2$ (`rootA3_cyclic_length_pentagon`), corresponding to pentagonal boundary faces of $K_5$.
+2. *Square Facets (3 Roots):* The 3 roots $\{\alpha_{12}, \alpha_{23}, -\alpha_2\}$ map to chords of cyclic length $3$ (`rootA3_cyclic_length_square`), corresponding to square boundary faces of $K_5$.
 
 ---
 
