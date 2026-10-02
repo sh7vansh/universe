@@ -11,7 +11,7 @@
 We study the algebraic, categorical, and geometric structure of partially ordered sets and subobject lattices. By formulating a poset $(L, \le)$ as a thin category, we develop a unified framework spanning three core areas:
 
 1. **Order and Homological Defects:** We realize meets and joins as universal categorical products and coproducts, and characterize submodular rank defects $\Delta(A, B) \ge 0$, showing that $\Delta$ vanishes identically if and only if modularity holds.
-2. **Filtrations and Path Valuations:** On covering chains, we define a path valuation into the monoid $(\mathbb{N}, +) \times \mathbf{U}_2(\mathbb{Z})$ combining traversal cost with unipotent shear transport. For semi-Artinian objects in abelian categories, we construct transfinite Loewy filtrations and prove finite/ordinal stabilization, complete object reconstruction, and the vanishing of directed residual colimits.
+2. **Filtrations and Path Valuations:** On covering chains, we define a path valuation into the monoid $(\mathbb{N}, +) \times \mathbf{U}_2(\mathbb{Z})$ combining traversal cost with unipotent shear transport. For semi-Artinian objects in abelian categories, we construct transfinite cellular filtrations and prove finite/ordinal stabilization, complete object reconstruction, and the vanishing of directed residual colimits.
 3. **Polyhedral and Root Geometry:** We analyze morphism compositions through the Tamari lattice $\mathcal{T}_4$ and construct an explicit bijection between the 9 boundary facets of the 3D Stasheff associahedron $K_5$ and the 9 almost-positive roots $\Phi_{\ge -1}(A_3)$, verified under the positive-definite $A_3$ Cartan metric.
 
 All definitions, constructions, and theorems are formally machine-checked in Lean 4 with zero `sorry` placeholders and no non-standard axioms.
@@ -27,7 +27,7 @@ This paper presents a formal categorical and geometric study of subobject lattic
 1. **Thin Categories and Universal Properties (§2):** We formulate a poset as a thin category $\mathcal{C}_L$, translating order-theoretic meets, joins, and closure operators into categorical products, coproducts, and idempotent monads.
 2. **Submodular Defects and Modularity (§3):** We analyze submodular rank functions $\mathrm{rk} : L \to \mathbb{Z}$ via their defect $\Delta(A, B) = \mathrm{rk}(A) + \mathrm{rk}(B) - \mathrm{rk}(A \vee B) - \mathrm{rk}(A \wedge B)$, proving that non-negativity $\Delta \ge 0$ holds universally and that $\Delta = 0$ characterizes lattice modularity.
 3. **Path Valuations on Covering Chains (§4):** We equip covering paths with valuations taking values in the monoid $(\mathbb{N}, +) \times \mathbf{U}_2(\mathbb{Z})$, pairing strictly increasing step costs with upper-triangular unipotent shear transport.
-4. **Transfinite Loewy Filtrations (§5):** In well-powered abelian categories with colimits, we construct transfinite Loewy sequences for semi-Artinian objects, proving ordinal stabilization at length $\Omega$, complete object reconstruction ($C_\Omega = \top$), and the vanishing of the directed colimit of residual cokernels.
+4. **Transfinite Cellular Filtrations (§5):** In well-powered abelian categories with colimits, we construct transfinite cellular sequences for semi-Artinian objects, proving ordinal stabilization at length $\Omega$, complete object reconstruction ($C_\Omega = \top$), and the vanishing of the directed colimit of residual cokernels.
 5. **Associativity Posets and $A_3 \leftrightarrow K_5$ Root Duality (§6–§7):** We analyze higher parenthesizations through the Tamari lattice $\mathcal{T}_4$ (cardinality $C_3 = 5$) and establish an explicit constructive bijection between the 9 boundary facets of the 3D Stasheff associahedron $K_5$ and the 9 almost-positive roots $\Phi_{\ge -1}(A_3)$, verified under the positive-definite $A_3$ Cartan metric.
 
 All definitions, constructions, and theorems in this paper are machine-checked in Lean 4 without unproven axioms or `sorry` placeholders.
@@ -118,7 +118,7 @@ For a locally finite lattice $(L, \le)$, let $\mathcal{Q}_L$ be its covering qui
 
 The Travel Functor $\mathbb{T} : \mathcal{P}(\mathcal{Q}_L) \to (\mathbb{N}, +) \times \mathbf{U}_2(\mathbb{Z})$ assigns to each covering path $\gamma = (x_0 \lessdot x_1 \lessdot \dots \lessdot x_k)$ two independent accumulated invariants:
 1. **Search Action $\mathcal{S}(\gamma) \in (\mathbb{N}, +)$:** Cumulative step costs $\sum_{i=0}^{k-1} c(x_i \lessdot x_{i+1})$.
-2. **Unipotent Shear Transport $\mathbf{Trans}(\gamma) \in \mathbf{U}_2(\mathbb{Z})$:** The 2D upper-triangular matrix tracking extension classes:
+2. **Unipotent Shear Transport $\mathbf{Trans}(\gamma) \in \mathbf{U}_2(\mathbb{Z})$:** The 2D upper-triangular matrix tracking extension classes. Because $\mathbf{U}_2(\mathbb{Z}) \cong (\mathbb{Z}, +)$, this matrix group acts simply as integer addition:
    $$\mathbf{Trans}(\gamma) = \prod_{i=0}^{k-1} \begin{pmatrix} 1 & e(x_i \lessdot x_{i+1}) \\ 0 & 1 \end{pmatrix} = \begin{pmatrix} 1 & \sum e_i \\ 0 & 1 \end{pmatrix}$$
 
 ### 4.2 Monoid Structure and Strict Growth
@@ -134,18 +134,18 @@ $$\mathbf{1} = (0, \mathbf{I}), \qquad (S_1, T_1) \cdot (S_2, T_2) = (S_1 + S_2,
 
 ---
 
-## 5. Transfinite Loewy Filtrations and Basis Discovery
+## 5. Transfinite Cellular Filtrations and Basis Discovery
 
-### 5.1 The Loewy Length Existence Theorem
+### 5.1 The Cellular Length Existence Theorem
 
 Let $\mathcal{A}$ be a well-powered abelian category with colimits. An object $U_0 \in \mathcal{A}$ is *semi-Artinian* if for every proper subobject $C < U_0$, the residual quotient $\mathrm{coker}(C \hookrightarrow U_0)$ contains a simple subobject.
 
-**Definition 5.1 (Cellular Loewy Sequence).** The cellular Loewy sequence is constructed transfinitely:
+**Definition 5.1 (Transfinite Cellular Sequence).** The cellular sequence is constructed transfinitely:
 - **Base Case:** $C_0 = \bot$.
 - **Successor Step:** $C_{\alpha+1} = C_\alpha$ if $\mathrm{coker}(C_\alpha \hookrightarrow U_0) = 0$; otherwise, choose a simple subobject $a \hookrightarrow \mathrm{coker}(C_\alpha)$ and pull it back to form $C_{\alpha+1} = \mathrm{pb}(a \to \mathrm{coker}(C_\alpha))$.
 - **Limit Ordinal:** $C_\lambda = \sup_{\beta < \lambda} C_\beta$.
 
-**Theorem 5.2 (Loewy Length Existence and Reconstruction).**  
+**Theorem 5.2 (Cellular Length Existence and Reconstruction).**  
 *Because the subobject lattice $\mathrm{Sub}(U_0)$ is small, the strictly increasing transfinite sequence $C_\alpha$ must stabilize. Consequently:*
 1. *There exists an ordinal $\Omega$ such that $C_\Omega = \top = U_0$.*
 2. *The inclusion morphism $C_\Omega \hookrightarrow U_0$ is an isomorphism.*
@@ -203,9 +203,9 @@ In Lie theory, the $A_3$ root system contains 6 positive roots $\Phi^+(A_3)$ and
 - **Negative Simple Roots (3):** $-\alpha_1, -\alpha_2, -\alpha_3$.
 
 **Corollary 6.2 ($A_3 \leftrightarrow K_5$ Specialization).**  
-*The constructive equivalence $\mathrm{Root}_{A_3} \simeq \mathrm{Facet}_{K_5}$ maps the 6 positive roots bijectively to the 6 pentagons and the 3 negative simple roots bijectively to the 3 squares:*
-$$\alpha_1 \mapsto P_0, \; \alpha_2 \mapsto P_1, \; \alpha_3 \mapsto P_2, \; \alpha_{12} \mapsto P_3, \; \alpha_{23} \mapsto P_4, \; \alpha_{123} \mapsto P_5$$
-$$-\alpha_1 \mapsto S_0, \; -\alpha_2 \mapsto S_1, \; -\alpha_3 \mapsto S_2$$
+*The constructive equivalence $\mathrm{Root}_{A_3} \simeq \mathrm{Facet}_{K_5}$ maps roots to facets based on the length of the corresponding polygon diagonal in the hexagon. Diagonals of length 2 (which cut off a triangle) map to the 6 pentagons, and diagonals of length 3 (which bisect the hexagon) map to the 3 squares. The 9 roots distribute across these geometric classes as follows:*
+- **Pentagons (Length 2):** $-\alpha_1, -\alpha_3, \alpha_1, \alpha_2, \alpha_3, \alpha_{123}$
+- **Squares (Length 3):** $-\alpha_2, \alpha_{12}, \alpha_{23}$
 
 ---
 
@@ -251,9 +251,9 @@ The entirety of the mathematical development presented in Sections 2–7 is form
 The formal development follows three structural principles:
 1. **Categorical Integration with Mathlib:** Rather than using ad-hoc posetal order structures, thin categories and subobject lattices are expressed directly through Mathlib's native category theory library (`CategoryTheory.Subobject`, `CategoryTheory.Abelian`, and `CategoryTheory.Limits`).
 2. **Constructive Computational Core:** Discrete and algebraic structures—including the travel monoid $(\mathbb{N}, +) \times \mathbf{U}_2(\mathbb{Z})$, the Tamari poset $\mathcal{T}_4$, the general $A_n \leftrightarrow K_{n+2}$ equivalence, the $A_3 \leftrightarrow K_5$ root-facet bijection, and the Cartan quadratic forms—are defined constructively with `DecidableEq` instances and verified by computation (`rfl`, `ring`, `omega`).
-3. **Controlled Non-Constructivity:** Classical reasoning (`Classical.choice`) is strictly quarantined to points where the ambient mathematics fundamentally demands it: selecting simple subobjects in non-constructive abelian categories (Theorem 5.2) and invoking well-founded choice over infinite generator candidate sets (Section 5.2).
+3. **Controlled Non-Constructivity:** Classical reasoning (`Classical.choice`) is strictly applied globally via `open Classical` to ease reasoning: selecting simple subobjects in non-constructive abelian categories (Theorem 5.2) and invoking well-founded choice over infinite generator candidate sets (Section 5.2).
 
-An automated axiom audit via `#print axioms` confirms that the entire formalization relies exclusively on Lean's core foundational axioms (`Classical.choice`, `Quot.sound`, `propext`), containing zero unproven axioms and zero `sorry` placeholders.
+The appended `#print axioms` output confirms that the entire formalization relies exclusively on Lean's core foundational axioms (`Classical.choice`, `Quot.sound`, `propext`), containing zero unproven axioms and zero `sorry` placeholders.
 
 ### 8.2 Paper-to-Code Correspondence Matrix
 

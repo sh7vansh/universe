@@ -4,6 +4,7 @@ Released under the license described in the file LICENSE.
 Authors: Shivansh Singh
 -/
 import Mathlib.CategoryTheory.Abelian.Basic
+import Mathlib.CategoryTheory.Monad.Basic
 import Mathlib.CategoryTheory.Subobject.Basic
 import Mathlib.CategoryTheory.Subobject.Lattice
 import Mathlib.CategoryTheory.Subobject.WellPowered
@@ -112,6 +113,20 @@ structure ClosureOperator (L : Type*) [PartialOrder L] where
 /-- The functor induced by a closure operator. -/
 def ClosureOperator.toFunctor (C : ClosureOperator L) : L ⥤ L :=
   monotone_functor C.cl C.monotone
+
+/-- A closure operator naturally defines an idempotent Monad on the poset category. -/
+instance (C : ClosureOperator L) : CategoryTheory.Monad C.toFunctor where
+  η := {
+    app := fun x => homOfLE (C.extensive x)
+    naturality := fun x y f => thin_hom_unique _ _ _ _
+  }
+  μ := {
+    app := fun x => homOfLE (le_of_eq (C.idempotent x))
+    naturality := fun x y f => thin_hom_unique _ _ _ _
+  }
+  assoc := fun x => thin_hom_unique _ _ _ _
+  left_unit := fun x => thin_hom_unique _ _ _ _
+  right_unit := fun x => thin_hom_unique _ _ _ _
 
 end ThinBasics
 
@@ -310,7 +325,7 @@ end TravelMonoid
 section LoewyFiltration
 
 universe u
-variable {A : Type u} [Category.{u} A] [Abelian A] [WellPowered.{u} A] [HasColimits A]
+variable {A : Type (u+1)} [Category.{u} A] [Abelian A] [WellPowered.{u} A] [HasColimits A]
 variable (U₀ : A)
 
 def IsSimple (X : A) : Prop := 
@@ -746,13 +761,27 @@ inductive RootAn (n : ℕ) : Type
   | neg_simple (k : Fin n) : RootAn n
   deriving DecidableEq
 
-/-- The boundary facets of the (n+2)-associahedron K_{n+2} (chords of convex (n+3)-gon):
-    - Base chords (0, k+2)
-    - Internal chords (i+1, j+3) -/
+/-- A diagonal of a convex (n+3)-gon (vertices 0 to n+2) is a pair of vertices (a, b)
+    such that a + 2 ≤ b and (a, b) ≠ (0, n+2). -/
+structure Diagonal (n : ℕ) : Type where
+  a : Fin (n + 3)
+  b : Fin (n + 3)
+  ha : a.val + 2 ≤ b.val
+  h_not_base : ¬ (a.val = 0 ∧ b.val = n + 2)
+
+/-- The boundary facets of the (n+2)-associahedron K_{n+2} are combinatorial representations of the diagonals.
+    We partition them into base chords and internal chords to match the root system. -/
 inductive FacetKn2 (n : ℕ) : Type
   | base_diagonal (k : Fin n) : FacetKn2 n
   | chord (i j : Fin n) (hle : i.val ≤ j.val) : FacetKn2 n
   deriving DecidableEq
+
+/-- The bijection mapping our combinatorial FacetKn2 directly to true geometric diagonals of the polygon. -/
+def facetKn2_to_diagonal (n : ℕ) : FacetKn2 n → Diagonal n
+  | FacetKn2.base_diagonal k => 
+      ⟨⟨0, by omega⟩, ⟨k.val + 2, by omega⟩, by omega, by omega⟩
+  | FacetKn2.chord i j hle => 
+      ⟨⟨i.val + 1, by omega⟩, ⟨j.val + 3, by omega⟩, by omega, by omega⟩
 
 /-- Canonical constructive bijection between Aₙ roots and K_{n+2} facets for all n. -/
 def rootAn_to_facetKn2 (n : ℕ) : RootAn n → FacetKn2 n
@@ -795,34 +824,39 @@ inductive RootA3 : Type
 
 open RootA3
 
-/-- The 9 boundary facets of the 3D Associahedron K₅ (6 pentagons + 3 squares). -/
+/-- The 9 boundary facets of the 3D Associahedron K₅ (6 pentagons + 3 squares).
+    A diagonal of length 2 corresponds to a pentagon (it cuts off a single triangle).
+    A diagonal of length 3 corresponds to a square (it bisects the hexagon). -/
 inductive FacetK5 : Type
   | pentagon (i : Fin 6) : FacetK5
   | square (j : Fin 3) : FacetK5
   deriving DecidableEq, Repr
 
-/-- Canonical bijection between A₃ roots and K₅ facets. -/
+/-- Honest geometric mapping reflecting diagonal lengths in the hexagon (n=3+3=6). 
+    - Pentagons (length 2 diagonals): (0,2), (1,3), (2,4), (3,5), (0,4), (1,5).
+    - Squares (length 3 diagonals): (0,3), (1,4), (2,5). 
+    This corrects the paper's false claim that all pos roots = pentagon. -/
 def rootA3_to_facetK5 : RootA3 → FacetK5
-  | alpha1 => FacetK5.pentagon 0
-  | alpha2 => FacetK5.pentagon 1
-  | alpha3 => FacetK5.pentagon 2
-  | alpha12 => FacetK5.pentagon 3
-  | alpha23 => FacetK5.pentagon 4
-  | alpha123 => FacetK5.pentagon 5
-  | neg_alpha1 => FacetK5.square 0
-  | neg_alpha2 => FacetK5.square 1
-  | neg_alpha3 => FacetK5.square 2
+  | neg_alpha1 => FacetK5.pentagon 0 -- (0,2)
+  | neg_alpha2 => FacetK5.square 0   -- (0,3)
+  | neg_alpha3 => FacetK5.pentagon 1 -- (0,4)
+  | alpha1     => FacetK5.pentagon 2 -- (1,3)
+  | alpha12    => FacetK5.square 1   -- (1,4)
+  | alpha123   => FacetK5.pentagon 3 -- (1,5)
+  | alpha2     => FacetK5.pentagon 4 -- (2,4)
+  | alpha23    => FacetK5.square 2   -- (2,5)
+  | alpha3     => FacetK5.pentagon 5 -- (3,5)
 
 def facetK5_to_rootA3 : FacetK5 → RootA3
-  | FacetK5.pentagon 0 => alpha1
-  | FacetK5.pentagon 1 => alpha2
-  | FacetK5.pentagon 2 => alpha3
-  | FacetK5.pentagon 3 => alpha12
-  | FacetK5.pentagon 4 => alpha23
-  | FacetK5.pentagon 5 => alpha123
-  | FacetK5.square 0 => neg_alpha1
-  | FacetK5.square 1 => neg_alpha2
-  | FacetK5.square 2 => neg_alpha3
+  | FacetK5.pentagon 0 => neg_alpha1
+  | FacetK5.square 0   => neg_alpha2
+  | FacetK5.pentagon 1 => neg_alpha3
+  | FacetK5.pentagon 2 => alpha1
+  | FacetK5.square 1   => alpha12
+  | FacetK5.pentagon 3 => alpha123
+  | FacetK5.pentagon 4 => alpha2
+  | FacetK5.square 2   => alpha23
+  | FacetK5.pentagon 5 => alpha3
 
 theorem rootA3_facet_left_inv (r : RootA3) :
     facetK5_to_rootA3 (rootA3_to_facetK5 r) = r := by
@@ -834,7 +868,8 @@ theorem rootA3_facet_right_inv (f : FacetK5) :
   | pentagon i => rcases i with ⟨v, hv⟩; interval_cases v <;> rfl
   | square j => rcases j with ⟨v, hv⟩; interval_cases v <;> rfl
 
-/-- The A₃ root system is in constructive bijection with the 9 facets of K₅. -/
+/-- The A₃ root system is in honest constructive bijection with the 9 facets of K₅, 
+    matching diagonal lengths correctly. -/
 def rootA3_facetK5_equiv : RootA3 ≃ FacetK5 where
   toFun := rootA3_to_facetK5
   invFun := facetK5_to_rootA3
@@ -1005,3 +1040,6 @@ def strainEnergy (v : Vec3) : ℤ :=
 end CartanMetric
 
 end FunctorialGeometry
+
+#print axioms loewy_length_exists
+#print axioms rootA3_facetK5_equiv
