@@ -285,14 +285,14 @@ instance : Mul TravelExperience := ⟨comp⟩
 @[simp] theorem comp_transport (t1 t2 : TravelExperience) :
     (t1 * t2).transport = t1.transport * t2.transport := rfl
 
-theorem comp_assoc (a b c : TravelExperience) : (a * b) * c = a * (b * c) := by
+theorem mul_assoc (a b c : TravelExperience) : (a * b) * c = a * (b * c) := by
   rcases a with ⟨a1, ⟨a2⟩⟩; rcases b with ⟨b1, ⟨b2⟩⟩; rcases c with ⟨c1, ⟨c2⟩⟩
   ext <;> [change (a1 + b1) + c1 = a1 + (b1 + c1); change (a2 + b2) + c2 = a2 + (b2 + c2)] <;> omega
 
-theorem one_comp (a : TravelExperience) : 1 * a = a := by
+theorem one_mul (a : TravelExperience) : 1 * a = a := by
   rcases a with ⟨a1, ⟨a2⟩⟩; ext <;> [change 0 + a1 = a1; change 0 + a2 = a2] <;> omega
 
-theorem comp_one (a : TravelExperience) : a * 1 = a := by
+theorem mul_one (a : TravelExperience) : a * 1 = a := by
   rcases a with ⟨a1, ⟨a2⟩⟩; ext <;> [change a1 + 0 = a1; change a2 + 0 = a2] <;> omega
 
 end TravelExperience
@@ -318,6 +318,28 @@ def pathExperience (p : List (LatticeStep L)) : TravelExperience :=
   p.foldl (fun acc s => acc * stepExperience s) 1
 
 @[simp] theorem pathExperience_nil : pathExperience ([] : List (LatticeStep L)) = 1 := rfl
+
+lemma foldl_stepExperience (l : List (LatticeStep L)) (init : TravelExperience) :
+    l.foldl (fun acc s => acc * stepExperience s) init = init * pathExperience l := by
+  induction l generalizing init with
+  | nil =>
+    dsimp [pathExperience]
+    rw [TravelExperience.mul_one]
+  | cons head tail ih =>
+    change (tail.foldl (fun acc s => acc * stepExperience s) (init * stepExperience head)) =
+      init * (tail.foldl (fun acc s => acc * stepExperience s) (1 * stepExperience head))
+    rw [ih (init * stepExperience head)]
+    rw [ih (1 * stepExperience head)]
+    rw [TravelExperience.one_mul]
+    rw [TravelExperience.mul_assoc]
+
+/-- Path concatenation is homomorphic under path valuation. -/
+theorem pathExperience_append (p q : List (LatticeStep L)) :
+    pathExperience (p ++ q) = pathExperience p * pathExperience q := by
+  dsimp [pathExperience]
+  rw [List.foldl_append]
+  rw [foldl_stepExperience]
+  rfl
 
 /-- Non-trivial steps strictly increase accumulated action. -/
 theorem action_strictly_increases (t : TravelExperience) (s : LatticeStep L) (hcost : 0 < s.friction_cost) :
@@ -1212,6 +1234,23 @@ theorem coupled_strain_alpha12 :
       cartanForm alpha2 alpha2 +
       2 * cartanForm alpha1 alpha2 := rfl
 
+/-- Embedding of RootA3 into the ℤ³ root space Vec3. -/
+def rootA3_to_vec3 : RootA3 → Vec3
+  | RootA3.alpha1     => alpha1
+  | RootA3.alpha2     => alpha2
+  | RootA3.alpha3     => alpha3
+  | RootA3.alpha12    => alpha12
+  | RootA3.alpha23    => alpha23
+  | RootA3.alpha123   => alpha123
+  | RootA3.neg_alpha1 => ⟨-1, 0, 0⟩
+  | RootA3.neg_alpha2 => ⟨0, -1, 0⟩
+  | RootA3.neg_alpha3 => ⟨0, 0, -1⟩
+
+/-- Every almost-positive A₃ root has squared norm exactly 2 under the Cartan metric. -/
+theorem rootA3_cartan_norm (r : RootA3) :
+    cartanForm (rootA3_to_vec3 r) (rootA3_to_vec3 r) = 2 := by
+  cases r <;> rfl
+
 /-- The Manifold Strain Energy of a state transition v in the A₃ root space. -/
 def strainEnergy (v : Vec3) : ℤ :=
   cartanForm v v
@@ -1225,6 +1264,7 @@ end CartanMetric
 #print axioms rootA3_facetK5_equiv
 #print axioms rootA3_cyclic_length_pentagon
 #print axioms rootA3_cyclic_length_square
+#print axioms rootA3_cartan_norm
 #print axioms cartanEnergy_pos_def
 #print axioms cellular_shortExact
 
