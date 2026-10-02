@@ -225,16 +225,23 @@ cartanSumOfSquares []     = 0
 cartanSumOfSquares [x]    = 2 * x^2
 cartanSumOfSquares (x:xs) = x^2 + sum (zipWith (\a b -> (a - b)^2) (x:xs) xs) + last xs^2
 
--- | The 9 almost-positive roots of A_3 corresponding to the 9 facets of K_5
-rootsA3 :: [[Integer]]
-rootsA3 =
-    [ [1,0,0], [0,1,0], [0,0,1], [1,1,0], [0,1,1], [1,1,1]  -- 6 Pentagons  (Positive roots)
-    , [-1,0,0], [0,-1,0], [0,0,-1]                           -- 3 Squares    (Negative simple roots)
-    ]
+-- | Almost-positive roots Φ_(≥-1)(A_d) for arbitrary dimension d
+rootsA :: Int -> [[Integer]]
+rootsA d = simplePositive ++ compoundPositive ++ negativeRoots
+  where
+    -- Simple positive roots: α_i
+    simplePositive = [ [ if k == i then 1 else 0 | k <- [1..d] ] | i <- [1..d] ]
+    -- Compound positive roots: α_i..j for i < j
+    compoundPositive = [ [ if k >= i && k <= j then 1 else 0 | k <- [1..d] ] 
+                       | i <- [1..d], j <- [i..d], i /= j ]
+    -- Negative simple roots: -α_k
+    negativeRoots = [ [ if k == i then -1 else 0 | k <- [1..d] ] | i <- [1..d] ]
 
--- | Direct mapping from Associahedron boundary facets to Root Vectors and their Cartan energy
+-- | Direct mapping from Associahedron boundary facets to Root Vectors and their generalized Dirichlet-Cartan energy
 facetRootEnergy :: Associahedron -> [([Integer], Integer)]
 facetRootEnergy assoc =
-    [ (r, cartanFormA r r) | r <- take (assocFacets assoc) rootsA3 ]
+    let d = max 1 (assocN assoc - 2) -- Dimension of the Lie algebra A_d
+        roots = rootsA d
+    in [ (r, cartanSumOfSquares r) | r <- roots ]
 
 

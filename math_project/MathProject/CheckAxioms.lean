@@ -1,7 +1,0 @@
-import MathProject.CategoricalColimits
-import MathProject.LoewyLength
-import MathProject.SubmodularFriction
-
-#print axioms CategoricalMachine.loewy_length_exists
-#print axioms LoewyLength.loewy_length_exists
-#print axioms OntologicalFriction.greedy_submodular_bound
