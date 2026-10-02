@@ -1039,7 +1039,12 @@ def strainEnergy (v : Vec3) : ℤ :=
 
 end CartanMetric
 
+#print axioms loewy_length_exists
+#print axioms loewy_residual_colimit_vanishes
+#print axioms rootAn_facetKn2_equiv
+#print axioms rootA3_facetK5_equiv
+#print axioms cartanEnergy_pos_def
+#print axioms cellular_shortExact
+
 end FunctorialGeometry
 
-#print axioms loewy_length_exists
-#print axioms rootA3_facetK5_equiv

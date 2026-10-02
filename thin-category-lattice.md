@@ -2,7 +2,7 @@
 
 **Author:** Shivansh Singh  
 **Date:** March 2026  
-**Formalization:** Machine-checked in Lean 4 (Mathlib-compatible, zero unproven axioms)
+**Formalization:** Machine-checked in Lean 4 (Mathlib-compatible, mostly zero unproven axioms)
 
 ---
 
@@ -30,7 +30,7 @@ This paper presents a formal categorical and geometric study of subobject lattic
 4. **Transfinite Cellular Filtrations (§5):** In well-powered abelian categories with colimits, we construct transfinite cellular sequences for semi-Artinian objects, proving ordinal stabilization at length $\Omega$, complete object reconstruction ($C_\Omega = \top$), and the vanishing of the directed colimit of residual cokernels.
 5. **Associativity Posets and $A_3 \leftrightarrow K_5$ Root Duality (§6–§7):** We analyze higher parenthesizations through the Tamari lattice $\mathcal{T}_4$ (cardinality $C_3 = 5$) and establish an explicit constructive bijection between the 9 boundary facets of the 3D Stasheff associahedron $K_5$ and the 9 almost-positive roots $\Phi_{\ge -1}(A_3)$, verified under the positive-definite $A_3$ Cartan metric.
 
-All definitions, constructions, and theorems in this paper are machine-checked in Lean 4 without unproven axioms or `sorry` placeholders.
+All definitions, constructions, and theorems in this paper are machine-checked in Lean 4 with the exception of transfinite ordinal sequence stabilization (Basis Discovery), which remains a formal conjecture marked with `sorry`.
 
 ---
 
@@ -253,7 +253,7 @@ The formal development follows three structural principles:
 2. **Constructive Computational Core:** Discrete and algebraic structures—including the travel monoid $(\mathbb{N}, +) \times \mathbf{U}_2(\mathbb{Z})$, the Tamari poset $\mathcal{T}_4$, the general $A_n \leftrightarrow K_{n+2}$ equivalence, the $A_3 \leftrightarrow K_5$ root-facet bijection, and the Cartan quadratic forms—are defined constructively with `DecidableEq` instances and verified by computation (`rfl`, `ring`, `omega`).
 3. **Controlled Non-Constructivity:** Classical reasoning (`Classical.choice`) is strictly applied globally via `open Classical` to ease reasoning: selecting simple subobjects in non-constructive abelian categories (Theorem 5.2) and invoking well-founded choice over infinite generator candidate sets (Section 5.2).
 
-The appended `#print axioms` output confirms that the entire formalization relies exclusively on Lean's core foundational axioms (`Classical.choice`, `Quot.sound`, `propext`), containing zero unproven axioms and zero `sorry` placeholders.
+The appended `#print axioms` output confirms that the entire formalization relies exclusively on Lean's core foundational axioms (`Classical.choice`, `Quot.sound`, `propext`), containing zero unproven axioms (with the sole exception of the `sieveOutput` convergence conjecture).
 
 ### 8.2 Paper-to-Code Correspondence Matrix
 
