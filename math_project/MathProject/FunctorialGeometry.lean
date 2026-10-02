@@ -4,6 +4,7 @@ Released under the license described in the file LICENSE.
 Authors: Shivansh Singh
 -/
 import Mathlib.CategoryTheory.Abelian.Basic
+import Mathlib.CategoryTheory.Category.Preorder
 import Mathlib.CategoryTheory.Monad.Basic
 import Mathlib.CategoryTheory.Subobject.Basic
 import Mathlib.CategoryTheory.Subobject.Lattice
@@ -115,18 +116,19 @@ def ClosureOperator.toFunctor (C : ClosureOperator L) : L ⥤ L :=
   monotone_functor C.cl C.monotone
 
 /-- A closure operator naturally defines an idempotent Monad on the poset category. -/
-instance (C : ClosureOperator L) : CategoryTheory.Monad C.toFunctor where
+def ClosureOperator.toMonad (C : ClosureOperator L) : CategoryTheory.Monad L where
+  toFunctor := C.toFunctor
   η := {
     app := fun x => homOfLE (C.extensive x)
-    naturality := fun x y f => thin_hom_unique _ _ _ _
+    naturality := fun _ _ _ => thin_hom_unique _ _ _ _
   }
   μ := {
     app := fun x => homOfLE (le_of_eq (C.idempotent x))
-    naturality := fun x y f => thin_hom_unique _ _ _ _
+    naturality := fun _ _ _ => thin_hom_unique _ _ _ _
   }
-  assoc := fun x => thin_hom_unique _ _ _ _
-  left_unit := fun x => thin_hom_unique _ _ _ _
-  right_unit := fun x => thin_hom_unique _ _ _ _
+  assoc := fun _ => thin_hom_unique _ _ _ _
+  left_unit := fun _ => thin_hom_unique _ _ _ _
+  right_unit := fun _ => thin_hom_unique _ _ _ _
 
 end ThinBasics
 
@@ -325,8 +327,23 @@ end TravelMonoid
 section LoewyFiltration
 
 universe u
-variable {A : Type (u+1)} [Category.{u} A] [Abelian A] [WellPowered.{u} A] [HasColimits A]
+variable {A : Type (u+1)} [Category.{u} A] [Abelian A] [HasLimitsOfSize.{u, u} A] [HasColimitsOfSize.{u, u} A] [WellPowered.{u} A]
 variable (U₀ : A)
+
+noncomputable instance (priority := 2000) subobjectSupSet (X : A) : SupSet (Subobject X) :=
+  ⟨Subobject.sSup.{u, u, u+1}⟩
+
+noncomputable instance (priority := 2000) subobjectInfSet (X : A) : InfSet (Subobject X) :=
+  ⟨Subobject.sInf.{u, u, u+1}⟩
+
+noncomputable instance (priority := 2000) subobjectCompleteSemilatticeSup (X : A) : CompleteSemilatticeSup (Subobject X) :=
+  Subobject.completeSemilatticeSup.{u, u, u+1}
+
+noncomputable instance (priority := 2000) subobjectCompleteSemilatticeInf (X : A) : CompleteSemilatticeInf (Subobject X) :=
+  Subobject.completeSemilatticeInf.{u, u, u+1}
+
+noncomputable instance (priority := 2000) subobjectCompleteLattice (X : A) : CompleteLattice (Subobject X) :=
+  Subobject.instCompleteLattice.{u, u, u+1}
 
 def IsSimple (X : A) : Prop := 
   ¬ IsZero X ∧ ∀ (Y : Subobject X), Y = ⊥ ∨ Y = ⊤
@@ -468,9 +485,28 @@ lemma loewySequence_strict_mono (h_semi : IsSemiArtinian U₀) (o : Ordinal.{u})
   have hi : Mono i := (h_semi (loewySequence U₀ h_semi o) hz).choose_spec.choose_spec.2
   exact lt_cellular U₀ _ a i hi ha_simple
 
+theorem loewy_eventuallyConst (f : Ordinal.{u} → Subobject U₀) (hf : Monotone f) :
+    Filter.EventuallyConst f Filter.atTop := by
+  have : Small.{u} (Subobject U₀) := inferInstance
+  let e := equivShrink (Subobject U₀)
+  let _ : PartialOrder (Shrink (Subobject U₀)) := PartialOrder.lift e.symm (Equiv.injective _)
+  let f' : Ordinal.{u} → Shrink (Subobject U₀) := fun o => e (f o)
+  have hf' : Monotone f' := fun a b hab => by
+    change e.symm (e (f a)) ≤ e.symm (e (f b))
+    simp only [Equiv.symm_apply_apply]
+    exact hf hab
+  have h_ev' := Ordinal.eventuallyConst_of_monotone hf'
+  rw [Filter.eventuallyConst_atTop] at h_ev' ⊢
+  rcases h_ev' with ⟨i, hi⟩
+  refine ⟨i, fun j hj => ?_⟩
+  have hj' := hi j hj
+  dsimp [f'] at hj'
+  have := congr_arg e.symm hj'
+  simpa only [Equiv.symm_apply_apply] using this
+
 lemma loewySequence_stabilizes (h_semi : IsSemiArtinian U₀) :
     ∃ (Ω : Ordinal.{u}), loewySequence U₀ h_semi Ω = loewySequence U₀ h_semi (Ω + 1) := by
-  have h_ev := Ordinal.eventuallyConst_of_monotone (loewySequence_mono U₀ h_semi)
+  have h_ev := loewy_eventuallyConst U₀ (loewySequence U₀ h_semi) (loewySequence_mono U₀ h_semi)
   rw [Filter.eventuallyConst_atTop] at h_ev
   rcases h_ev with ⟨Ω, hΩ⟩
   refine ⟨Ω, ?_⟩
@@ -498,6 +534,35 @@ theorem reconstruction_iso (h_semi : IsSemiArtinian U₀) :
     IsIso (loewySequence U₀ h_semi (LoewyLength U₀ h_semi)).arrow := by
   rw [reconstruction]
   exact Subobject.top_arrow_isIso
+
+def OrdinalInterval (Ω : Ordinal.{u}) : Type u := Shrink.{u} (Set.Iic Ω)
+
+namespace OrdinalInterval
+
+variable (Ω : Ordinal.{u})
+
+noncomputable def toIic (x : OrdinalInterval Ω) : Set.Iic Ω :=
+  (equivShrink (Set.Iic Ω)).symm x
+
+noncomputable def ofIic (x : Set.Iic Ω) : OrdinalInterval Ω :=
+  (equivShrink (Set.Iic Ω)) x
+
+noncomputable instance : PartialOrder (OrdinalInterval Ω) :=
+  PartialOrder.lift (toIic Ω) (Equiv.injective _)
+
+noncomputable instance : Category (OrdinalInterval Ω) := inferInstance
+
+noncomputable instance : IsFiltered (OrdinalInterval Ω) where
+  nonempty := ⟨ofIic Ω ⟨⊥, Set.mem_Iic.mpr bot_le⟩⟩
+  cocone_objs x y :=
+    let m : Set.Iic Ω := ⟨max (toIic Ω x).1 (toIic Ω y).1, Set.mem_Iic.mpr (max_le (toIic Ω x).2 (toIic Ω y).2)⟩
+    ⟨ofIic Ω m,
+     homOfLE (show x ≤ ofIic Ω m by change (toIic Ω x).1 ≤ (toIic Ω (ofIic Ω m)).1; simp only [toIic, ofIic, Equiv.symm_apply_apply, Subtype.coe_le_coe]; exact le_max_left _ _),
+     homOfLE (show y ≤ ofIic Ω m by change (toIic Ω y).1 ≤ (toIic Ω (ofIic Ω m)).1; simp only [toIic, ofIic, Equiv.symm_apply_apply, Subtype.coe_le_coe]; exact le_max_right _ _),
+     trivial⟩
+  cocone_maps {x y} f g := ⟨y, 𝟙 y, Subsingleton.elim _ _⟩
+
+end OrdinalInterval
 
 -- Transfinite Filtration functor and residual diagram
 variable {J : Type u} [Category.{u} J]
@@ -537,6 +602,21 @@ theorem residual_colimit_vanishes (F : J ⥤ Subobject U₀) [IsFiltered J] (h_c
   have h_iota_zero : colimit.ι (residualDiagram U₀ F) k = 0 := by
     apply IsZero.eq_of_src h_zero
   rw [h_iota_zero, comp_zero]
+
+noncomputable def loewyIntervalFunctor (h_semi : IsSemiArtinian U₀) (Ω : Ordinal.{u}) :
+    OrdinalInterval Ω ⥤ Subobject U₀ where
+  obj x := loewySequence U₀ h_semi (OrdinalInterval.toIic Ω x).1
+  map {x y} f := homOfLE (by
+    have : x ≤ y := leOfHom f
+    exact loewySequence_le U₀ h_semi _ _ this)
+
+theorem loewy_residual_colimit_vanishes (h_semi : IsSemiArtinian U₀) :
+    IsZero (colimit (residualDiagram U₀ (loewyIntervalFunctor U₀ h_semi (LoewyLength U₀ h_semi)))) := by
+  apply residual_colimit_vanishes
+  refine ⟨OrdinalInterval.ofIic _ ⟨LoewyLength U₀ h_semi, Set.mem_Iic.mpr le_rfl⟩, ?_⟩
+  dsimp [loewyIntervalFunctor, OrdinalInterval.toIic, OrdinalInterval.ofIic]
+  simp only [Equiv.symm_apply_apply]
+  exact reconstruction U₀ h_semi
 
 section Yoneda
 
@@ -778,10 +858,19 @@ inductive FacetKn2 (n : ℕ) : Type
 
 /-- The bijection mapping our combinatorial FacetKn2 directly to true geometric diagonals of the polygon. -/
 def facetKn2_to_diagonal (n : ℕ) : FacetKn2 n → Diagonal n
-  | FacetKn2.base_diagonal k => 
-      ⟨⟨0, by omega⟩, ⟨k.val + 2, by omega⟩, by omega, by omega⟩
-  | FacetKn2.chord i j hle => 
-      ⟨⟨i.val + 1, by omega⟩, ⟨j.val + 3, by omega⟩, by omega, by omega⟩
+  | FacetKn2.base_diagonal k =>
+      have hk := k.isLt
+      ⟨⟨0, by omega⟩, ⟨k.val + 2, by omega⟩, by dsimp; omega, by
+        rintro ⟨h0, h2⟩
+        dsimp at h0 h2
+        omega⟩
+  | FacetKn2.chord i j hle =>
+      have hi := i.isLt
+      have hj := j.isLt
+      ⟨⟨i.val + 1, by omega⟩, ⟨j.val + 3, by omega⟩, by dsimp; omega, by
+        rintro ⟨h0, h2⟩
+        dsimp at h0 h2
+        omega⟩
 
 /-- Canonical constructive bijection between Aₙ roots and K_{n+2} facets for all n. -/
 def rootAn_to_facetKn2 (n : ℕ) : RootAn n → FacetKn2 n
@@ -1047,4 +1136,3 @@ end CartanMetric
 #print axioms cellular_shortExact
 
 end FunctorialGeometry
-
