@@ -91,4 +91,15 @@ The final supremum of all generators extracted across the transfinite sequence.
 noncomputable def sieveOutput : L :=
   ⨆ (o : Ordinal.{0}), xSeq embed o
 
+theorem xSeq_zero : xSeq embed 0 = ⊥ :=
+  Ordinal.limitRecOn_zero _ _ _
+
+/-- Every transfinite stage is bounded above by the sieve output. -/
+theorem xSeq_le_sieveOutput (o : Ordinal.{0}) : xSeq embed o ≤ sieveOutput embed :=
+  le_iSup (fun o => xSeq embed o) o
+
+/-- The sieve output is the least upper bound of the transfinite sequence. -/
+theorem sieveOutput_is_lub (x : L) : sieveOutput embed ≤ x ↔ ∀ (o : Ordinal.{0}), xSeq embed o ≤ x :=
+  iSup_le_iff
+
 end BasisDiscovery

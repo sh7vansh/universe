@@ -13,6 +13,7 @@ import Mathlib.CategoryTheory.Limits.Shapes.Pullback.HasPullback
 import Mathlib.CategoryTheory.Limits.Shapes.Pullback.Mono
 import Mathlib.CategoryTheory.Limits.Shapes.ZeroMorphisms
 import Mathlib.CategoryTheory.Filtered.Basic
+import Mathlib.Order.GaloisConnection.Basic
 import Mathlib.Order.CompleteLattice.Defs
 import Mathlib.Order.WellFounded
 import Mathlib.SetTheory.Ordinal.Basic
@@ -47,7 +48,7 @@ This unified module formalizes the mathematical core corresponding to `thin-cate
 2. **Submodular Defects & Modularity:** Defect Δ(A, B) ≥ 0, modularity characterization,
    and Tor₀ as the categorical meet.
 3. **The Travel Experience Monoid:** 2×2 unipotent shear group, travel state (action, transport),
-   monoid associativity/unitality, path valuation, and strict action growth on covering paths.
+   monoid associativity/unitality, path valuation, and strict action growth on step sequences.
 4. **Transfinite Loewy Filtrations & Basis Discovery:** Transfinite Loewy sequence on
    semi-Artinian objects, stabilization at Loewy length Ω, reconstruction, SES presentation,
    vanishing residual colimits on restricted ordinal intervals, and well-founded novelty selection.
@@ -111,6 +112,15 @@ structure ClosureOperator (L : Type*) [PartialOrder L] where
   extensive : ∀ x, x ≤ cl x
   monotone : Monotone cl
   idempotent : ∀ x, cl (cl x) = cl x
+
+/-- A Galois connection `l ⊣ u` canonically induces an idempotent closure operator `u ∘ l`. -/
+def galoisConnection_toClosureOperator {M : Type*} [PartialOrder M]
+    {l : L → M} {u : M → L} (gc : GaloisConnection l u) :
+    ClosureOperator L where
+  cl := u ∘ l
+  extensive x := gc.le_u_l x
+  monotone := gc.monotone_u.comp gc.monotone_l
+  idempotent x := le_antisymm (gc.monotone_u (gc.l_u_le (l x))) (gc.le_u_l (u (l x)))
 
 /-- The functor induced by a closure operator. -/
 def ClosureOperator.toFunctor (C : ClosureOperator L) : L ⥤ L :=
@@ -301,7 +311,7 @@ open TravelExperience
 
 variable {L : Type*} [PartialOrder L]
 
-/-- An elementary step along a covering edge in the lattice. -/
+/-- An elementary step (`source ≤ target`) in the lattice, equipped with traversal friction cost and extension class. -/
 structure LatticeStep (L : Type*) [PartialOrder L] where
   source : L
   target : L
@@ -811,6 +821,17 @@ noncomputable def xSeq (o : Ordinal) : L :=
 noncomputable def sieveOutput : L :=
   ⨆ (o : Ordinal.{0}), xSeq embed o
 
+theorem xSeq_zero : xSeq embed 0 = ⊥ :=
+  Ordinal.limitRecOn_zero _ _ _
+
+/-- Every transfinite stage is bounded above by the sieve output. -/
+theorem xSeq_le_sieveOutput (o : Ordinal.{0}) : xSeq embed o ≤ sieveOutput embed :=
+  le_iSup (fun o => xSeq embed o) o
+
+/-- The sieve output is the least upper bound of the transfinite sequence. -/
+theorem sieveOutput_is_lub (x : L) : sieveOutput embed ≤ x ↔ ∀ (o : Ordinal.{0}), xSeq embed o ≤ x :=
+  iSup_le_iff
+
 end BasisDiscovery
 
 /-! ==============================================================================
@@ -1246,6 +1267,118 @@ def rootA3_to_vec3 : RootA3 → Vec3
   | RootA3.neg_alpha2 => ⟨0, -1, 0⟩
   | RootA3.neg_alpha3 => ⟨0, 0, -1⟩
 
+/-- A vector in ℤ³ is a root of A₃ iff its Cartan norm is exactly 2. -/
+def IsRootA3 (v : Vec3) : Prop :=
+  cartanForm v v = 2
+
+/-- An almost-positive root is a root that is either non-negative in all coordinates
+    or is a negative simple root. -/
+def IsAlmostPositiveRootA3 (v : Vec3) : Prop :=
+  IsRootA3 v ∧
+  ((0 ≤ v.x ∧ 0 ≤ v.y ∧ 0 ≤ v.z) ∨
+   (v = ⟨-1, 0, 0⟩ ∨ v = ⟨0, -1, 0⟩ ∨ v = ⟨0, 0, -1⟩))
+
+/-- Coordinate bounds derived from the sum-of-squares Cartan energy. -/
+theorem root_bounds (v : Vec3) (h : IsRootA3 v) :
+    -1 ≤ v.x ∧ v.x ≤ 1 ∧
+    -2 ≤ v.y ∧ v.y ≤ 2 ∧
+    -1 ≤ v.z ∧ v.z ≤ 1 := by
+  have hsq : v.x ^ 2 + (v.x - v.y) ^ 2 + (v.y - v.z) ^ 2 + v.z ^ 2 = 2 := by
+    rw [← cartanForm_sum_of_squares]
+    exact h
+  have hx : v.x ^ 2 ≤ 2 := by nlinarith [sq_nonneg (v.x - v.y), sq_nonneg (v.y - v.z), sq_nonneg v.z]
+  have hz : v.z ^ 2 ≤ 2 := by nlinarith [sq_nonneg v.x, sq_nonneg (v.x - v.y), sq_nonneg (v.y - v.z)]
+  have hxy : (v.x - v.y) ^ 2 ≤ 2 := by nlinarith [sq_nonneg v.x, sq_nonneg (v.y - v.z), sq_nonneg v.z]
+  have hyz : (v.y - v.z) ^ 2 ≤ 2 := by nlinarith [sq_nonneg v.x, sq_nonneg (v.x - v.y), sq_nonneg v.z]
+  have hx_bd : -1 ≤ v.x ∧ v.x ≤ 1 := by
+    constructor
+    · by_contra hc
+      have : v.x ≤ -2 := by omega
+      nlinarith [hx]
+    · by_contra hc
+      have : v.x ≥ 2 := by omega
+      nlinarith [hx]
+  have hz_bd : -1 ≤ v.z ∧ v.z ≤ 1 := by
+    constructor
+    · by_contra hc
+      have : v.z ≤ -2 := by omega
+      nlinarith [hz]
+    · by_contra hc
+      have : v.z ≥ 2 := by omega
+      nlinarith [hz]
+  have hy_bd : -2 ≤ v.y ∧ v.y ≤ 2 := by
+    constructor
+    · by_contra hc
+      have : v.y ≤ -3 := by omega
+      have hx1 : -1 ≤ v.x := hx_bd.1
+      have : (v.x - v.y) ≥ 2 := by omega
+      nlinarith [hxy]
+    · by_contra hc
+      have : v.y ≥ 3 := by omega
+      have hx2 : v.x ≤ 1 := hx_bd.2
+      have : (v.x - v.y) ≤ -2 := by omega
+      nlinarith [hxy]
+  exact ⟨hx_bd.1, hx_bd.2, hy_bd.1, hy_bd.2, hz_bd.1, hz_bd.2⟩
+
+/-- The root embedding rootA3_to_vec3 is injective. -/
+theorem rootA3_to_vec3_injective : Function.Injective rootA3_to_vec3 := by
+  intro a b h
+  cases a <;> cases b <;> first | rfl | revert h; decide
+
+/-- The 9 constructors of RootA3 precisely classify the almost-positive roots of A₃. -/
+theorem isAlmostPositiveRootA3_iff (v : Vec3) :
+    IsAlmostPositiveRootA3 v ↔ ∃ r : RootA3, rootA3_to_vec3 r = v := by
+  constructor
+  · rintro ⟨hroot, hpos | hneg⟩
+    · by_cases h1 : v = alpha1
+      · exact ⟨RootA3.alpha1, h1 ▸ rfl⟩
+      · by_cases h2 : v = alpha2
+        · exact ⟨RootA3.alpha2, h2 ▸ rfl⟩
+        · by_cases h3 : v = alpha3
+          · exact ⟨RootA3.alpha3, h3 ▸ rfl⟩
+          · by_cases h12 : v = alpha12
+            · exact ⟨RootA3.alpha12, h12 ▸ rfl⟩
+            · by_cases h23 : v = alpha23
+              · exact ⟨RootA3.alpha23, h23 ▸ rfl⟩
+              · by_cases h123 : v = alpha123
+                · exact ⟨RootA3.alpha123, h123 ▸ rfl⟩
+                · exfalso
+                  have hbd := root_bounds v hroot
+                  have hnorm : v.x ^ 2 + (v.x - v.y) ^ 2 + (v.y - v.z) ^ 2 + v.z ^ 2 = 2 := by
+                    rw [← cartanForm_sum_of_squares]; exact hroot
+                  rcases v with ⟨vx, vy, vz⟩
+                  dsimp at hbd hpos
+                  rcases hbd with ⟨hx1, hx2, hy1, hy2, hz1, hz2⟩
+                  have hx_cases : vx = 0 ∨ vx = 1 := by omega
+                  have hy_cases : vy = 0 ∨ vy = 1 ∨ vy = 2 := by omega
+                  have hz_cases : vz = 0 ∨ vz = 1 := by omega
+                  dsimp [alpha1, alpha2, alpha3, alpha12, alpha23, alpha123] at h1 h2 h3 h12 h23 h123 hnorm
+                  rcases hx_cases with rx | rx <;> rcases hy_cases with ry | ry | ry <;> rcases hz_cases with rz | rz
+                  · rw [rx, ry, rz] at hnorm; revert hnorm; decide
+                  · subst rx ry rz; exact h3 rfl
+                  · subst rx ry rz; exact h2 rfl
+                  · subst rx ry rz; exact h23 rfl
+                  · rw [rx, ry, rz] at hnorm; revert hnorm; decide
+                  · rw [rx, ry, rz] at hnorm; revert hnorm; decide
+                  · subst rx ry rz; exact h1 rfl
+                  · rw [rx, ry, rz] at hnorm; revert hnorm; decide
+                  · subst rx ry rz; exact h12 rfl
+                  · subst rx ry rz; exact h123 rfl
+                  · rw [rx, ry, rz] at hnorm; revert hnorm; decide
+                  · rw [rx, ry, rz] at hnorm; revert hnorm; decide
+    · rcases hneg with rfl | rfl | rfl
+      · exact ⟨RootA3.neg_alpha1, rfl⟩
+      · exact ⟨RootA3.neg_alpha2, rfl⟩
+      · exact ⟨RootA3.neg_alpha3, rfl⟩
+  · rintro ⟨r, rfl⟩
+    constructor
+    · cases r <;> rfl
+    · cases r <;> {
+        first
+        | left; refine ⟨by decide, by decide, by decide⟩
+        | right; first | left; rfl | right; first | left; rfl | right; rfl
+      }
+
 /-- Every almost-positive A₃ root has squared norm exactly 2 under the Cartan metric. -/
 theorem rootA3_cartan_norm (r : RootA3) :
     cartanForm (rootA3_to_vec3 r) (rootA3_to_vec3 r) = 2 := by
@@ -1262,6 +1395,8 @@ end CartanMetric
 #print axioms facetKn2_diagonal_equiv
 #print axioms rootAn_diagonal_equiv
 #print axioms rootA3_facetK5_equiv
+#print axioms isAlmostPositiveRootA3_iff
+#print axioms rootA3_cartan_norm
 #print axioms rootA3_cyclic_length_pentagon
 #print axioms rootA3_cyclic_length_square
 #print axioms rootA3_cartan_norm
