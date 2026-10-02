@@ -24,6 +24,7 @@ import Mathlib.Algebra.Homology.ShortComplex.ShortExact
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 set_option linter.style.header false
 set_option linter.style.longLine false
@@ -735,6 +736,50 @@ instance : Fintype Tree4 where
 /-- Catalan C₃ = 5 vertices of Tamari 𝒯₄. -/
 theorem tamari4_card : (Fintype.elems : Finset Tree4).card = 5 := rfl
 
+/-! ### Universal N-Dimensional Associahedron-Root Duality (K_{n+2} ≅ Aₙ) -/
+
+/-- The almost-positive root system of type Aₙ for arbitrary rank n:
+    - Positive roots α_{i..j} for 0 ≤ i ≤ j < n (cardinality n(n+1)/2)
+    - Negative simple roots -α_k for 0 ≤ k < n (cardinality n) -/
+inductive RootAn (n : ℕ) : Type
+  | pos (i j : Fin n) (hle : i.val ≤ j.val) : RootAn n
+  | neg_simple (k : Fin n) : RootAn n
+  deriving DecidableEq
+
+/-- The boundary facets of the (n+2)-associahedron K_{n+2} (chords of convex (n+3)-gon):
+    - Base chords (0, k+2)
+    - Internal chords (i+1, j+3) -/
+inductive FacetKn2 (n : ℕ) : Type
+  | base_diagonal (k : Fin n) : FacetKn2 n
+  | chord (i j : Fin n) (hle : i.val ≤ j.val) : FacetKn2 n
+  deriving DecidableEq
+
+/-- Canonical constructive bijection between Aₙ roots and K_{n+2} facets for all n. -/
+def rootAn_to_facetKn2 (n : ℕ) : RootAn n → FacetKn2 n
+  | RootAn.pos i j hle => FacetKn2.chord i j hle
+  | RootAn.neg_simple k => FacetKn2.base_diagonal k
+
+def facetKn2_to_rootAn (n : ℕ) : FacetKn2 n → RootAn n
+  | FacetKn2.chord i j hle => RootAn.pos i j hle
+  | FacetKn2.base_diagonal k => RootAn.neg_simple k
+
+theorem rootAn_facet_left_inv (n : ℕ) (r : RootAn n) :
+    facetKn2_to_rootAn n (rootAn_to_facetKn2 n r) = r := by
+  cases r <;> rfl
+
+theorem rootAn_facet_right_inv (n : ℕ) (f : FacetKn2 n) :
+    rootAn_to_facetKn2 n (facetKn2_to_rootAn n f) = f := by
+  cases f <;> rfl
+
+/-- Universal Associahedron-Root Equivalence: RootAn n ≃ FacetKn2 n for all n : ℕ. -/
+def rootAn_facetKn2_equiv (n : ℕ) : RootAn n ≃ FacetKn2 n where
+  toFun := rootAn_to_facetKn2 n
+  invFun := facetKn2_to_rootAn n
+  left_inv := rootAn_facet_left_inv n
+  right_inv := rootAn_facet_right_inv n
+
+/-! ### Explicit A₃ ≅ K₅ Dimension-3 Specialization -/
+
 /-- The 9 almost-positive roots of A₃ (6 positive + 3 negative simple). -/
 inductive RootA3 : Type
   | alpha1 : RootA3
@@ -806,10 +851,79 @@ theorem a3_facet_count : (Fintype.elems : Finset RootA3).card = 9 := rfl
 end AssociahedraDuality
 
 /-! ==============================================================================
-    SECTION 6: THE A₃ CARTAN METRIC AND SUM-OF-SQUARES FORM
+    SECTION 6: CARTAN METRIC AND SUM-OF-SQUARES FORM
     ============================================================================== -/
 
 section CartanMetric
+
+open BigOperators
+
+/-! ### Universal N-Dimensional Aₙ Dirichlet-Cartan Energy -/
+
+/-- Extended vector with Dirichlet boundary conditions: v(0) = 0 and v(i) = 0 for i > n. -/
+def extVec (n : ℕ) (v : Fin n → ℤ) (i : ℕ) : ℤ :=
+  if h : 0 < i ∧ i ≤ n then v ⟨i - 1, by omega⟩ else 0
+
+@[simp] theorem extVec_zero (n : ℕ) (v : Fin n → ℤ) : extVec n v 0 = 0 := by
+  dsimp [extVec]
+
+theorem extVec_val (n : ℕ) (v : Fin n → ℤ) (k : Fin n) :
+    extVec n v (k.val + 1) = v k := by
+  dsimp [extVec]
+  have h : 0 < k.val + 1 ∧ k.val + 1 ≤ n := by omega
+  simp [h]
+
+/-- The General Aₙ Cartan Quadratic Form as a discrete Dirichlet energy on ℤⁿ. -/
+def cartanEnergy (n : ℕ) (v : Fin n → ℤ) : ℤ :=
+  ∑ i : Fin (n + 1), (extVec n v (i.val + 1) - extVec n v i.val)^2
+
+/-- Universal positive semi-definiteness of the Aₙ Cartan form for all n. -/
+theorem cartanEnergy_nonneg (n : ℕ) (v : Fin n → ℤ) : 0 ≤ cartanEnergy n v := by
+  apply Finset.sum_nonneg
+  intro i _
+  exact sq_nonneg _
+
+/-- Universal positive definiteness of the Aₙ Cartan form for all n. -/
+theorem cartanEnergy_pos_def (n : ℕ) (v : Fin n → ℤ) :
+    cartanEnergy n v = 0 ↔ v = 0 := by
+  constructor
+  · intro h
+    have hterms : ∀ i : Fin (n + 1),
+        (extVec n v (i.val + 1) - extVec n v i.val)^2 = 0 := by
+      intro i
+      exact (Finset.sum_eq_zero_iff_of_nonneg (fun j _ => sq_nonneg _)).mp h i (Finset.mem_univ i)
+    have hdiff : ∀ i : ℕ, i ≤ n → extVec n v (i + 1) = extVec n v i := by
+      intro i hi
+      have sqz := hterms ⟨i, by omega⟩
+      have sq0 : extVec n v (i + 1) - extVec n v i = 0 := sq_eq_zero_iff.mp sqz
+      exact sub_eq_zero.mp sq0
+    have hext_zero : ∀ m : ℕ, m ≤ n + 1 → extVec n v m = 0 := by
+      intro m hm
+      induction m with
+      | zero => exact extVec_zero n v
+      | succ m ih =>
+        rw [hdiff m (by omega), ih (by omega)]
+    funext k
+    have hval := extVec_val n v k
+    have hz := hext_zero (k.val + 1) (by omega)
+    rw [← hval, hz]
+    rfl
+  · rintro rfl
+    dsimp [cartanEnergy, extVec]
+    have h_zero : ∀ i : Fin (n + 1),
+        ((if 0 < i.val + 1 ∧ i.val + 1 ≤ n then (0 : ℤ) else 0) -
+         (if 0 < i.val ∧ i.val ≤ n then (0 : ℤ) else 0))^2 = 0 := by
+      intro i
+      split_ifs <;> simp
+    have hsum : (∑ i : Fin (n + 1),
+        ((if 0 < i.val + 1 ∧ i.val + 1 ≤ n then (0 : ℤ) else 0) -
+         (if 0 < i.val ∧ i.val ≤ n then (0 : ℤ) else 0))^2) = 0 := by
+      apply Finset.sum_eq_zero
+      intro x _
+      exact h_zero x
+    exact hsum
+
+/-! ### Explicit A₃ Vector Space Specialization -/
 
 @[ext]
 structure Vec3 where

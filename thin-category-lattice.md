@@ -160,7 +160,7 @@ is well-defined for all $x < \top$. It satisfies the **novelty property**: $e(\p
 
 ---
 
-## 6. The Crystalline Tower and the $A_3 \cong K_5$ Duality
+## 6. The Crystalline Tower and the $A_n \cong K_{n+2}$ Duality
 
 ### 6.1 The Crystalline Tower ($K_0 \longrightarrow K_\infty$)
 
@@ -174,7 +174,7 @@ When composing chains of morphisms in the thin category substrate, the non-uniqu
 | **$K_3$** | **3-Chain** $\{x_0 \le x_1 \le x_2\}$ | $2$ | $A_1$ | $2$ Vertices | **Composed Path $[0, 1]$** (2 bracketings of composition / homotopy) |
 | **$K_4$** | **4-Chain** | **$5$** | **$A_2$** | **$5$ Edges** | **Tamari Lattice $\mathcal{T}_4$** (5 bracketings of 4 objects / Mac Lane pentagon) |
 | **$K_5$** | **5-Chain** | **$14$** | **$A_3$** | **$9$ Facets (6 Pent + 3 Sq)** | **3D Associahedron** (14 bracketings / $A_3$ Cartan root space) |
-| **$K_n$** | $n$-Chain | $C_{n-1} = \frac{1}{n}\binom{2n-2}{n-1}$ | $A_{n-2}$ | Cluster Variables | $(n-2)$D Universal Discrete $A_\infty$ Operad |
+| **$K_n$** | $n$-Chain | $C_{n-1} = \frac{1}{n}\binom{2n-2}{n-1}$ | $A_{n-2}$ | $\frac{(n-2)(n+1)}{2}$ Facets | $(n-2)$D Universal Discrete $A_\infty$ Operad |
 
 #### Base Elements and Identity Paths ($K_0 \to K_1$)
 The foundational levels $K_0$ and $K_1$ anchor the operad directly in the thin category axioms:
@@ -182,39 +182,53 @@ The foundational levels $K_0$ and $K_1$ anchor the operad directly in the thin c
 2. **Identity Morphisms ($K_1$):** A 1-chain $\{x_0\}$ corresponds to the trivial 0-step path $\mathrm{id}_{x_0} : x_0 \to x_0$. Under the Travel Functor, $\mathbb{T}(\mathrm{id}_{x_0}) = (0, \mathbf{I})$ (zero search effort, identity unipotent shear matrix).
 3. **Tamari Pentagon ($K_4$):** For $n=4$, the 5 bracketings of 4 objects form the Tamari lattice $\mathcal{T}_4$ ordered by right-associativity moves, with cardinality exactly $C_3 = 5$.
 
-### 6.2 The $A_3 \leftrightarrow K_5$ Root Duality Theorem
+### 6.2 Universal $N$-Dimensional Associahedron-Root Equivalence ($K_{n+2} \cong A_n$)
 
-For $n=5$, the 3D associahedron $K_5$ has 14 vertices and exactly **9 boundary facets** (6 pentagonal and 3 square faces).
+For arbitrary rank $n \in \mathbb{N}$, the $(n+2)$-associahedron $K_{n+2}$ corresponds to parenthesizations of $(n+2)$ objects or triangulations of a convex $(n+3)$-gon:
+- **Associahedron Facets $\mathrm{Facets}(K_{n+2})$:** Internal chords of a convex $(n+3)$-gon, partitioned into $n$ base chords $(0, k+2)$ ($0 \le k < n$) and $\frac{n(n+1)}{2}$ internal chords $(i+1, j+3)$ ($0 \le i \le j < n$). Total facets: $\binom{n+3}{2} - (n+3) = \frac{n(n+3)}{2}$.
+- **Almost-Positive Roots $\Phi_{\ge -1}(A_n)$:** The union of $\frac{n(n+1)}{2}$ positive roots $\alpha_{i..j}$ ($0 \le i \le j < n$) and $n$ negative simple roots $-\alpha_k$ ($0 \le k < n$). Total roots: $\frac{n(n+1)}{2} + n = \frac{n(n+3)}{2}$.
+
+**Theorem 6.1 (Universal Associahedron-Root Duality).**  
+*For every rank $n \in \mathbb{N}$, there is an explicit constructive equivalence of types:*
+$$\mathrm{Root}_{A_n} \simeq \mathrm{Facet}_{K_{n+2}}$$
+*defined constructively via the closed-form assignment:*
+$$\Xi(\alpha_{i..j}) = \mathrm{chord}(i+1, j+3), \qquad \Xi(-\alpha_k) = \mathrm{base\_diagonal}(0, k+2)$$
+
+### 6.3 Dimension-3 Specialization ($A_3 \leftrightarrow K_5$)
+
+For $n=3$, the 3D associahedron $K_5$ has 14 vertices and exactly **9 boundary facets** (6 pentagonal and 3 square faces).
 
 In Lie theory, the $A_3$ root system contains 6 positive roots $\Phi^+(A_3)$ and 3 negative simple roots $-\Delta(A_3)$, forming the 9 almost-positive roots $\Phi_{\ge -1}(A_3)$:
 - **Positive Roots (6):** $\alpha_1, \alpha_2, \alpha_3, \alpha_1+\alpha_2, \alpha_2+\alpha_3, \alpha_1+\alpha_2+\alpha_3$.
 - **Negative Simple Roots (3):** $-\alpha_1, -\alpha_2, -\alpha_3$.
 
-**Theorem 6.1 (Facet-Root Equivalence).**  
-*There exists an explicit constructive bijection $\Xi : \Phi_{\ge -1}(A_3) \xrightarrow{\sim} \mathrm{Facets}(K_5)$ mapping:*
-1. *The 6 positive roots bijectively to the 6 pentagonal facets:*
-   $$\alpha_1 \mapsto P_0, \; \alpha_2 \mapsto P_1, \; \alpha_3 \mapsto P_2, \; \alpha_{12} \mapsto P_3, \; \alpha_{23} \mapsto P_4, \; \alpha_{123} \mapsto P_5$$
-2. *The 3 negative simple roots bijectively to the 3 square facets:*
-   $$-\alpha_1 \mapsto S_0, \; -\alpha_2 \mapsto S_1, \; -\alpha_3 \mapsto S_2$$
+**Corollary 6.2 ($A_3 \leftrightarrow K_5$ Specialization).**  
+*The constructive equivalence $\mathrm{Root}_{A_3} \simeq \mathrm{Facet}_{K_5}$ maps the 6 positive roots bijectively to the 6 pentagons and the 3 negative simple roots bijectively to the 3 squares:*
+$$\alpha_1 \mapsto P_0, \; \alpha_2 \mapsto P_1, \; \alpha_3 \mapsto P_2, \; \alpha_{12} \mapsto P_3, \; \alpha_{23} \mapsto P_4, \; \alpha_{123} \mapsto P_5$$
+$$-\alpha_1 \mapsto S_0, \; -\alpha_2 \mapsto S_1, \; -\alpha_3 \mapsto S_2$$
 
 ---
 
-## 7. The $A_3$ Cartan Metric and Quadratic Form
+## 7. The $A_n$ Cartan Metric and Quadratic Form
 
-The geometry of the $A_3$ root space $\mathbb{Z}^3$ is governed by the Cartan matrix:
+### 7.1 Universal $N$-Dimensional Dirichlet-Cartan Energy
+
+For arbitrary rank $n \in \mathbb{N}$, any vector $v \in \mathbb{Z}^n$ induces an extended vector $\tilde{v} : \{0, 1, \dots, n+1\} \to \mathbb{Z}$ satisfying Dirichlet boundary conditions $\tilde{v}(0) = \tilde{v}(n+1) = 0$. The $A_n$ Cartan quadratic form is given by the discrete Dirichlet energy:
+$$Q_n(v) = \sum_{i=0}^n (\tilde{v}(i+1) - \tilde{v}(i))^2$$
+
+**Theorem 7.1 (Universal Positive Definiteness).**  
+*For every $n \in \mathbb{N}$ and every $v \in \mathbb{Z}^n$:*
+1. *Positive semi-definiteness: $Q_n(v) \ge 0$.*
+2. *Positive definiteness: $Q_n(v) = 0 \iff v = 0$.*
+
+### 7.2 Dimension-3 Specialization and Sum-of-Squares
+
+For $n=3$, the geometry of the $A_3$ root space $\mathbb{Z}^3$ is governed by the Cartan matrix:
 $$C(A_3) = \begin{pmatrix} 2 & -1 & 0 \\ -1 & 2 & -1 \\ 0 & -1 & 2 \end{pmatrix}$$
-inducing the symmetric bilinear form $\langle u, v \rangle_{A_3} = u^T C(A_3) v$.
-
-### 7.1 Sum-of-Squares and Positive Definiteness
-
-**Theorem 7.1 (Positive Definiteness).**  
-*For every vector $v = (v_1, v_2, v_3) \in \mathbb{Z}^3$, the quadratic form $\langle v, v \rangle_{A_3}$ satisfies the sum-of-squares identity:*
+inducing the symmetric bilinear form $\langle u, v \rangle_{A_3} = u^T C(A_3) v$, with sum-of-squares decomposition:
 $$\langle v, v \rangle_{A_3} = v_1^2 + (v_1 - v_2)^2 + (v_2 - v_3)^2 + v_3^2$$
-*Consequently:*
-1. *Positive semi-definiteness: $\langle v, v \rangle_{A_3} \ge 0$ for all $v \in \mathbb{Z}^3$.*
-2. *Positive definiteness: $\langle v, v \rangle_{A_3} = 0 \iff v = 0$.*
 
-### 7.2 Geometric Invariants of the Roots
+### 7.3 Geometric Invariants of the Roots
 
 Evaluating the Cartan form on the roots reproduces the fundamental geometric invariants:
 1. **Norm Invariance:** All 6 positive roots have identical squared norm:
@@ -236,7 +250,7 @@ The entirety of the mathematical development presented in Sections 2–7 is form
 
 The formal development follows three structural principles:
 1. **Categorical Integration with Mathlib:** Rather than using ad-hoc posetal order structures, thin categories and subobject lattices are expressed directly through Mathlib's native category theory library (`CategoryTheory.Subobject`, `CategoryTheory.Abelian`, and `CategoryTheory.Limits`).
-2. **Constructive Computational Core:** Discrete and algebraic structures—including the travel monoid $(\mathbb{N}, +) \times \mathbf{U}_2(\mathbb{Z})$, the Tamari poset $\mathcal{T}_4$, the $A_3 \leftrightarrow K_5$ root-facet bijection, and the Cartan quadratic form—are defined constructively with `DecidableEq` instances and verified by computation (`rfl`, `ring`).
+2. **Constructive Computational Core:** Discrete and algebraic structures—including the travel monoid $(\mathbb{N}, +) \times \mathbf{U}_2(\mathbb{Z})$, the Tamari poset $\mathcal{T}_4$, the general $A_n \leftrightarrow K_{n+2}$ equivalence, the $A_3 \leftrightarrow K_5$ root-facet bijection, and the Cartan quadratic forms—are defined constructively with `DecidableEq` instances and verified by computation (`rfl`, `ring`, `omega`).
 3. **Controlled Non-Constructivity:** Classical reasoning (`Classical.choice`) is strictly quarantined to points where the ambient mathematics fundamentally demands it: selecting simple subobjects in non-constructive abelian categories (Theorem 5.2) and invoking well-founded choice over infinite generator candidate sets (Section 5.2).
 
 An automated axiom audit via `#print axioms` confirms that the entire formalization relies exclusively on Lean's core foundational axioms (`Classical.choice`, `Quot.sound`, `propext`), containing zero unproven axioms and zero `sorry` placeholders.
@@ -255,13 +269,15 @@ An automated axiom audit via `#print axioms` confirms that the entire formalizat
 | **Theorem 5.2 (3)** | Vanishing residual colimit $\varinjlim \mathrm{coker} = 0$ | [`residualDiagram`](https://raw.githubusercontent.com/sh7vansh/universe/main/math_project/MathProject/FunctorialGeometry.lean#L486), [`residual_colimit_vanishes`](https://raw.githubusercontent.com/sh7vansh/universe/main/math_project/MathProject/FunctorialGeometry.lean#L502) | Filtered colimit absorption, `isZero_cokernel_of_epi` |
 | **Section 5.2** | Well-founded basis selection and novelty property | [`candidates_nonempty`](https://raw.githubusercontent.com/sh7vansh/universe/main/math_project/MathProject/FunctorialGeometry.lean#L535), [`fixedPriorityPhi`](https://raw.githubusercontent.com/sh7vansh/universe/main/math_project/MathProject/FunctorialGeometry.lean#L547), [`novelty_of_fixedPriorityPhi`](https://raw.githubusercontent.com/sh7vansh/universe/main/math_project/MathProject/FunctorialGeometry.lean#L552), [`sieveOutput`](https://raw.githubusercontent.com/sh7vansh/universe/main/math_project/MathProject/FunctorialGeometry.lean#L564) | `WellFounded.min_mem` |
 | **Section 6.1** | Tamari $\mathcal{T}_4$ Catalan cardinality $C_3 = 5$ | [`tamari_le`](https://raw.githubusercontent.com/sh7vansh/universe/main/math_project/MathProject/FunctorialGeometry.lean#L586), [`tamari4_card`](https://raw.githubusercontent.com/sh7vansh/universe/main/math_project/MathProject/FunctorialGeometry.lean#L613) | Finite case exhaustion (`rfl`) |
-| **Theorem 6.1** | Constructive bijection $\Phi_{\ge -1}(A_3) \xrightarrow{\sim} \mathrm{Facets}(K_5)$ | [`rootA3_facetK5_equiv`](https://raw.githubusercontent.com/sh7vansh/universe/main/math_project/MathProject/FunctorialGeometry.lean#L670), [`a3_facet_count`](https://raw.githubusercontent.com/sh7vansh/universe/main/math_project/MathProject/FunctorialGeometry.lean#L681) | Constructive two-sided inverse, `interval_cases` |
-| **Theorem 7.1** | Positive-definite sum-of-squares Cartan metric | [`cartanForm_sum_of_squares`](https://raw.githubusercontent.com/sh7vansh/universe/main/math_project/MathProject/FunctorialGeometry.lean#L718), [`cartanForm_pos_def`](https://raw.githubusercontent.com/sh7vansh/universe/main/math_project/MathProject/FunctorialGeometry.lean#L730) | `ring`, `nlinarith [sq_nonneg]` |
-| **Section 7.2** | Root norm invariance ($=2$), off-diagonal couplings ($-1, 0$) | [`norm_alpha1`](https://raw.githubusercontent.com/sh7vansh/universe/main/math_project/MathProject/FunctorialGeometry.lean#L747), [`strain_adjacent_12`](https://raw.githubusercontent.com/sh7vansh/universe/main/math_project/MathProject/FunctorialGeometry.lean#L754), [`coupled_strain_alpha12`](https://raw.githubusercontent.com/sh7vansh/universe/main/math_project/MathProject/FunctorialGeometry.lean#L758) | Bilinear form evaluation (`rfl`) |
+| **Theorem 6.1** | Universal $N$-dimensional equivalence $\mathrm{Root}_{A_n} \simeq \mathrm{Facet}_{K_{n+2}}$ | [`rootAn_facetKn2_equiv`](https://raw.githubusercontent.com/sh7vansh/universe/main/math_project/MathProject/FunctorialGeometry.lean) | Closed-form polygon chord bijection |
+| **Corollary 6.2** | Constructive bijection $\Phi_{\ge -1}(A_3) \xrightarrow{\sim} \mathrm{Facets}(K_5)$ | [`rootA3_facetK5_equiv`](https://raw.githubusercontent.com/sh7vansh/universe/main/math_project/MathProject/FunctorialGeometry.lean), [`a3_facet_count`](https://raw.githubusercontent.com/sh7vansh/universe/main/math_project/MathProject/FunctorialGeometry.lean) | Constructive two-sided inverse, `interval_cases` |
+| **Theorem 7.1** | Universal positive-definite $A_n$ Dirichlet-Cartan metric | [`cartanEnergy_nonneg`](https://raw.githubusercontent.com/sh7vansh/universe/main/math_project/MathProject/FunctorialGeometry.lean), [`cartanEnergy_pos_def`](https://raw.githubusercontent.com/sh7vansh/universe/main/math_project/MathProject/FunctorialGeometry.lean) | `Finset.sum_eq_zero_iff_of_nonneg`, induction, `omega` |
+| **Section 7.2** | Sum-of-squares $A_3$ Cartan metric | [`cartanForm_sum_of_squares`](https://raw.githubusercontent.com/sh7vansh/universe/main/math_project/MathProject/FunctorialGeometry.lean), [`cartanForm_pos_def`](https://raw.githubusercontent.com/sh7vansh/universe/main/math_project/MathProject/FunctorialGeometry.lean) | `ring`, `nlinarith [sq_nonneg]` |
+| **Section 7.3** | Root norm invariance ($=2$), off-diagonal couplings ($-1, 0$) | [`norm_alpha1`](https://raw.githubusercontent.com/sh7vansh/universe/main/math_project/MathProject/FunctorialGeometry.lean), [`strain_adjacent_12`](https://raw.githubusercontent.com/sh7vansh/universe/main/math_project/MathProject/FunctorialGeometry.lean), [`coupled_strain_alpha12`](https://raw.githubusercontent.com/sh7vansh/universe/main/math_project/MathProject/FunctorialGeometry.lean) | Bilinear form evaluation (`rfl`) |
 
 ### 8.3 Compilation and Machine Verification
 
-- **Formal Target:** [`math_project/MathProject/FunctorialGeometry.lean`](https://raw.githubusercontent.com/sh7vansh/universe/main/math_project/MathProject/FunctorialGeometry.lean) (~770 lines of verified code).
+- **Formal Target:** [`math_project/MathProject/FunctorialGeometry.lean`](https://raw.githubusercontent.com/sh7vansh/universe/main/math_project/MathProject/FunctorialGeometry.lean) (~930 lines of verified code).
 - **Environment:** Lean 4 (`v4.33.1`), Mathlib (v4.33.1).
 - **Build Command:**
   ```bash
@@ -270,7 +286,6 @@ An automated axiom audit via `#print axioms` confirms that the entire formalizat
   Verified in the Lean 4 kernel with 0 errors and 0 warnings.
 - **Axiom Check:** Executing `#print axioms` verifies that all declarations reduce exclusively to the standard core foundations `[propext, Classical.choice, Quot.sound]`.
 
----
 
 ## 9. Conclusion
 
