@@ -41,18 +41,19 @@ set_option linter.style.haveILetI false
 /-!
 # Functorial and Geometric Structures on Subobject Lattices
 
-This unified module formalizes the mathematical core corresponding to `paper1.md`:
+This unified module formalizes the mathematical core corresponding to `thin-category-lattice.md`:
 1. **Thin Categories & Subobject Lattices:** Posets as thin categories, subsingleton homs,
    monic/epic collapse, meets/joins as universal products/coproducts, closure monads.
 2. **Submodular Defects & Modularity:** Defect Δ(A, B) ≥ 0, modularity characterization,
    and Tor₀ as the categorical meet.
 3. **The Travel Experience Monoid:** 2×2 unipotent shear group, travel state (action, transport),
-   monoid associativity/unitality, and strict action growth on covering paths.
+   monoid associativity/unitality, path valuation, and strict action growth on covering paths.
 4. **Transfinite Loewy Filtrations & Basis Discovery:** Transfinite Loewy sequence on
-   semi-Artinian objects, stabilization at ordinal length Ω, vanishing residual colimits,
-   and well-founded basis selection.
+   semi-Artinian objects, stabilization at Loewy length Ω, reconstruction, SES presentation,
+   vanishing residual colimits on restricted ordinal intervals, and well-founded novelty selection.
 5. **Higher Associativity & A₃ ≅ K₅ Duality:** Tamari lattice 𝒯₄ (Catalan C₃ = 5),
-   constructive bijection between K₅ boundary facets and A₃ almost-positive roots (card = 9).
+   two-sided equivalence between RootAn and true geometric polygon diagonals, and classification
+   of A₃ roots into cyclic length 2 (pentagons) and 3 (squares).
 6. **Cartan Metric & Quadratic Form:** Positive-definite Riemannian metric on ℤ³,
    sum-of-squares decomposition, root norm invariance (= 2), and off-diagonal shear couplings.
 -/
@@ -182,7 +183,6 @@ variable {L : Type*} [Lattice L]
 structure SubmodularRank (L : Type*) [Lattice L] where
   rk : L → ℤ
   submodular : ∀ A B : L, rk (A ⊔ B) + rk (A ⊓ B) ≤ rk A + rk B
-  monotone : ∀ A B : L, A ≤ B → rk A ≤ rk B
 
 /-- The Submodular Defect Δ(A, B) = (rk A + rk B) - (rk(A ⊔ B) + rk(A ⊓ B)). -/
 def submodularDefect (R : SubmodularRank L) (A B : L) : ℤ :=
@@ -195,7 +195,7 @@ theorem defect_nonneg (R : SubmodularRank L) (A B : L) :
   have h := R.submodular A B
   linarith
 
-/-- The defect vanishes if and only if modularity holds on {A, B}. -/
+/-- The defect vanishes if and only if the modular equality holds on {A, B}. -/
 theorem defect_zero_iff_modular (R : SubmodularRank L) (A B : L) :
     submodularDefect R A B = 0 ↔ R.rk (A ⊔ B) + R.rk (A ⊓ B) = R.rk A + R.rk B := by
   dsimp [submodularDefect]
@@ -312,6 +312,12 @@ structure LatticeStep (L : Type*) [PartialOrder L] where
 /-- Functorial valuation of a lattice step into the travel monoid. -/
 def stepExperience (s : LatticeStep L) : TravelExperience :=
   ⟨s.friction_cost, ⟨s.ext_class⟩⟩
+
+/-- Path valuation composing a sequence of lattice steps into the travel monoid. -/
+def pathExperience (p : List (LatticeStep L)) : TravelExperience :=
+  p.foldl (fun acc s => acc * stepExperience s) 1
+
+@[simp] theorem pathExperience_nil : pathExperience ([] : List (LatticeStep L)) = 1 := rfl
 
 /-- Non-trivial steps strictly increase accumulated action. -/
 theorem action_strictly_increases (t : TravelExperience) (s : LatticeStep L) (hcost : 0 < s.friction_cost) :
@@ -730,8 +736,8 @@ instance : Epi (cellularShortComplex U₀ C a i).g := by
   dsimp [cellularShortComplex]
   infer_instance
 
-/-- Main Yoneda Extension Theorem: Every cellular step is a Short Exact Sequence,
-    classifying a length-1 Yoneda extension class `ξ ∈ Ext¹(a, C)`. -/
+/-- Main Cellular Extension Theorem: Every cellular step forms a Short Exact Sequence,
+    presenting a length-1 extension `0 ⟶ C ⟶ pullback ⟶ a ⟶ 0`. -/
 theorem cellular_shortExact :
     (cellularShortComplex U₀ C a i).ShortExact where
   exact := cellular_exact U₀ C a i
@@ -843,11 +849,13 @@ inductive RootAn (n : ℕ) : Type
 
 /-- A diagonal of a convex (n+3)-gon (vertices 0 to n+2) is a pair of vertices (a, b)
     such that a + 2 ≤ b and (a, b) ≠ (0, n+2). -/
+@[ext]
 structure Diagonal (n : ℕ) : Type where
   a : Fin (n + 3)
   b : Fin (n + 3)
   ha : a.val + 2 ≤ b.val
   h_not_base : ¬ (a.val = 0 ∧ b.val = n + 2)
+  deriving DecidableEq
 
 /-- The boundary facets of the (n+2)-associahedron K_{n+2} are combinatorial representations of the diagonals.
     We partition them into base chords and internal chords to match the root system. -/
@@ -858,19 +866,75 @@ inductive FacetKn2 (n : ℕ) : Type
 
 /-- The bijection mapping our combinatorial FacetKn2 directly to true geometric diagonals of the polygon. -/
 def facetKn2_to_diagonal (n : ℕ) : FacetKn2 n → Diagonal n
-  | FacetKn2.base_diagonal k =>
+  | FacetKn2.base_diagonal k => 
       have hk := k.isLt
       ⟨⟨0, by omega⟩, ⟨k.val + 2, by omega⟩, by dsimp; omega, by
         rintro ⟨h0, h2⟩
         dsimp at h0 h2
         omega⟩
-  | FacetKn2.chord i j hle =>
+  | FacetKn2.chord i j hle => 
       have hi := i.isLt
       have hj := j.isLt
       ⟨⟨i.val + 1, by omega⟩, ⟨j.val + 3, by omega⟩, by dsimp; omega, by
         rintro ⟨h0, h2⟩
         dsimp at h0 h2
         omega⟩
+
+/-- The inverse mapping from geometric diagonals to combinatorial FacetKn2. -/
+def diagonal_to_facetKn2 (n : ℕ) (d : Diagonal n) : FacetKn2 n :=
+  if h0 : d.a.val = 0 then
+    have hk : d.b.val - 2 < n := by
+      have ha := d.ha
+      have hb := d.b.isLt
+      have hnb := d.h_not_base
+      omega
+    FacetKn2.base_diagonal ⟨d.b.val - 2, hk⟩
+  else
+    have hi : d.a.val - 1 < n := by
+      have ha := d.ha
+      have hb := d.b.isLt
+      have ha_lt := d.a.isLt
+      omega
+    have hj : d.b.val - 3 < n := by
+      have hb := d.b.isLt
+      omega
+    have hle : d.a.val - 1 ≤ d.b.val - 3 := by
+      have ha := d.ha
+      omega
+    FacetKn2.chord ⟨d.a.val - 1, hi⟩ ⟨d.b.val - 3, hj⟩ hle
+
+theorem facetKn2_diagonal_left_inv (n : ℕ) (f : FacetKn2 n) :
+    diagonal_to_facetKn2 n (facetKn2_to_diagonal n f) = f := by
+  cases f <;> (dsimp [facetKn2_to_diagonal, diagonal_to_facetKn2]; congr 1)
+
+theorem facetKn2_diagonal_right_inv (n : ℕ) (d : Diagonal n) :
+    facetKn2_to_diagonal n (diagonal_to_facetKn2 n d) = d := by
+  dsimp [diagonal_to_facetKn2]
+  split_ifs with h0
+  · dsimp [facetKn2_to_diagonal]
+    have ha := d.ha
+    have hb := d.b.isLt
+    apply Diagonal.ext
+    · ext; dsimp; omega
+    · ext; dsimp; omega
+  · dsimp [facetKn2_to_diagonal]
+    have ha := d.ha
+    have hb := d.b.isLt
+    have ha_lt := d.a.isLt
+    apply Diagonal.ext
+    · ext; dsimp; omega
+    · ext; dsimp; omega
+
+/-- Fully proven constructive equivalence between FacetKn2 and true polygon Diagonals. -/
+def facetKn2_diagonal_equiv (n : ℕ) : FacetKn2 n ≃ Diagonal n where
+  toFun := facetKn2_to_diagonal n
+  invFun := diagonal_to_facetKn2 n
+  left_inv := facetKn2_diagonal_left_inv n
+  right_inv := facetKn2_diagonal_right_inv n
+
+/-- Cyclic length of a chord in a convex (n+3)-gon. -/
+def cyclicLength (n : ℕ) (d : Diagonal n) : ℕ :=
+  min (d.b.val - d.a.val) ((n + 3) - (d.b.val - d.a.val))
 
 /-- Canonical constructive bijection between Aₙ roots and K_{n+2} facets for all n. -/
 def rootAn_to_facetKn2 (n : ℕ) : RootAn n → FacetKn2 n
@@ -896,6 +960,10 @@ def rootAn_facetKn2_equiv (n : ℕ) : RootAn n ≃ FacetKn2 n where
   left_inv := rootAn_facet_left_inv n
   right_inv := rootAn_facet_right_inv n
 
+/-- Universal bijection between Aₙ roots and true polygon Diagonals. -/
+def rootAn_diagonal_equiv (n : ℕ) : RootAn n ≃ Diagonal n :=
+  (rootAn_facetKn2_equiv n).trans (facetKn2_diagonal_equiv n)
+
 /-! ### Explicit A₃ ≅ K₅ Dimension-3 Specialization -/
 
 /-- The 9 almost-positive roots of A₃ (6 positive + 3 negative simple). -/
@@ -913,28 +981,42 @@ inductive RootA3 : Type
 
 open RootA3
 
-/-- The 9 boundary facets of the 3D Associahedron K₅ (6 pentagons + 3 squares).
-    A diagonal of length 2 corresponds to a pentagon (it cuts off a single triangle).
-    A diagonal of length 3 corresponds to a square (it bisects the hexagon). -/
+/-- The 9 boundary facets of the 3D Associahedron K₅ (6 pentagons + 3 squares). -/
 inductive FacetK5 : Type
   | pentagon (i : Fin 6) : FacetK5
   | square (j : Fin 3) : FacetK5
   deriving DecidableEq, Repr
 
-/-- Honest geometric mapping reflecting diagonal lengths in the hexagon (n=3+3=6). 
-    - Pentagons (length 2 diagonals): (0,2), (1,3), (2,4), (3,5), (0,4), (1,5).
-    - Squares (length 3 diagonals): (0,3), (1,4), (2,5). 
-    This corrects the paper's false claim that all pos roots = pentagon. -/
+def rootA3_to_facetKn2_3 : RootA3 → FacetKn2 3
+  | neg_alpha1 => FacetKn2.base_diagonal ⟨0, by decide⟩
+  | neg_alpha2 => FacetKn2.base_diagonal ⟨1, by decide⟩
+  | neg_alpha3 => FacetKn2.base_diagonal ⟨2, by decide⟩
+  | alpha1     => FacetKn2.chord ⟨0, by decide⟩ ⟨0, by decide⟩ (by decide)
+  | alpha2     => FacetKn2.chord ⟨1, by decide⟩ ⟨1, by decide⟩ (by decide)
+  | alpha3     => FacetKn2.chord ⟨2, by decide⟩ ⟨2, by decide⟩ (by decide)
+  | alpha12    => FacetKn2.chord ⟨0, by decide⟩ ⟨1, by decide⟩ (by decide)
+  | alpha23    => FacetKn2.chord ⟨1, by decide⟩ ⟨2, by decide⟩ (by decide)
+  | alpha123   => FacetKn2.chord ⟨0, by decide⟩ ⟨2, by decide⟩ (by decide)
+
+def rootA3_to_diagonal_3 (r : RootA3) : Diagonal 3 :=
+  facetKn2_to_diagonal 3 (rootA3_to_facetKn2_3 r)
+
+def rootA3_cyclic_length (r : RootA3) : ℕ :=
+  cyclicLength 3 (rootA3_to_diagonal_3 r)
+
+/-- Honest geometric mapping reflecting cyclic diagonal lengths in the hexagon (n=3+3=6). 
+    - Pentagons (cyclic length 2 diagonals): (0,2), (1,3), (2,4), (3,5), (0,4), (1,5).
+    - Squares (cyclic length 3 diagonals): (0,3), (1,4), (2,5). -/
 def rootA3_to_facetK5 : RootA3 → FacetK5
-  | neg_alpha1 => FacetK5.pentagon 0 -- (0,2)
-  | neg_alpha2 => FacetK5.square 0   -- (0,3)
-  | neg_alpha3 => FacetK5.pentagon 1 -- (0,4)
-  | alpha1     => FacetK5.pentagon 2 -- (1,3)
-  | alpha12    => FacetK5.square 1   -- (1,4)
-  | alpha123   => FacetK5.pentagon 3 -- (1,5)
-  | alpha2     => FacetK5.pentagon 4 -- (2,4)
-  | alpha23    => FacetK5.square 2   -- (2,5)
-  | alpha3     => FacetK5.pentagon 5 -- (3,5)
+  | neg_alpha1 => FacetK5.pentagon 0 -- (0,2) length 2
+  | neg_alpha2 => FacetK5.square 0   -- (0,3) length 3
+  | neg_alpha3 => FacetK5.pentagon 1 -- (0,4) length 2
+  | alpha1     => FacetK5.pentagon 2 -- (1,3) length 2
+  | alpha12    => FacetK5.square 1   -- (1,4) length 3
+  | alpha123   => FacetK5.pentagon 3 -- (1,5) length 2
+  | alpha2     => FacetK5.pentagon 4 -- (2,4) length 2
+  | alpha23    => FacetK5.square 2   -- (2,5) length 3
+  | alpha3     => FacetK5.pentagon 5 -- (3,5) length 2
 
 def facetK5_to_rootA3 : FacetK5 → RootA3
   | FacetK5.pentagon 0 => neg_alpha1
@@ -964,6 +1046,14 @@ def rootA3_facetK5_equiv : RootA3 ≃ FacetK5 where
   invFun := facetK5_to_rootA3
   left_inv := rootA3_facet_left_inv
   right_inv := rootA3_facet_right_inv
+
+theorem rootA3_cyclic_length_pentagon (r : RootA3) (i : Fin 6) (h : rootA3_to_facetK5 r = FacetK5.pentagon i) :
+    rootA3_cyclic_length r = 2 := by
+  cases r <;> (first | rfl | cases h)
+
+theorem rootA3_cyclic_length_square (r : RootA3) (j : Fin 3) (h : rootA3_to_facetK5 r = FacetK5.square j) :
+    rootA3_cyclic_length r = 3 := by
+  cases r <;> (first | rfl | cases h)
 
 instance : Fintype RootA3 where
   elems := {alpha1, alpha2, alpha3, alpha12, alpha23, alpha123, neg_alpha1, neg_alpha2, neg_alpha3}
@@ -1130,8 +1220,11 @@ end CartanMetric
 
 #print axioms loewy_length_exists
 #print axioms loewy_residual_colimit_vanishes
-#print axioms rootAn_facetKn2_equiv
+#print axioms facetKn2_diagonal_equiv
+#print axioms rootAn_diagonal_equiv
 #print axioms rootA3_facetK5_equiv
+#print axioms rootA3_cyclic_length_pentagon
+#print axioms rootA3_cyclic_length_square
 #print axioms cartanEnergy_pos_def
 #print axioms cellular_shortExact
 
