@@ -9,3 +9,5 @@ import MathProject.ThinCategoryLattice
 import MathProject.A3ManifoldStrain
 import MathProject.TorFrictionStrain
 import MathProject.TravelFunctor
+
+import MathProject.FunctorialGeometry
