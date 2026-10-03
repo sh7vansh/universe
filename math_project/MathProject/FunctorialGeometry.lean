@@ -46,7 +46,7 @@ This unified module formalizes the mathematical core corresponding to `thin-cate
 1. **Thin Categories & Subobject Lattices:** Posets as thin categories, subsingleton homs,
    monic/epic collapse, meets/joins as universal products/coproducts, closure monads.
 2. **Submodular Defects & Modularity:** Defect Δ(A, B) ≥ 0, modularity characterization,
-   and Tor₀ as the categorical meet.
+   and the meet interaction.
 3. **The Travel Experience Monoid:** 2×2 unipotent shear group, travel state (action, transport),
    monoid associativity/unitality, path valuation, and strict action growth on step sequences.
 4. **Transfinite Loewy Filtrations & Basis Discovery:** Transfinite Loewy sequence on
@@ -223,17 +223,17 @@ theorem modular_defect_zero (M : ModularRank L) (A B : L) :
   rw [defect_zero_iff_modular]
   exact M.modular A B
 
-/-- Tor₀ in thin categories is canonically the lattice meet. -/
-def tor0 (A B : L) : L := A ⊓ B
+/-- Meet interaction in thin categories playing the role of a zero-order product. -/
+def meetInteraction (A B : L) : L := A ⊓ B
 
-theorem tor0_comm (A B : L) : tor0 A B = tor0 B A := by
-  dsimp [tor0]; rw [inf_comm]
+theorem meetInteraction_comm (A B : L) : meetInteraction A B = meetInteraction B A := by
+  dsimp [meetInteraction]; rw [inf_comm]
 
-theorem tor0_assoc (A B C : L) : tor0 (tor0 A B) C = tor0 A (tor0 B C) := by
-  dsimp [tor0]; rw [inf_assoc]
+theorem meetInteraction_assoc (A B C : L) : meetInteraction (meetInteraction A B) C = meetInteraction A (meetInteraction B C) := by
+  dsimp [meetInteraction]; rw [inf_assoc]
 
-theorem tor0_universal {A B C : L} (hCA : C ≤ A) (hCB : C ≤ B) :
-    C ≤ tor0 A B :=
+theorem meetInteraction_universal {A B C : L} (hCA : C ≤ A) (hCB : C ≤ B) :
+    C ≤ meetInteraction A B :=
   le_inf hCA hCB
 
 end TorFriction
