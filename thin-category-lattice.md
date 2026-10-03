@@ -268,7 +268,7 @@ Under the form $\langle \cdot, \cdot \rangle_{A_3}$, the roots satisfy exact geo
 
 ## 8. Lean 4 Formalization and Machine Verification
 
-The entirety of the mathematical development presented in Sections 2–7 is formalized in Lean 4 as the standalone module [`FunctorialGeometry.lean`](https://github.com/sh7vansh/universe/blob/481407acad1474e6601642b852fc09b7cd862205/math_project/MathProject/FunctorialGeometry.lean) within the `MathProject` workspace.
+The entirety of the mathematical development presented in Sections 2–7 is formalized in Lean 4 as the standalone module [`FunctorialGeometry.lean`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean) within the `MathProject` workspace.
 
 ### 8.1 Design Principles and Axiomatic Foundations
 
