@@ -31,6 +31,7 @@ import Mathlib.Tactic.Ring
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Algebra.BigOperators.Fin
+import MathProject.AssociahedralDimension
 
 set_option linter.style.header false
 set_option linter.style.longLine false
@@ -56,6 +57,10 @@ This unified module formalizes the mathematical core corresponding to `thin-cate
    semi-Artinian objects, stabilization at Cellular length Ω, reconstruction, SES presentation,
    vanishing residual colimits on restricted ordinal intervals, and well-founded novelty selection.
 5. **Higher Associativity & A₃ ≅ K₅ Duality:** Tamari lattice 𝒯₄ (Catalan C₃ = 5),
+   all-arity bracket/face order isomorphisms and thin-category evaluation (imported
+   from `AssociahedralComposition`), the general tree-to-vertex equivalence,
+   Loday's convex realization with its full supporting-face order, affine dimension,
+   geometric Catalan vertex count and geometric facet count in every dimension,
    two-sided equivalence between RootAn and polygon diagonals, and classification
    of A₃ roots into cyclic length 2 (pentagons) and 3 (squares).
 6. **Cartan Metric & Quadratic Form:** Positive-definite quadratic form on ℤ³,
@@ -67,7 +72,7 @@ namespace FunctorialGeometry
 open CategoryTheory Limits Classical
 
 /-! ##############################################################################
-    PART I: CATEGORICAL FOUNDATIONS AND ORDER DEFECTS
+    PART I: CATEGORICAL FOUNDATIONS AND SUBMODULAR DEFECTS
     ##############################################################################
 
     SECTION 1: POSETS AND SUBOBJECT LATTICES AS THIN CATEGORIES
