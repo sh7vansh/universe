@@ -31,7 +31,7 @@ import Mathlib.Tactic.Ring
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Algebra.BigOperators.Fin
-import MathProject.AssociahedralDimension
+import MathProject.AssociahedralFacetProducts
 
 set_option linter.style.header false
 set_option linter.style.longLine false
@@ -59,8 +59,8 @@ Part and section labels below refer to the paper.
    from `AssociahedralComposition`), the general tree-to-vertex equivalence,
    Loday's convex realization with its full supporting-face order, affine dimension,
    geometric Catalan vertex count and geometric facet count in every dimension,
-   two-sided equivalence between RootAn and polygon diagonals, and classification
-   of A₃ roots into cyclic length 2 (pentagons) and 3 (squares).
+   facet product face orders, root indexing of actual supporting facets, and
+   the pentagonal and square facet types and counts for K₅.
 4. **Cartan Metric & Quadratic Form:** Positive-definite quadratic form on ℤ³,
    sum-of-squares decomposition, root norm invariance (= 2), and off-diagonal shear couplings.
 5. **The Travel Experience Monoid:** 2×2 unipotent shear group, travel state (action, transport),
@@ -1509,6 +1509,19 @@ def rootAn_facetKn2_equiv (n : ℕ) : RootAn n ≃ FacetKn2 n where
 def rootAn_diagonal_equiv (n : ℕ) : RootAn n ≃ Diagonal n :=
   (rootAn_facetKn2_equiv n).trans (facetKn2_diagonal_equiv n)
 
+/-- Identify the root-indexing diagonal type with the general polygon face type. -/
+def diagonal_polygon_equiv (n : ℕ) : Diagonal n ≃ PolygonDiagonal (n + 2) where
+  toFun d := ⟨d.a, d.b, d.ha, d.h_not_base⟩
+  invFun d := ⟨d.a, d.b, d.gap, d.not_boundary⟩
+  left_inv _ := rfl
+  right_inv _ := rfl
+
+/-- Almost-positive roots index actual supporting facets of the convex realization. -/
+noncomputable def rootAn_lodayFacet_equiv (n : ℕ) :
+    RootAn n ≃ {F : LodayExposedFace n // IsCoatom F} :=
+  (rootAn_diagonal_equiv n).trans
+    ((diagonal_polygon_equiv n).trans (polygonDiagonal_lodayFacet_equiv n))
+
 /-! ### Support = Crossing in the Fan Model -/
 
 /-- Two diagonals of the (n+3)-gon cross in their interiors. -/
@@ -1715,6 +1728,28 @@ theorem rootA3_cyclic_length_square (r : RootA3) (j : Fin 3) (h : rootA3_facetK5
   have heq : rootA3_facetK5_equiv r = rootA3_to_facetK5 r := by cases r <;> rfl
   rw [heq] at h
   cases r <;> (first | rfl | cases h)
+
+/-- The legacy A₃ cyclic-length labels agree with the general geometric index. -/
+theorem rootA3_polygon_cyclic_length (r : RootA3) :
+    polygonCyclicLength (diagonal_polygon_equiv 3 (rootA3_to_diagonal_3 r)) =
+      rootA3_cyclic_length r := by
+  cases r <;> rfl
+
+/-- A pentagon label identifies an actual facet with the pentagon face order. -/
+theorem rootA3_geometric_pentagonal_facet (r : RootA3) (i : Fin 6)
+    (h : rootA3_facetK5_equiv r = FacetK5.pentagon i) :
+    Nonempty (LodayFacetFaces 3 (diagonal_polygon_equiv 3 (rootA3_to_diagonal_3 r)) ≃o
+      LodayExposedFace 2) :=
+  Loday_K5_pentagonal_facet _ ((rootA3_polygon_cyclic_length r).trans
+    (rootA3_cyclic_length_pentagon r i h))
+
+/-- A square label identifies an actual facet with the product of two interval face orders. -/
+theorem rootA3_geometric_square_facet (r : RootA3) (j : Fin 3)
+    (h : rootA3_facetK5_equiv r = FacetK5.square j) :
+    Nonempty (LodayFacetFaces 3 (diagonal_polygon_equiv 3 (rootA3_to_diagonal_3 r)) ≃o
+      (LodayExposedFace 1 × LodayExposedFace 1)) :=
+  Loday_K5_square_facet _ ((rootA3_polygon_cyclic_length r).trans
+    (rootA3_cyclic_length_square r j h))
 
 instance : Fintype RootA3 where
   elems := {alpha1, alpha2, alpha3, alpha12, alpha23, alpha123, neg_alpha1, neg_alpha2, neg_alpha3}

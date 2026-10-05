@@ -162,16 +162,25 @@ $$\dim K_n=n-2,\qquad
 
 The theorem `all_Kn_poset_realization` combines the convex realization and counts with equality of the composite arrows for any poset chain. The map `all_Kn_geometric_orderIso` includes $K_0$ and $K_1$ under the stated conventions. Loday's construction is described in [Realization of the Stasheff polytope](https://arxiv.org/abs/math/0212126).
 
-| Polytope | Objects | Composable Arrows | Bracketings ($C_{n-1}$) | Dimension | Almost-Positive Roots | Boundary Facets | Categorical Meaning |
+**Theorem 4.0.2 (Facet Product Face Order).** Let $d=(a,b)$ be a diagonal of the $(n+1)$-gon for $K_n$. Put $m=b-a$ and $k=n+1-m$. Then $m,k\ge2$, and the nonempty subfaces of the facet indexed by $d$ have the product order
+$$\{G : G\text{ is a nonempty face of }K_n,\ G\le F_d\}\simeq_o
+\operatorname{Faces}_{\ne\emptyset}(K_m)\times\operatorname{Faces}_{\ne\emptyset}(K_k).$$
+The declarations `polygonFacet_product_orderIso` and `Loday_facet_geometric_product_orderIso` prove this for the polygon model and the actual convex supporting-face model. This specifies the combinatorial type; it does not assert metric regularity.
+
+*Proof.* The diagonal splits the polygon into one polygon with vertices $a,\ldots,b$ and a complementary polygon. Every other diagonal that does not cross $d$ belongs to exactly one side. The endpoint maps preserve crossings within a side, and diagonals on different sides do not cross. A face containing $d$ therefore splits into a pair of compatible diagonal sets. Conversely, insert $d$ and unite the two embedded sets. These maps preserve reverse inclusion and give the order isomorphism. Restrict the proved polygon-to-convex face map to the subfaces of the facet, then apply the same face map to both smaller factors.
+
+| Member | Chain positions | Composable arrows | Full binary bracketings | Dimension | Almost-positive root labels | Boundary facets | Categorical Meaning |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **$K_0$** | $1$ ($x_0$) | $0$ (nullary) | $0$ binary trees | $\emptyset$ (convention) | — | $0$ | **Empty nullary member**; empty composition is $\mathbb{1}_{x_0}$ |
-| **$K_1$** | $2$ ($x_0, x_1$) | $1$ ($x_0 \xrightarrow{f} x_1$) | $C_0 = 1$ | Unit point (convention) | — | $0$ | **Unary evaluation** gives $f$ |
+| **$K_0$** | $1$ ($x_0$) | $0$ (nullary) | $0$ binary trees | Not assigned; empty by convention | — | $0$ | **Empty nullary member**; empty composition is $\mathbb{1}_{x_0}$ |
+| **$K_1$** | $2$ ($x_0, x_1$) | $1$ ($x_0 \xrightarrow{f} x_1$) | $C_0 = 1$ | 0D point, by convention | — | $0$ | **Unary evaluation** gives $f$ |
 | **$K_2$** | $3$ ($x_0, x_1, x_2$) | $2$ ($x_0 \xrightarrow{f} x_1 \xrightarrow{g} x_2$) | $C_1 = 1$ | 0D (point) | $A_0$ ($0$ roots) | $0$ | **Binary Composition** ($(gf)$) |
 | **$K_3$** | $4$ ($x_0, \dots, x_3$) | $3$ ($x_0 \xrightarrow{f} x_1 \xrightarrow{g} x_2 \xrightarrow{h} x_3$) | $C_2 = 2$ | 1D (interval) | $A_1$ ($2$ roots) | $2$ Points | **Ternary Associativity** ($h(gf) \leftrightarrow (hg)f$) |
 | **$K_4$** | $5$ ($x_0, \dots, x_4$) | $4$ (4 arrows) | $C_3 = 5$ | 2D (pentagon) | $A_2$ ($5$ roots) | $5$ Edges | **Stasheff Pentagon** (Tamari $\mathcal{T}_4$) |
-| **$K_5$** | $6$ ($x_0, \dots, x_5$) | $5$ (5 arrows) | $C_4 = 14$ | 3D (polyhedron) | $A_3$ ($9$ roots) | **$9$ Facets (6 Pent + 3 Sq)** | **3D Associahedron** ($K_5 \leftrightarrow A_3$) |
+| **$K_5$** | $6$ ($x_0, \dots, x_5$) | $5$ (5 arrows) | $C_4 = 14$ | 3D (polyhedron) | $A_3$ ($9$ roots) | **9 facets: 6 pentagons and 3 squares** | **3D Associahedron** ($K_5 \leftrightarrow A_3$) |
 | **$K_6$** | $7$ ($x_0, \dots, x_6$) | $6$ (6 arrows) | $C_5 = 42$ | 4D (polytope) | $A_4$ ($14$ roots) | $14$ Facets | **4D Associahedron** |
 | **$K_{n+2}$** | $n+3$ objects | $n+2$ arrows | $C_{n+1}$ | $n$-dimensional | $A_n$ ($\frac{n(n+3)}{2}$ roots) | $\frac{n(n+3)}{2}$ Facets | **Higher $n$-Associativity** |
+
+Chain positions can contain repeated objects. The Catalan formula $C_{n-1}$ for full binary bracketings applies for $n \ge 1$. At $n=0$, the empty categorical composition is defined separately from full binary trees. The Tamari order is an order on full bracketings; the face order uses compatible partial bracket patterns and reverse inclusion. Facet shape names describe combinatorial type, without an assertion of equal side lengths or angles.
 
 In Lean 4, parenthesizations for $K_2$ (`Tree2`, $C_1 = 1$), $K_3$ (`Tree3`, $C_2 = 2$), and $K_4$ (`Tree4`, $C_3 = 5$) are formalized constructively, with Catalan cardinalities machine-checked (`tamari2_card`, `tamari3_card`, `tamari4_card`).
 
@@ -189,6 +198,8 @@ In `FunctorialGeometry.lean`, we formalize a bijection in the fan-triangulation 
 $$\mathrm{Root}_{A_n} \xrightarrow[\sim]{\mathrm{rootAn\_facetKn2\_equiv}} \mathrm{Facet}_{K_{n+2}} \xrightarrow[\sim]{\mathrm{facetKn2\_diagonal\_equiv}} \mathrm{Diagonal}(n)$$
 *Their composition yields the universal root-diagonal equivalence $\mathrm{Root}_{A_n} \simeq \mathrm{Diagonal}(n)$ (`rootAn_diagonal_equiv`).*
 
+The declaration `diagonal_polygon_equiv` identifies this diagonal type with the general polygon face model. Composing with the proved diagonal-to-convex-facet equivalence gives `rootAn_lodayFacet_equiv`, an equivalence between the root labels and the actual supporting facets of the convex realization.
+
 **Definition 4.2 (Cyclic Length).** For any diagonal $d = (a, b)$ of an $(n+3)$-gon, its cyclic length is:
 $$\ell_{\mathrm{cyc}}(d) = \min\big(b - a, \, (n + 3) - (b - a)\big)$$
 
@@ -203,6 +214,8 @@ For $n=3$, the associahedron $K_5$ is a 3-dimensional polyhedron with 14 vertice
 
 1. *Pentagonal Facets (6 Roots):* The 6 roots $\{-\alpha_1, -\alpha_3, \alpha_1, \alpha_2, \alpha_3, \alpha_{123}\}$ map to chords of cyclic length $2$ (`rootA3_cyclic_length_pentagon`), corresponding to pentagonal boundary faces of $K_5$.
 2. *Square Facets (3 Roots):* The 3 roots $\{-\alpha_2, \alpha_{12}, \alpha_{23}\}$ map to chords of cyclic length $3$ (`rootA3_cyclic_length_square`), corresponding to square boundary faces of $K_5$.
+
+The facet shapes now follow from Theorem 4.0.2. A cyclic length-2 diagonal splits the hexagon into a triangle and a pentagon, so its facet has type $K_2\times K_4\cong K_4$. A cyclic length-3 diagonal splits it into two quadrilaterals, so its facet has type $K_3\times K_3$, a square. The symbol $\cong$ here denotes combinatorial type. The Lean theorems `Loday_K5_pentagonal_facet` and `Loday_K5_square_facet` identify the actual supporting-face orders. The theorems `rootA3_geometric_pentagonal_facet` and `rootA3_geometric_square_facet` connect these shapes to the existing root labels. The actual facet counts are six and three (`Loday_K5_pentagonal_facet_count`, `Loday_K5_square_facet_count`).
 
 ---
 
@@ -340,15 +353,16 @@ is well-defined for all $x < \top$. It satisfies the **novelty property**: $e(\p
 
 ## 8. Lean 4 Formalization and Machine Verification
 
-The entry point is [`FunctorialGeometry.lean`](math_project/MathProject/FunctorialGeometry.lean). It imports the general associahedron proofs through five modules:
+The entry point is [`FunctorialGeometry.lean`](math_project/MathProject/FunctorialGeometry.lean). It imports the general associahedron proofs through six modules:
 
 - [`AssociahedralComposition.lean`](math_project/MathProject/AssociahedralComposition.lean): bracket and polygon orders, full-bracketing count, and chain evaluation.
 - [`AssociahedralTrees.lean`](math_project/MathProject/AssociahedralTrees.lean): tree completion, vertex correspondence, rotations, and combinatorial counts.
 - [`AssociahedralRealization.lean`](math_project/MathProject/AssociahedralRealization.lean): Loday coordinates, convex hull, supporting inequalities, and actual extreme points.
 - [`AssociahedralFaces.lean`](math_project/MathProject/AssociahedralFaces.lean): certificates for all linear functionals and the complete supporting-face order isomorphism.
 - [`AssociahedralDimension.lean`](math_project/MathProject/AssociahedralDimension.lean): actual affine dimension, geometric counts, and the combined theorem for poset chains.
+- [`AssociahedralFacetProducts.lean`](math_project/MathProject/AssociahedralFacetProducts.lean): facet product face orders, convex subface orders, and the pentagon and square shapes and counts for $K_5$.
 
-[`CheckAssociahedra.lean`](math_project/MathProject/CheckAssociahedra.lean) checks the axiom dependencies and the small geometric cases. [`CheckPathValuations.lean`](math_project/MathProject/CheckPathValuations.lean) audits the path-valuation theorems and checks labelled examples and the empty path.
+[`CheckAssociahedra.lean`](math_project/MathProject/CheckAssociahedra.lean) checks the axiom dependencies and the small geometric cases. [`CheckPathValuations.lean`](math_project/MathProject/CheckPathValuations.lean) audits the path-valuation theorems and checks labelled examples and the empty path. [`CheckFacetProducts.lean`](math_project/MathProject/CheckFacetProducts.lean) audits the facet product proofs and checks the root-to-shape conclusions.
 
 ### 8.1 Design Principles and Axiomatic Foundations
 
@@ -375,11 +389,13 @@ The `#print axioms` command confirms that all declarations compile without `sorr
 | **Theorem 4.0** | All bracket patterns of a finite chain give the same arrow | `all_Kn_chain_composites`, `all_Kn_thin_composition` | Recursive categorical composition, `Subsingleton.elim` |
 | **Section 4.1** | Full binary bracketing count for every positive arity | `fullBracketing_card`, `fullBracketing_card_formula` | Mathlib binary-tree enumeration and Catalan formula |
 | **Theorem 4.0.1** | Convex face order, actual affine dimension, and geometric counts for every rank | `polygon_loday_face_orderIso`, `Loday_affine_dimension`, `Loday_geometric_vertex_count`, `Loday_geometric_facet_count`, `all_Kn_poset_realization` | Interval inequalities, normal certificates, tree rotations, affine-span rank |
+| **Theorem 4.0.2** | Each facet has the product face order of two smaller associahedra | `polygonFacet_product_orderIso`, `Loday_facet_geometric_product_orderIso` | Split the polygon, preserve crossings, restrict the supporting-face order |
 | **Theorem 4.1** | Two-sided geometric equivalence $\mathrm{Root}_{A_n} \simeq \mathrm{Facet}_{K_{n+2}} \simeq \mathrm{Diagonal}(n)$ | [`facetKn2_diagonal_equiv`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L1286), [`rootAn_facetKn2_equiv`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L1502), [`rootAn_diagonal_equiv`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L1509) | `Fin.isLt`, `omega`, two-sided inverse proofs |
-| **Theorem 4.3** | Constructive bijection $\Phi_{\ge -1}(A_3) \simeq \mathrm{Facets}(K_5)$ & Cyclic Length Theorems | [`rootA3_facetK5_equiv`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L1704), [`rootA3_cyclic_length_pentagon`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L1707), [`rootA3_cyclic_length_square`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L1713) | Constructive two-sided inverse, `cases`, `rfl` |
-| **Theorem 5.1** | Universal positive-definite $A_n$ Dirichlet-Cartan energy | [`cartanEnergy_nonneg`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L1756), [`cartanEnergy_pos_def`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L1762) | `Finset.sum_eq_zero_iff_of_nonneg`, induction, `omega` |
-| **Section 5.2** | Sum-of-squares $A_3$ Cartan energy | [`cartanForm_sum_of_squares`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L1830), [`cartanForm_pos_def`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L1842) | `ring`, `nlinarith [sq_nonneg]` |
-| **Section 5.3** | Intrinsic $A_3$ root classification, norm invariance ($=2$), couplings ($-1, 0$) | [`root_bounds`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L1900), [`isAlmostPositiveRootA3_iff`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L1947), [`rootA3_to_vec3_injective`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L1942), [`rootA3_cartan_norm`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L2001), [`strain_adjacent_12`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L1866) | Sum-of-squares bounds, `nlinarith`, case analysis, `rfl` |
+| **Theorem 4.3** | Constructive bijection $\Phi_{\ge -1}(A_3) \simeq \mathrm{Facets}(K_5)$ & Cyclic Length Theorems | [`rootA3_facetK5_equiv`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L1717), [`rootA3_cyclic_length_pentagon`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L1720), [`rootA3_cyclic_length_square`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L1726) | Constructive two-sided inverse, `cases`, `rfl` |
+| **Section 4.3** | Actual pentagonal and square facet types, with counts six and three | `rootA3_geometric_pentagonal_facet`, `rootA3_geometric_square_facet`, `Loday_K5_pentagonal_facet_count`, `Loday_K5_square_facet_count` | Facet product order, cyclic length, transfer to convex supporting faces |
+| **Theorem 5.1** | Universal positive-definite $A_n$ Dirichlet-Cartan energy | [`cartanEnergy_nonneg`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L1791), [`cartanEnergy_pos_def`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L1797) | `Finset.sum_eq_zero_iff_of_nonneg`, induction, `omega` |
+| **Section 5.2** | Sum-of-squares $A_3$ Cartan energy | [`cartanForm_sum_of_squares`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L1865), [`cartanForm_pos_def`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L1877) | `ring`, `nlinarith [sq_nonneg]` |
+| **Section 5.3** | Intrinsic $A_3$ root classification, norm invariance ($=2$), couplings ($-1, 0$) | [`root_bounds`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L1935), [`isAlmostPositiveRootA3_iff`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L1982), [`rootA3_to_vec3_injective`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L1977), [`rootA3_cartan_norm`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L2036), [`strain_adjacent_12`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L1901) | Sum-of-squares bounds, `nlinarith`, case analysis, `rfl` |
 | **Theorem 6.3** | Travel monoid laws, path concatenation, strict growth | [`Unipotent2`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L248), [`TravelExperience`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L279), [`pathExperience_append`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L349), [`action_strictly_increases`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L357) | Additive group model $(\mathbb{Z}, +)$, `omega`, `linarith` |
 | **Theorem 6.4** | Fixed-chain arrow and valuation invariance on every full bracket pattern | `evalBracketPath_eq`, `evalChainPathBracketing_eq`, `chainSteps_valuation`, `all_Kn_chain_path_valuations` | Binary-tree induction, list splitting, concatenation, thinness |
 | **Corollary 6.5** | Unit step costs count the arrows | `evalChainPathBracketing_unit_cost` | Finite sum of ones |
@@ -393,7 +409,7 @@ The `#print axioms` command confirms that all declarations compile without `sorr
 The file `FunctorialGeometry.lean` was verified against Lean 4 (version `v4.33.1`) and Mathlib. The build process runs without errors (note: some linters are disabled):
 ```bash
 lake build MathProject.FunctorialGeometry
-lake build MathProject.CheckPathValuations MathProject.CheckAssociahedra
+lake build MathProject.CheckPathValuations MathProject.CheckAssociahedra MathProject.CheckFacetProducts
 ```
 
 The axiomatic dependency commands:
@@ -420,6 +436,11 @@ The axiomatic dependency commands:
 #print axioms chainSteps_valuation
 #print axioms evalChainPathBracketing_unit_cost
 #print axioms all_Kn_chain_path_valuations
+#print axioms Loday_facet_geometric_product_orderIso
+#print axioms Loday_K5_pentagonal_facet_count
+#print axioms Loday_K5_square_facet_count
+#print axioms rootA3_geometric_pentagonal_facet
+#print axioms rootA3_geometric_square_facet
 ```
 reduce exclusively to the standard core foundations `[propext, Classical.choice, Quot.sound]`.
 
@@ -431,7 +452,7 @@ We have established a formal categorical and geometric framework for partially o
 
 1. **Category Structure:** Meets, joins, and closure operators emerge as limits, colimits, and idempotent monads (`CategoryTheory.Monad`).
 2. **Defect Theory:** Modularity of valuations is governed by the non-negative defect $\Delta \ge 0$, whose vanishing characterizes modular rank functions.
-3. **Associahedral Presentations:** For every arity, the bracket and polygon face models have isomorphic orders. All full bracket patterns of a poset chain give the same composite arrow. The Lean development also identifies the facet labels with $A_n$ almost-positive roots and polygon diagonals, classifies the $A_3$ labels by cyclic length, and proves Cartan norm 2. The convex realization, complete supporting-face order, actual affine dimension, and geometric counts are now proved for every rank, including the rank-zero point.
+3. **Associahedral Presentations:** For every arity, the bracket and polygon face models have isomorphic orders. All full bracket patterns of a poset chain give the same composite arrow. The Lean development also identifies the facet labels with $A_n$ almost-positive roots and polygon diagonals, classifies the $A_3$ labels by cyclic length, proves their pentagonal and square facet types and counts, and proves Cartan norm 2. The convex realization, complete supporting-face order, actual affine dimension, and geometric counts are now proved for every rank, including the rank-zero point.
 4. **Monoidal Dynamics:** Path valuations into $(\mathbb{N}, +) \times \mathbf{U}_2(\mathbb{Z})$ capture accumulated cost and unipotent shear labels with homomorphic path concatenation. For every fixed labelled chain, all full bracket patterns give the same arrow and the same valuation.
 5. **Filtration Limits:** Semi-Artinian objects in universe-stratified abelian categories admit transfinite cellular reconstructions with vanishing residual colimits over restricted ordinal intervals at stabilization.
 
