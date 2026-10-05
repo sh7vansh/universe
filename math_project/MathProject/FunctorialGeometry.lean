@@ -47,24 +47,27 @@ set_option linter.style.haveILetI false
 # Functorial and Geometric Structures on Subobject Lattices
 
 This unified module formalizes the mathematical core corresponding to `thin-category-lattice.md`:
+The overview follows the paper order. The declarations retain their existing order.
+Part and section labels below refer to the paper.
+
 1. **Thin Categories & Subobject Lattices:** Posets as thin categories, subsingleton homs,
    monic/epic collapse, meets/joins as universal products/coproducts, closure monads.
 2. **Submodular Defects & Modularity:** Defect Δ(A, B) ≥ 0, modularity characterization,
    and the meet interaction.
-3. **The Travel Experience Monoid:** 2×2 unipotent shear group, travel state (action, transport),
-   monoid associativity/unitality, path valuation, and strict action growth on step sequences.
-4. **Transfinite Cellular Filtrations & Basis Discovery:** Transfinite Cellular sequence on
-   semi-Artinian objects, stabilization at Cellular length Ω, reconstruction, SES presentation,
-   vanishing residual colimits on restricted ordinal intervals, and well-founded novelty selection.
-5. **Higher Associativity & A₃ ≅ K₅ Duality:** Tamari lattice 𝒯₄ (Catalan C₃ = 5),
+3. **Higher Associativity & Root Labels:** Tamari lattice 𝒯₄ (Catalan C₃ = 5),
    all-arity bracket/face order isomorphisms and thin-category evaluation (imported
    from `AssociahedralComposition`), the general tree-to-vertex equivalence,
    Loday's convex realization with its full supporting-face order, affine dimension,
    geometric Catalan vertex count and geometric facet count in every dimension,
    two-sided equivalence between RootAn and polygon diagonals, and classification
    of A₃ roots into cyclic length 2 (pentagons) and 3 (squares).
-6. **Cartan Metric & Quadratic Form:** Positive-definite quadratic form on ℤ³,
+4. **Cartan Metric & Quadratic Form:** Positive-definite quadratic form on ℤ³,
    sum-of-squares decomposition, root norm invariance (= 2), and off-diagonal shear couplings.
+5. **The Travel Experience Monoid:** 2×2 unipotent shear group, travel state (action, transport),
+   monoid associativity/unitality, path valuation, and strict action growth on step sequences.
+6. **Transfinite Cellular Filtrations & Basis Discovery:** Transfinite Cellular sequence on
+   semi-Artinian objects, stabilization at Cellular length Ω, reconstruction, SES presentation,
+   vanishing residual colimits on restricted ordinal intervals, and well-founded novelty selection.
 -/
 
 namespace FunctorialGeometry
@@ -75,7 +78,7 @@ open CategoryTheory Limits Classical
     PART I: CATEGORICAL FOUNDATIONS AND SUBMODULAR DEFECTS
     ##############################################################################
 
-    SECTION 1: POSETS AND SUBOBJECT LATTICES AS THIN CATEGORIES
+    SECTION 2: POSETS AND SUBOBJECT LATTICES AS THIN CATEGORIES
     ============================================================================== -/
 
 section ThinBasics
@@ -177,7 +180,7 @@ theorem subobject_epi (A B : Subobject X) (f : A ⟶ B) : Epi f :=
 end SubobjectThin
 
 /-! ==============================================================================
-    SECTION 2: SUBMODULAR DEFECTS, MODULARITY, AND TOR₀
+    SECTION 3: SUBMODULAR DEFECTS AND MODULARITY
     ============================================================================== -/
 
 section SubmodularDefect
@@ -231,10 +234,10 @@ theorem meetInteraction_universal {A B C : L} (hCA : C ≤ A) (hCB : C ≤ B) :
 end SubmodularDefect
 
 /-! ##############################################################################
-    PART II: TRANSFINITE FILTRATIONS AND SUBOBJECT RECONSTRUCTION
+    PART III: TRANSFINITE FILTRATIONS AND SUBOBJECT RECONSTRUCTION
     ##############################################################################
 
-    SECTION 3: THE TRAVEL EXPERIENCE MONOID
+    SECTION 6: PATH VALUATIONS ON STEP SEQUENCES AND COVERING QUIVERS
     ============================================================================== -/
 
 section TravelMonoid
@@ -357,7 +360,7 @@ theorem action_strictly_increases (t : TravelExperience) (s : LatticeStep L) (hc
 end TravelMonoid
 
 /-! ==============================================================================
-    SECTION 4: TRANSFINITE LOEWY FILTRATIONS AND BASIS DISCOVERY
+    SECTION 7: TRANSFINITE CELLULAR FILTRATIONS AND BASIS DISCOVERY
     ============================================================================== -/
 
 section CellularFiltration
@@ -929,10 +932,10 @@ theorem sieveOutput_is_lub (x : L) : sieveOutput embed ≤ x ↔ ∀ (o : Ordina
 end BasisDiscovery
 
 /-! ##############################################################################
-    PART III: HIGHER ASSOCIATIVITY, ASSOCIAHEDRA, AND ROOT GEOMETRY
+    PART II: HIGHER ASSOCIATIVITY, ASSOCIAHEDRA, AND ROOT GEOMETRY
     ##############################################################################
 
-    SECTION 5: HIGHER ASSOCIATIVITY AND THE A₃ ≅ K₅ DUALITY
+    SECTION 4: HIGHER ASSOCIATIVITY, ASSOCIAHEDRA, AND ROOT LABELS
     ============================================================================== -/
 
 section AssociahedraDuality
@@ -1624,7 +1627,7 @@ theorem a3_facet_count : Fintype.card RootA3 = 9 := rfl
 end AssociahedraDuality
 
 /-! ==============================================================================
-    SECTION 6: CARTAN METRIC AND SUM-OF-SQUARES FORM
+    SECTION 5: THE Aₙ CARTAN METRIC AND QUADRATIC FORM
     ============================================================================== -/
 
 section CartanMetric
