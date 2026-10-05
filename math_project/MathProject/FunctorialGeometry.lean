@@ -13,6 +13,7 @@ import Mathlib.CategoryTheory.Limits.Shapes.Pullback.HasPullback
 import Mathlib.CategoryTheory.Limits.Shapes.Pullback.Mono
 import Mathlib.CategoryTheory.Limits.Shapes.ZeroMorphisms
 import Mathlib.CategoryTheory.Filtered.Basic
+import Mathlib.Order.Closure
 import Mathlib.Order.GaloisConnection.Basic
 import Mathlib.Order.CompleteLattice.Defs
 import Mathlib.Order.WellFounded
@@ -28,6 +29,8 @@ import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Algebra.BigOperators.Fin
 
 set_option linter.style.header false
 set_option linter.style.longLine false
@@ -49,13 +52,13 @@ This unified module formalizes the mathematical core corresponding to `thin-cate
    and the meet interaction.
 3. **The Travel Experience Monoid:** 2×2 unipotent shear group, travel state (action, transport),
    monoid associativity/unitality, path valuation, and strict action growth on step sequences.
-4. **Transfinite Loewy Filtrations & Basis Discovery:** Transfinite Loewy sequence on
-   semi-Artinian objects, stabilization at Loewy length Ω, reconstruction, SES presentation,
+4. **Transfinite Cellular Filtrations & Basis Discovery:** Transfinite Cellular sequence on
+   semi-Artinian objects, stabilization at Cellular length Ω, reconstruction, SES presentation,
    vanishing residual colimits on restricted ordinal intervals, and well-founded novelty selection.
 5. **Higher Associativity & A₃ ≅ K₅ Duality:** Tamari lattice 𝒯₄ (Catalan C₃ = 5),
-   two-sided equivalence between RootAn and true geometric polygon diagonals, and classification
+   two-sided equivalence between RootAn and polygon diagonals, and classification
    of A₃ roots into cyclic length 2 (pentagons) and 3 (squares).
-6. **Cartan Metric & Quadratic Form:** Positive-definite Riemannian metric on ℤ³,
+6. **Cartan Metric & Quadratic Form:** Positive-definite quadratic form on ℤ³,
    sum-of-squares decomposition, root norm invariance (= 2), and off-diagonal shear couplings.
 -/
 
@@ -109,31 +112,15 @@ def monotone_functor {M : Type*} [PartialOrder M] (F : L → M) (hF : Monotone F
   obj x := F x
   map {x y} f := homOfLE (hF (leOfHom f))
 
-/-- An idempotent closure operator on a poset. -/
-structure ClosureOperator (L : Type*) [PartialOrder L] where
-  cl : L → L
-  extensive : ∀ x, x ≤ cl x
-  monotone : Monotone cl
-  idempotent : ∀ x, cl (cl x) = cl x
-
-/-- A Galois connection `l ⊣ u` canonically induces an idempotent closure operator `u ∘ l`. -/
-def galoisConnection_toClosureOperator {M : Type*} [PartialOrder M]
-    {l : L → M} {u : M → L} (gc : GaloisConnection l u) :
-    ClosureOperator L where
-  cl := u ∘ l
-  extensive x := gc.le_u_l x
-  monotone := gc.monotone_u.comp gc.monotone_l
-  idempotent x := le_antisymm (gc.monotone_u (gc.l_u_le (l x))) (gc.le_u_l (u (l x)))
-
 /-- The functor induced by a closure operator. -/
 def ClosureOperator.toFunctor (C : ClosureOperator L) : L ⥤ L :=
-  monotone_functor C.cl C.monotone
+  monotone_functor C C.monotone
 
 /-- A closure operator naturally defines an idempotent Monad on the poset category. -/
 def ClosureOperator.toMonad (C : ClosureOperator L) : CategoryTheory.Monad L where
   toFunctor := C.toFunctor
   η := {
-    app := fun x => homOfLE (C.extensive x)
+    app := fun x => homOfLE (C.le_closure x)
     naturality := fun _ _ _ => thin_hom_unique _ _ _ _
   }
   μ := {
@@ -188,7 +175,7 @@ end SubobjectThin
     SECTION 2: SUBMODULAR DEFECTS, MODULARITY, AND TOR₀
     ============================================================================== -/
 
-section TorFriction
+section SubmodularDefect
 
 variable {L : Type*} [Lattice L]
 
@@ -236,7 +223,7 @@ theorem meetInteraction_universal {A B C : L} (hCA : C ≤ A) (hCB : C ≤ B) :
     C ≤ meetInteraction A B :=
   le_inf hCA hCB
 
-end TorFriction
+end SubmodularDefect
 
 /-! ##############################################################################
     PART II: TRANSFINITE FILTRATIONS AND SUBOBJECT RECONSTRUCTION
@@ -317,17 +304,17 @@ open TravelExperience
 
 variable {L : Type*} [PartialOrder L]
 
-/-- An elementary step (`source ≤ target`) in the lattice, equipped with traversal friction cost and extension class. -/
+/-- An elementary step (`source ≤ target`) in the lattice, equipped with traversal friction cost and defect. -/
 structure LatticeStep (L : Type*) [PartialOrder L] where
   source : L
   target : L
   le : source ≤ target
   friction_cost : ℕ
-  ext_class : ℤ
+  defect : ℤ
 
 /-- Functorial valuation of a lattice step into the travel monoid. -/
 def stepExperience (s : LatticeStep L) : TravelExperience :=
-  ⟨s.friction_cost, ⟨s.ext_class⟩⟩
+  ⟨s.friction_cost, ⟨s.defect⟩⟩
 
 /-- Path valuation composing a sequence of lattice steps into the travel monoid. -/
 def pathExperience (p : List (LatticeStep L)) : TravelExperience :=
@@ -368,7 +355,7 @@ end TravelMonoid
     SECTION 4: TRANSFINITE LOEWY FILTRATIONS AND BASIS DISCOVERY
     ============================================================================== -/
 
-section LoewyFiltration
+section CellularFiltration
 
 universe u
 variable {A : Type (u+1)} [Category.{u} A] [Abelian A] [HasLimitsOfSize.{u, u} A] [HasColimitsOfSize.{u, u} A] [WellPowered.{u} A]
@@ -437,7 +424,7 @@ lemma lt_cellular (C : Subobject U₀) (a : A) (i : a ⟶ cokernel C.arrow) (hi 
   have h_zero : IsZero a := IsZero.of_epi_zero (pullback i (cokernel.π C.arrow)) a
   exact ha.1 h_zero
 
-noncomputable def nextLoewy (C : Subobject U₀) (h_semi : IsSemiArtinian U₀) : Subobject U₀ :=
+noncomputable def nextCellular (C : Subobject U₀) (h_semi : IsSemiArtinian U₀) : Subobject U₀ :=
   if h : IsZero (residual U₀ C) then C
   else
     let a := (h_semi C h).choose
@@ -446,9 +433,9 @@ noncomputable def nextLoewy (C : Subobject U₀) (h_semi : IsSemiArtinian U₀) 
     haveI : Mono (pullback.snd i (cokernel.π C.arrow)) := pullback.snd_of_mono
     Subobject.mk (pullback.snd i (cokernel.π C.arrow))
 
-lemma le_nextLoewy (C : Subobject U₀) (h_semi : IsSemiArtinian U₀) :
-    C ≤ nextLoewy U₀ C h_semi := by
-  dsimp [nextLoewy]
+lemma le_nextCellular (C : Subobject U₀) (h_semi : IsSemiArtinian U₀) :
+    C ≤ nextCellular U₀ C h_semi := by
+  dsimp [nextCellular]
   split_ifs with h
   · exact le_rfl
   · let a := (h_semi C h).choose
@@ -457,10 +444,10 @@ lemma le_nextLoewy (C : Subobject U₀) (h_semi : IsSemiArtinian U₀) :
     have hi : Mono i := (h_semi C h).choose_spec.choose_spec.2
     exact (lt_cellular U₀ C a i hi ha_simple).le
 
-noncomputable def loewySequence (h_semi : IsSemiArtinian U₀) (o : Ordinal.{u}) : Subobject U₀ :=
+noncomputable def cellularSequence (h_semi : IsSemiArtinian U₀) (o : Ordinal.{u}) : Subobject U₀ :=
   Ordinal.limitRecOn o
     (⊥ : Subobject U₀)
-    (fun _ C => nextLoewy U₀ C h_semi)
+    (fun _ C => nextCellular U₀ C h_semi)
     (fun a _ f => ⨆ (b : Ordinal.{u}) (hb : b < a), f b hb)
 
 lemma le_iSup_subobject {ι : Sort*} (f : ι → Subobject U₀) (i : ι) :
@@ -476,13 +463,13 @@ lemma le_biSup_subobject (o : Ordinal.{u}) (o₁ : Ordinal.{u}) (h : o₁ < o)
     le_iSup_subobject U₀ (fun b => ⨆ (hb : b < o), f b hb) o₁
   exact h1.trans h2
 
-lemma loewySequence_limit (h_semi : IsSemiArtinian U₀) (o : Ordinal.{u}) (ho : Order.IsSuccLimit o) :
-    loewySequence U₀ h_semi o = ⨆ (b : Ordinal.{u}) (_hb : b < o), loewySequence U₀ h_semi b := by
-  dsimp [loewySequence]
+lemma cellularSequence_limit (h_semi : IsSemiArtinian U₀) (o : Ordinal.{u}) (ho : Order.IsSuccLimit o) :
+    cellularSequence U₀ h_semi o = ⨆ (b : Ordinal.{u}) (_hb : b < o), cellularSequence U₀ h_semi b := by
+  dsimp [cellularSequence]
   exact Ordinal.limitRecOn_limit o _ _ _ ho
 
-lemma loewySequence_le (h_semi : IsSemiArtinian U₀) (o₁ o₂ : Ordinal.{u}) (h_le : o₁ ≤ o₂) :
-    loewySequence U₀ h_semi o₁ ≤ loewySequence U₀ h_semi o₂ := by
+lemma cellularSequence_le (h_semi : IsSemiArtinian U₀) (o₁ o₂ : Ordinal.{u}) (h_le : o₁ ≤ o₂) :
+    cellularSequence U₀ h_semi o₁ ≤ cellularSequence U₀ h_semi o₂ := by
   revert o₁
   induction o₂ using Ordinal.limitRecOn with
   | zero =>
@@ -497,39 +484,59 @@ lemma loewySequence_le (h_semi : IsSemiArtinian U₀) (o₁ o₂ : Ordinal.{u}) 
     · have h_le_o₂ : o₁ ≤ o₂ := by
         rwa [← Order.succ_eq_add_one, Order.lt_succ_iff] at hlt
       have ih_le := ih o₁ h_le_o₂
-      have step_le : loewySequence U₀ h_semi o₂ ≤ loewySequence U₀ h_semi (o₂ + 1) := by
-        dsimp [loewySequence]
+      have step_le : cellularSequence U₀ h_semi o₂ ≤ cellularSequence U₀ h_semi (o₂ + 1) := by
+        dsimp [cellularSequence]
         rw [Ordinal.limitRecOn_add_one]
-        exact le_nextLoewy U₀ (loewySequence U₀ h_semi o₂) h_semi
+        exact le_nextCellular U₀ (cellularSequence U₀ h_semi o₂) h_semi
       exact ih_le.trans step_le
   | limit o₂ ho ih =>
     intro o₁ h₁
     rcases eq_or_lt_of_le h₁ with rfl | hlt
     · exact le_rfl
-    · rw [loewySequence_limit U₀ h_semi o₂ ho]
-      exact le_biSup_subobject U₀ o₂ o₁ hlt (fun b _ => loewySequence U₀ h_semi b)
+    · rw [cellularSequence_limit U₀ h_semi o₂ ho]
+      exact le_biSup_subobject U₀ o₂ o₁ hlt (fun b _ => cellularSequence U₀ h_semi b)
 
-lemma loewySequence_mono (h_semi : IsSemiArtinian U₀) :
-    Monotone (loewySequence U₀ h_semi) :=
-  fun _ _ h => loewySequence_le U₀ h_semi _ _ h
-
-lemma loewySequence_strict_mono (h_semi : IsSemiArtinian U₀) (o : Ordinal.{u}) :
-    loewySequence U₀ h_semi o ≠ ⊤ → 
-    loewySequence U₀ h_semi o < loewySequence U₀ h_semi (o + 1) := by
-  intro h_ne
-  have h_succ : loewySequence U₀ h_semi (o + 1) = nextLoewy U₀ (loewySequence U₀ h_semi o) h_semi := by
-    dsimp [loewySequence]; rw [Ordinal.limitRecOn_add_one]
-  rw [h_succ]
-  have hz : ¬ IsZero (residual U₀ (loewySequence U₀ h_semi o)) :=
+lemma cellularSequence_mono (h_semi : IsSemiArtinian U₀) :
+    Monotone (cellularSequence U₀ h_semi) :=
+  fun _ _ h => cellularSequence_le U₀ h_semi _ _ h
+lemma cellularSequence_step_exists (h_semi : IsSemiArtinian U₀) (o : Ordinal.{u})
+    (h_ne : cellularSequence U₀ h_semi o ≠ ⊤) :
+    ∃ (a : A) (i : a ⟶ residual U₀ (cellularSequence U₀ h_semi o)) (hi : Mono i),
+      IsSimple a ∧
+      cellularSequence U₀ h_semi (o + 1) = (
+        haveI : Mono i := hi
+        haveI : Mono (pullback.snd i (cokernel.π (cellularSequence U₀ h_semi o).arrow)) := pullback.snd_of_mono
+        Subobject.mk (pullback.snd i (cokernel.π (cellularSequence U₀ h_semi o).arrow))) := by
+  have h_succ : cellularSequence U₀ h_semi (o + 1) = nextCellular U₀ (cellularSequence U₀ h_semi o) h_semi := by
+    dsimp [cellularSequence]; rw [Ordinal.limitRecOn_add_one]
+  have hz : ¬ IsZero (residual U₀ (cellularSequence U₀ h_semi o)) :=
     not_isZero_residual_of_ne_top U₀ _ h_ne
-  dsimp [nextLoewy]; rw [dif_neg hz]
-  let a := (h_semi (loewySequence U₀ h_semi o) hz).choose
-  let i := (h_semi (loewySequence U₀ h_semi o) hz).choose_spec.choose
-  have ha_simple := (h_semi (loewySequence U₀ h_semi o) hz).choose_spec.choose_spec.1
-  have hi : Mono i := (h_semi (loewySequence U₀ h_semi o) hz).choose_spec.choose_spec.2
+  let a := (h_semi (cellularSequence U₀ h_semi o) hz).choose
+  let i := (h_semi (cellularSequence U₀ h_semi o) hz).choose_spec.choose
+  have ha_simple := (h_semi (cellularSequence U₀ h_semi o) hz).choose_spec.choose_spec.1
+  have hi : Mono i := (h_semi (cellularSequence U₀ h_semi o) hz).choose_spec.choose_spec.2
+  refine ⟨a, i, hi, ha_simple, ?_⟩
+  rw [h_succ]
+  dsimp [nextCellular]
+  rw [dif_neg hz]
+
+lemma cellularSequence_strict_mono (h_semi : IsSemiArtinian U₀) (o : Ordinal.{u}) :
+    cellularSequence U₀ h_semi o ≠ ⊤ → 
+    cellularSequence U₀ h_semi o < cellularSequence U₀ h_semi (o + 1) := by
+  intro h_ne
+  have h_succ : cellularSequence U₀ h_semi (o + 1) = nextCellular U₀ (cellularSequence U₀ h_semi o) h_semi := by
+    dsimp [cellularSequence]; rw [Ordinal.limitRecOn_add_one]
+  rw [h_succ]
+  have hz : ¬ IsZero (residual U₀ (cellularSequence U₀ h_semi o)) :=
+    not_isZero_residual_of_ne_top U₀ _ h_ne
+  dsimp [nextCellular]; rw [dif_neg hz]
+  let a := (h_semi (cellularSequence U₀ h_semi o) hz).choose
+  let i := (h_semi (cellularSequence U₀ h_semi o) hz).choose_spec.choose
+  have ha_simple := (h_semi (cellularSequence U₀ h_semi o) hz).choose_spec.choose_spec.1
+  have hi : Mono i := (h_semi (cellularSequence U₀ h_semi o) hz).choose_spec.choose_spec.2
   exact lt_cellular U₀ _ a i hi ha_simple
 
-theorem loewy_eventuallyConst (f : Ordinal.{u} → Subobject U₀) (hf : Monotone f) :
+theorem cellular_eventuallyConst (f : Ordinal.{u} → Subobject U₀) (hf : Monotone f) :
     Filter.EventuallyConst f Filter.atTop := by
   have : Small.{u} (Subobject U₀) := inferInstance
   let e := equivShrink (Subobject U₀)
@@ -548,34 +555,34 @@ theorem loewy_eventuallyConst (f : Ordinal.{u} → Subobject U₀) (hf : Monoton
   have := congr_arg e.symm hj'
   simpa only [Equiv.symm_apply_apply] using this
 
-lemma loewySequence_stabilizes (h_semi : IsSemiArtinian U₀) :
-    ∃ (Ω : Ordinal.{u}), loewySequence U₀ h_semi Ω = loewySequence U₀ h_semi (Ω + 1) := by
-  have h_ev := loewy_eventuallyConst U₀ (loewySequence U₀ h_semi) (loewySequence_mono U₀ h_semi)
+lemma cellularSequence_stabilizes (h_semi : IsSemiArtinian U₀) :
+    ∃ (Ω : Ordinal.{u}), cellularSequence U₀ h_semi Ω = cellularSequence U₀ h_semi (Ω + 1) := by
+  have h_ev := cellular_eventuallyConst U₀ (cellularSequence U₀ h_semi) (cellularSequence_mono U₀ h_semi)
   rw [Filter.eventuallyConst_atTop] at h_ev
   rcases h_ev with ⟨Ω, hΩ⟩
   refine ⟨Ω, ?_⟩
   have h_le : Ω ≤ Ω + 1 := le_self_add
   exact (hΩ (Ω + 1) h_le).symm
 
-/-- Transfinite Loewy Length Existence Theorem. -/
-theorem loewy_length_exists (h_semi : IsSemiArtinian U₀) : 
-    ∃ (Ω : Ordinal.{u}), loewySequence U₀ h_semi Ω = ⊤ := by
-  obtain ⟨Ω, hΩ⟩ := loewySequence_stabilizes U₀ h_semi
+/-- Transfinite Cellular Length Existence Theorem. -/
+theorem cellular_length_exists (h_semi : IsSemiArtinian U₀) : 
+    ∃ (Ω : Ordinal.{u}), cellularSequence U₀ h_semi Ω = ⊤ := by
+  obtain ⟨Ω, hΩ⟩ := cellularSequence_stabilizes U₀ h_semi
   refine ⟨Ω, ?_⟩
   by_contra h_ne
-  have h_lt := loewySequence_strict_mono U₀ h_semi Ω h_ne
+  have h_lt := cellularSequence_strict_mono U₀ h_semi Ω h_ne
   rw [hΩ] at h_lt
   exact lt_irrefl _ h_lt
 
-noncomputable def LoewyLength (h_semi : IsSemiArtinian U₀) : Ordinal.{u} :=
-  (loewy_length_exists U₀ h_semi).choose
+noncomputable def cellularLength (h_semi : IsSemiArtinian U₀) : Ordinal.{u} :=
+  (cellular_length_exists U₀ h_semi).choose
 
 theorem reconstruction (h_semi : IsSemiArtinian U₀) :
-    loewySequence U₀ h_semi (LoewyLength U₀ h_semi) = ⊤ :=
-  (loewy_length_exists U₀ h_semi).choose_spec
+    cellularSequence U₀ h_semi (cellularLength U₀ h_semi) = ⊤ :=
+  (cellular_length_exists U₀ h_semi).choose_spec
 
 theorem reconstruction_iso (h_semi : IsSemiArtinian U₀) :
-    IsIso (loewySequence U₀ h_semi (LoewyLength U₀ h_semi)).arrow := by
+    IsIso (cellularSequence U₀ h_semi (cellularLength U₀ h_semi)).arrow := by
   rw [reconstruction]
   exact Subobject.top_arrow_isIso
 
@@ -647,22 +654,22 @@ theorem residual_colimit_vanishes (F : J ⥤ Subobject U₀) [IsFiltered J] (h_c
     apply IsZero.eq_of_src h_zero
   rw [h_iota_zero, comp_zero]
 
-noncomputable def loewyIntervalFunctor (h_semi : IsSemiArtinian U₀) (Ω : Ordinal.{u}) :
+noncomputable def cellularIntervalFunctor (h_semi : IsSemiArtinian U₀) (Ω : Ordinal.{u}) :
     OrdinalInterval Ω ⥤ Subobject U₀ where
-  obj x := loewySequence U₀ h_semi (OrdinalInterval.toIic Ω x).1
+  obj x := cellularSequence U₀ h_semi (OrdinalInterval.toIic Ω x).1
   map {x y} f := homOfLE (by
     have : x ≤ y := leOfHom f
-    exact loewySequence_le U₀ h_semi _ _ this)
+    exact cellularSequence_le U₀ h_semi _ _ this)
 
-theorem loewy_residual_colimit_vanishes (h_semi : IsSemiArtinian U₀) :
-    IsZero (colimit (residualDiagram U₀ (loewyIntervalFunctor U₀ h_semi (LoewyLength U₀ h_semi)))) := by
+theorem cellular_residual_colimit_vanishes (h_semi : IsSemiArtinian U₀) :
+    IsZero (colimit (residualDiagram U₀ (cellularIntervalFunctor U₀ h_semi (cellularLength U₀ h_semi)))) := by
   apply residual_colimit_vanishes
-  refine ⟨OrdinalInterval.ofIic _ ⟨LoewyLength U₀ h_semi, Set.mem_Iic.mpr le_rfl⟩, ?_⟩
-  dsimp [loewyIntervalFunctor, OrdinalInterval.toIic, OrdinalInterval.ofIic]
+  refine ⟨OrdinalInterval.ofIic _ ⟨cellularLength U₀ h_semi, Set.mem_Iic.mpr le_rfl⟩, ?_⟩
+  dsimp [cellularIntervalFunctor, OrdinalInterval.toIic, OrdinalInterval.ofIic]
   simp only [Equiv.symm_apply_apply]
   exact reconstruction U₀ h_semi
 
-section Yoneda
+section CellularSES
 
 variable (C : Subobject U₀) (a : A) (i : a ⟶ cokernel C.arrow) [Mono i]
 
@@ -780,9 +787,9 @@ theorem cellular_shortExact :
     (cellularShortComplex U₀ C a i).ShortExact where
   exact := cellular_exact U₀ C a i
 
-end Yoneda
+end CellularSES
 
-end LoewyFiltration
+end CellularFiltration
 
 section BasisDiscovery
 
@@ -830,6 +837,82 @@ noncomputable def sieveOutput : L :=
 theorem xSeq_zero : xSeq embed 0 = ⊥ :=
   Ordinal.limitRecOn_zero _ _ _
 
+theorem xSeq_add_one (o : Ordinal) :
+    xSeq embed (o + 1) = if h : xSeq embed o < ⊤ then xSeq embed o ⊔ embed (fixedPriorityPhi embed (xSeq embed o) h) else xSeq embed o := by
+  dsimp [xSeq]
+  rw [Ordinal.limitRecOn_add_one]
+  rfl
+
+lemma xSeq_le (o₁ o₂ : Ordinal.{0}) (h : o₁ ≤ o₂) : xSeq embed o₁ ≤ xSeq embed o₂ := by
+  revert o₁
+  induction o₂ using Ordinal.limitRecOn with
+  | zero =>
+    intro o₁ h₁
+    have : o₁ = 0 := le_zero_iff.mp h₁
+    subst this
+    exact le_rfl
+  | add_one o₂ ih =>
+    intro o₁ h₁
+    rcases eq_or_lt_of_le h₁ with rfl | hlt
+    · exact le_rfl
+    · have h_le_o₂ : o₁ ≤ o₂ := by
+        rwa [← Order.succ_eq_add_one, Order.lt_succ_iff] at hlt
+      have ih_le := ih o₁ h_le_o₂
+      have step_le : xSeq embed o₂ ≤ xSeq embed (o₂ + 1) := by
+        rw [xSeq_add_one]
+        split_ifs
+        · exact le_sup_left
+        · exact le_rfl
+      exact ih_le.trans step_le
+  | limit o₂ ho ih =>
+    intro o₁ h₁
+    rcases eq_or_lt_of_le h₁ with rfl | hlt
+    · exact le_rfl
+    · have : xSeq embed o₂ = ⨆ (b : Ordinal) (hb : b < o₂), xSeq embed b := by
+        dsimp [xSeq]; exact Ordinal.limitRecOn_limit o₂ _ _ _ ho
+      rw [this]
+      have h1 : xSeq embed o₁ ≤ ⨆ (hb : o₁ < o₂), xSeq embed o₁ := le_iSup (fun _ => xSeq embed o₁) hlt
+      have h2 : (⨆ (hb : o₁ < o₂), xSeq embed o₁) ≤ ⨆ (b : Ordinal) (hb : b < o₂), xSeq embed b := le_iSup_of_le o₁ (by rfl)
+      exact h1.trans h2
+
+lemma xSeq_strict_mono (o : Ordinal.{0}) (h : xSeq embed o < ⊤) : xSeq embed o < xSeq embed (o + 1) := by
+  have h_succ : xSeq embed (o + 1) = xSeq embed o ⊔ embed (fixedPriorityPhi embed (xSeq embed o) h) := by
+    rw [xSeq_add_one, dif_pos h]
+  rw [h_succ]
+  refine lt_of_le_not_ge le_sup_left ?_
+  intro h_ge
+  have : embed (fixedPriorityPhi embed (xSeq embed o) h) ≤ xSeq embed o := le_trans le_sup_right h_ge
+  exact novelty_of_fixedPriorityPhi embed (xSeq embed o) h this
+
+theorem sieveOutput_eq_top : sieveOutput embed = ⊤ := by
+  have hf : Monotone (xSeq embed) := fun _ _ h => xSeq_le embed _ _ h
+  have : Small.{0} L := inferInstance
+  let e := equivShrink L
+  let _ : PartialOrder (Shrink L) := PartialOrder.lift e.symm (Equiv.injective _)
+  let f' : Ordinal.{0} → Shrink L := fun o => e (xSeq embed o)
+  have hf' : Monotone f' := fun a b hab => by
+    change e.symm (e (xSeq embed a)) ≤ e.symm (e (xSeq embed b))
+    simp only [Equiv.symm_apply_apply]
+    exact hf hab
+  have h_ev' := Ordinal.eventuallyConst_of_monotone hf'
+  rw [Filter.eventuallyConst_atTop] at h_ev'
+  rcases h_ev' with ⟨Ω, hΩ⟩
+  have h_stab : xSeq embed Ω = xSeq embed (Ω + 1) := by
+    have h2 := hΩ (Ω + 1) le_self_add
+    dsimp [f'] at h2
+    apply_fun e.symm at h2
+    simp only [Equiv.symm_apply_apply] at h2
+    exact h2.symm
+  by_contra h_ne
+  have h_lt : xSeq embed Ω < xSeq embed (Ω + 1) := xSeq_strict_mono embed Ω (lt_top_iff_ne_top.mpr (by
+    intro h_eq
+    have h_le_sieve : xSeq embed Ω ≤ sieveOutput embed := le_iSup (fun o => xSeq embed o) Ω
+    rw [h_eq] at h_le_sieve
+    exact h_ne (top_le_iff.mp h_le_sieve)
+  ))
+  rw [h_stab] at h_lt
+  exact lt_irrefl _ h_lt
+
 /-- Every transfinite stage is bounded above by the sieve output. -/
 theorem xSeq_le_sieveOutput (o : Ordinal.{0}) : xSeq embed o ≤ sieveOutput embed :=
   le_iSup (fun o => xSeq embed o) o
@@ -858,7 +941,7 @@ instance : Fintype Tree2 where
   elems := {Tree2.t1}
   complete := by intro x; cases x; simp
 
-theorem tamari2_card : (Fintype.elems : Finset Tree2).card = 1 := rfl
+theorem tamari2_card : Fintype.card Tree2 = 1 := rfl
 
 /-- The 2 parenthesizations of 3 letters (vertices of Tamari 𝒯₃ / Stasheff K₃ = 1D interval). -/
 inductive Tree3 : Type
@@ -883,7 +966,7 @@ instance : Fintype Tree3 where
   elems := {Tree3.t1, Tree3.t2}
   complete := by intro x; cases x <;> simp
 
-theorem tamari3_card : (Fintype.elems : Finset Tree3).card = 2 := rfl
+theorem tamari3_card : Fintype.card Tree3 = 2 := rfl
 
 /-- The 5 parenthesizations of 4 letters (vertices of Tamari 𝒯₄ / Stasheff K₄). -/
 inductive Tree4 : Type
@@ -918,12 +1001,84 @@ instance : PartialOrder Tree4 where
   le_trans := tamari_trans
   le_antisymm := tamari_antisymm
 
+def tamari_sup : Tree4 → Tree4 → Tree4
+  | t1, x => x
+  | x, t1 => x
+  | t5, _ => t5
+  | _, t5 => t5
+  | t2, t2 => t2
+  | t2, t3 => t5
+  | t2, t4 => t4
+  | t3, t2 => t5
+  | t3, t3 => t3
+  | t3, t4 => t5
+  | t4, t2 => t4
+  | t4, t3 => t5
+  | t4, t4 => t4
+
+def tamari_inf : Tree4 → Tree4 → Tree4
+  | t1, _ => t1
+  | _, t1 => t1
+  | t5, x => x
+  | x, t5 => x
+  | t2, t2 => t2
+  | t2, t3 => t1
+  | t2, t4 => t2
+  | t3, t2 => t1
+  | t3, t3 => t3
+  | t3, t4 => t1
+  | t4, t2 => t2
+  | t4, t3 => t1
+  | t4, t4 => t4
+
+instance : Lattice Tree4 where
+  sup := tamari_sup
+  le_sup_left := by intro a b; cases a <;> cases b <;> simp [tamari_sup, LE.le, tamari_le]
+  le_sup_right := by intro a b; cases a <;> cases b <;> simp [tamari_sup, LE.le, tamari_le]
+  sup_le := by intro a b c; cases a <;> cases b <;> cases c <;> simp [tamari_sup, LE.le, tamari_le]
+  inf := tamari_inf
+  inf_le_left := by intro a b; cases a <;> cases b <;> simp [tamari_inf, LE.le, tamari_le]
+  inf_le_right := by intro a b; cases a <;> cases b <;> simp [tamari_inf, LE.le, tamari_le]
+  le_inf := by intro a b c; cases a <;> cases b <;> cases c <;> simp [tamari_inf, LE.le, tamari_le]
+
+inductive RightRot : Tree4 → Tree4 → Prop
+  | t1_t2 : RightRot t1 t2
+  | t1_t3 : RightRot t1 t3
+  | t2_t4 : RightRot t2 t4
+  | t3_t5 : RightRot t3 t5
+  | t4_t5 : RightRot t4 t5
+
+theorem rightRot_le {a b : Tree4} (h : RightRot a b) : a ≤ b := by
+  cases h <;> simp [LE.le, tamari_le]
+
+open Relation
+
+theorem tamari_le_eq_reflTransGen :
+    (· ≤ ·) = ReflTransGen RightRot (α := Tree4) := by
+  ext a b
+  constructor
+  · intro h
+    cases a <;> cases b <;> first | exact .refl | (revert h; exact fun _ => by contradiction) | skip
+    · exact .tail .refl .t1_t2
+    · exact .tail .refl .t1_t3
+    · exact .tail (.tail .refl .t1_t2) .t2_t4
+    · exact .tail (.tail .refl .t1_t3) .t3_t5
+    · exact .tail .refl .t2_t4
+    · exact .tail (.tail .refl .t2_t4) .t4_t5
+    · exact .tail .refl .t3_t5
+    · exact .tail .refl .t4_t5
+  · intro h
+    induction h with
+    | refl => exact le_rfl
+    | tail _ h2 ih => exact le_trans ih (rightRot_le h2)
+
+
 instance : Fintype Tree4 where
   elems := {t1, t2, t3, t4, t5}
   complete := by intro x; cases x <;> simp
 
 /-- Catalan C₃ = 5 vertices of Tamari 𝒯₄. -/
-theorem tamari4_card : (Fintype.elems : Finset Tree4).card = 5 := rfl
+theorem tamari4_card : Fintype.card Tree4 = 5 := rfl
 
 /-! ### Universal N-Dimensional Associahedron-Root Duality (K_{n+2} ≅ Aₙ) -/
 
@@ -945,6 +1100,13 @@ structure Diagonal (n : ℕ) : Type where
   h_not_base : ¬ (a.val = 0 ∧ b.val = n + 2)
   deriving DecidableEq
 
+instance (n : ℕ) : Fintype (Diagonal n) :=
+  Fintype.ofEquiv { p : Fin (n+3) × Fin (n+3) // p.1.val + 2 ≤ p.2.val ∧ ¬(p.1.val = 0 ∧ p.2.val = n+2) }
+    { toFun := fun p => ⟨p.val.1, p.val.2, p.property.1, p.property.2⟩
+      invFun := fun d => ⟨(d.a, d.b), d.ha, d.h_not_base⟩
+      left_inv := fun p => Subtype.ext rfl
+      right_inv := fun d => by cases d; rfl }
+
 /-- The boundary facets of the (n+2)-associahedron K_{n+2} are combinatorial representations of the diagonals.
     We partition them into base chords and internal chords to match the root system. -/
 inductive FacetKn2 (n : ℕ) : Type
@@ -952,7 +1114,7 @@ inductive FacetKn2 (n : ℕ) : Type
   | chord (i j : Fin n) (hle : i.val ≤ j.val) : FacetKn2 n
   deriving DecidableEq
 
-/-- The bijection mapping our combinatorial FacetKn2 directly to true geometric diagonals of the polygon. -/
+/-- The bijection mapping our combinatorial FacetKn2 directly to diagonals of the polygon. -/
 def facetKn2_to_diagonal (n : ℕ) : FacetKn2 n → Diagonal n
   | FacetKn2.base_diagonal k => 
       have hk := k.isLt
@@ -1024,6 +1186,194 @@ def facetKn2_diagonal_equiv (n : ℕ) : FacetKn2 n ≃ Diagonal n where
 def cyclicLength (n : ℕ) (d : Diagonal n) : ℕ :=
   min (d.b.val - d.a.val) ((n + 3) - (d.b.val - d.a.val))
 
+def diagonalsOfLength (n l : ℕ) : Finset (Diagonal n) :=
+  Finset.filter (fun d => cyclicLength n d = l) Finset.univ
+
+def map_eq (n l : ℕ) (hl1 : 2 ≤ l) (hl3 : l * 2 = n + 3) (i : Fin ((n + 3) / 2)) : Diagonal n :=
+  have h1 : i.val + 2 ≤ i.val + l := by omega
+  have h2 : ¬(i.val = 0 ∧ i.val + l = n + 2) := by omega
+  have ha : i.val < n + 3 := by omega
+  have hb : i.val + l < n + 3 := by have := i.isLt; omega
+  ⟨⟨i.val, ha⟩, ⟨i.val + l, hb⟩, h1, h2⟩
+
+lemma map_eq_inj (n l : ℕ) (hl1 : 2 ≤ l) (hl3 : l * 2 = n + 3) :
+    Function.Injective (map_eq n l hl1 hl3) := by
+  intro i j hij
+  have h_a : i.val = j.val := by
+    have := congrArg (fun d => d.a.val) hij
+    exact this
+  exact Fin.ext h_a
+
+lemma map_eq_mem (n l : ℕ) (hl1 : 2 ≤ l) (hl3 : l * 2 = n + 3) (i : Fin ((n + 3) / 2)) :
+    map_eq n l hl1 hl3 i ∈ diagonalsOfLength n l := by
+  dsimp [diagonalsOfLength]
+  apply Finset.mem_filter.mpr
+  constructor
+  · apply Finset.mem_univ
+  · dsimp [cyclicLength, map_eq]
+    have : i.val + l - i.val = l := by omega
+    rw [this]
+    have : n + 3 - l = l := by omega
+    rw [this, min_self]
+
+lemma map_eq_surj (n l : ℕ) (hl1 : 2 ≤ l) (hl3 : l * 2 = n + 3) (d : Diagonal n)
+    (hd : d ∈ diagonalsOfLength n l) : ∃ i, map_eq n l hl1 hl3 i = d := by
+  have hd2 : cyclicLength n d = l := by
+    have : d ∈ Finset.filter (fun x => cyclicLength n x = l) Finset.univ := hd
+    exact (Finset.mem_filter.mp this).2
+  have h_min : min (d.b.val - d.a.val) (n + 3 - (d.b.val - d.a.val)) = l := hd2
+  have h_len : d.b.val - d.a.val = l := by
+    have h_min_eq := min_eq_iff.mp h_min
+    cases h_min_eq with
+    | inl h => exact h.1
+    | inr h => omega
+  have hia : d.a.val < (n + 3) / 2 := by
+    have : d.b.val < n + 3 := d.b.isLt
+    omega
+  use ⟨d.a.val, hia⟩
+  apply Diagonal.ext
+  · apply Fin.ext
+    exact rfl
+  · apply Fin.ext
+    change d.a.val + l = d.b.val
+    omega
+
+theorem cyclic_length_count_eq (n l : ℕ) (hl1 : 2 ≤ l) (hl3 : l * 2 = n + 3) :
+    (diagonalsOfLength n l).card = (n + 3) / 2 := by
+  have h_eq : diagonalsOfLength n l = Finset.image (map_eq n l hl1 hl3) Finset.univ := by
+    ext d
+    simp only [Finset.mem_image, Finset.mem_univ, true_and]
+    constructor
+    · exact map_eq_surj n l hl1 hl3 d
+    · rintro ⟨i, hi⟩
+      rw [← hi]
+      exact map_eq_mem n l hl1 hl3 i
+  rw [h_eq, Finset.card_image_of_injective Finset.univ (map_eq_inj n l hl1 hl3), Finset.card_univ, Fintype.card_fin]
+
+def map_lt (n l : ℕ) (hl1 : 2 ≤ l) (hl3 : l * 2 < n + 3) (i : Fin (n + 3)) : Diagonal n :=
+  if h_lt : i.val < n + 3 - l then
+    have h1 : i.val + 2 ≤ i.val + l := by omega
+    have h2 : ¬(i.val = 0 ∧ i.val + l = n + 2) := by omega
+    have ha : i.val < n + 3 := by omega
+    have hb : i.val + l < n + 3 := by omega
+    ⟨⟨i.val, ha⟩, ⟨i.val + l, hb⟩, h1, h2⟩
+  else
+    have ha_val : i.val - (n + 3 - l) < n + 3 := by omega
+    have hb_val : i.val - (n + 3 - l) + (n + 3 - l) < n + 3 := by omega
+    have h1 : (i.val - (n + 3 - l)) + 2 ≤ (i.val - (n + 3 - l)) + (n + 3 - l) := by omega
+    have h2 : ¬(i.val - (n + 3 - l) = 0 ∧ i.val - (n + 3 - l) + (n + 3 - l) = n + 2) := by omega
+    ⟨⟨i.val - (n + 3 - l), ha_val⟩, ⟨i.val - (n + 3 - l) + (n + 3 - l), hb_val⟩, h1, h2⟩
+
+lemma map_lt_inj (n l : ℕ) (hl1 : 2 ≤ l) (hl3 : l * 2 < n + 3) :
+    Function.Injective (map_lt n l hl1 hl3) := by
+  intro i j hij
+  have h_a : (map_lt n l hl1 hl3 i).a.val = (map_lt n l hl1 hl3 j).a.val := congrArg (fun d => d.a.val) hij
+  have h_b : (map_lt n l hl1 hl3 i).b.val = (map_lt n l hl1 hl3 j).b.val := congrArg (fun d => d.b.val) hij
+  by_cases hi : i.val < n + 3 - l <;> by_cases hj : j.val < n + 3 - l
+  · dsimp [map_lt] at h_a h_b
+    rw [dif_pos hi, dif_pos hj] at h_a h_b
+    exact Fin.ext h_a
+  · dsimp [map_lt] at h_a h_b
+    rw [dif_pos hi, dif_neg hj] at h_a h_b
+    change i.val = j.val - (n + 3 - l) at h_a
+    change i.val + l = j.val - (n + 3 - l) + (n + 3 - l) at h_b
+    omega
+  · dsimp [map_lt] at h_a h_b
+    rw [dif_neg hi, dif_pos hj] at h_a h_b
+    change i.val - (n + 3 - l) = j.val at h_a
+    change i.val - (n + 3 - l) + (n + 3 - l) = j.val + l at h_b
+    omega
+  · dsimp [map_lt] at h_a h_b
+    rw [dif_neg hi, dif_neg hj] at h_a h_b
+    change i.val - (n + 3 - l) = j.val - (n + 3 - l) at h_a
+    have : i.val = j.val := by omega
+    exact Fin.ext this
+
+lemma map_lt_mem (n l : ℕ) (hl1 : 2 ≤ l) (hl3 : l * 2 < n + 3) (i : Fin (n + 3)) :
+    map_lt n l hl1 hl3 i ∈ diagonalsOfLength n l := by
+  dsimp [diagonalsOfLength]
+  apply Finset.mem_filter.mpr
+  constructor
+  · apply Finset.mem_univ
+  · dsimp [cyclicLength, map_lt]
+    split_ifs with h_lt
+    · have : i.val + l - i.val = l := by omega
+      rw [this]
+      apply min_eq_left
+      omega
+    · have : i.val - (n + 3 - l) + (n + 3 - l) - (i.val - (n + 3 - l)) = n + 3 - l := by omega
+      rw [this]
+      have : n + 3 - (n + 3 - l) = l := by omega
+      rw [this]
+      apply min_eq_right
+      omega
+
+lemma map_lt_surj (n l : ℕ) (hl1 : 2 ≤ l) (hl3 : l * 2 < n + 3) (d : Diagonal n)
+    (hd : d ∈ diagonalsOfLength n l) : ∃ i, map_lt n l hl1 hl3 i = d := by
+  have hd2 : cyclicLength n d = l := by
+    have : d ∈ Finset.filter (fun x => cyclicLength n x = l) Finset.univ := hd
+    exact (Finset.mem_filter.mp this).2
+  have h_min : min (d.b.val - d.a.val) (n + 3 - (d.b.val - d.a.val)) = l := hd2
+  cases min_eq_iff.mp h_min with
+  | inl h => 
+    have hl_eq : d.b.val - d.a.val = l := h.1
+    have hia : d.a.val < n + 3 - l := by
+      have : d.b.val < n + 3 := d.b.isLt
+      omega
+    use ⟨d.a.val, by omega⟩
+    apply Diagonal.ext
+    · apply Fin.ext
+      dsimp [map_lt]
+      rw [dif_pos hia]
+    · apply Fin.ext
+      dsimp [map_lt]
+      rw [dif_pos hia]
+      change d.a.val + l = d.b.val
+      omega
+  | inr h => 
+    have hl_eq : n + 3 - (d.b.val - d.a.val) = l := h.1
+    have h_diff : d.b.val - d.a.val = n + 3 - l := by omega
+    have hia : d.a.val + (n + 3 - l) < n + 3 := by
+      have : d.b.val < n + 3 := d.b.isLt
+      omega
+    use ⟨d.a.val + (n + 3 - l), hia⟩
+    have h_not_lt : ¬(d.a.val + (n + 3 - l) < n + 3 - l) := by omega
+    apply Diagonal.ext
+    · apply Fin.ext
+      dsimp [map_lt]
+      rw [dif_neg h_not_lt]
+      change (d.a.val + (n + 3 - l)) - (n + 3 - l) = d.a.val
+      omega
+    · apply Fin.ext
+      dsimp [map_lt]
+      rw [dif_neg h_not_lt]
+      change (d.a.val + (n + 3 - l)) - (n + 3 - l) + (n + 3 - l) = d.b.val
+      omega
+
+theorem cyclic_length_count_lt (n l : ℕ) (hl1 : 2 ≤ l) (hl3 : l * 2 < n + 3) :
+    (diagonalsOfLength n l).card = n + 3 := by
+  have h_eq : diagonalsOfLength n l = Finset.image (map_lt n l hl1 hl3) Finset.univ := by
+    ext d
+    simp only [Finset.mem_image, Finset.mem_univ, true_and]
+    constructor
+    · exact map_lt_surj n l hl1 hl3 d
+    · rintro ⟨i, hi⟩
+      rw [← hi]
+      exact map_lt_mem n l hl1 hl3 i
+  rw [h_eq, Finset.card_image_of_injective Finset.univ (map_lt_inj n l hl1 hl3), Finset.card_univ, Fintype.card_fin]
+
+/-- Diagonals of cyclic length ℓ number n+3, except when ℓ = (n+3)/2, where there are (n+3)/2. -/
+theorem cyclic_length_count (n l : ℕ) (hl1 : 2 ≤ l) (hl2 : l ≤ (n + 3) / 2) :
+    (diagonalsOfLength n l).card = if l * 2 = n + 3 then (n + 3) / 2 else n + 3 := by
+  split_ifs with h
+  · exact cyclic_length_count_eq n l hl1 h
+  · have hl3 : l * 2 < n + 3 := by omega
+    exact cyclic_length_count_lt n l hl1 hl3
+
+/-- The 6/3 split for n=3 as a concrete instance. -/
+theorem cyclic_length_count_3_2 : (diagonalsOfLength 3 2).card = 6 := by decide
+theorem cyclic_length_count_3_3 : (diagonalsOfLength 3 3).card = 3 := by decide
+
 /-- Canonical constructive bijection between Aₙ roots and K_{n+2} facets for all n. -/
 def rootAn_to_facetKn2 (n : ℕ) : RootAn n → FacetKn2 n
   | RootAn.pos i j hle => FacetKn2.chord i j hle
@@ -1051,6 +1401,73 @@ def rootAn_facetKn2_equiv (n : ℕ) : RootAn n ≃ FacetKn2 n where
 /-- Universal bijection between Aₙ roots and true polygon Diagonals. -/
 def rootAn_diagonal_equiv (n : ℕ) : RootAn n ≃ Diagonal n :=
   (rootAn_facetKn2_equiv n).trans (facetKn2_diagonal_equiv n)
+
+/-! ### Support = Crossing in the Fan Model -/
+
+/-- Two diagonals of the (n+3)-gon cross in their interiors. -/
+def Diagonal.Crosses {n : ℕ} (d e : Diagonal n) : Prop :=
+  (d.a.val < e.a.val ∧ e.a.val < d.b.val ∧ d.b.val < e.b.val) ∨
+  (e.a.val < d.a.val ∧ d.a.val < e.b.val ∧ e.b.val < d.b.val)
+
+instance {n : ℕ} (d e : Diagonal n) : Decidable (d.Crosses e) := by
+  unfold Diagonal.Crosses; infer_instance
+
+theorem Diagonal.crosses_comm {n : ℕ} (d e : Diagonal n) : d.Crosses e ↔ e.Crosses d := by
+  unfold Diagonal.Crosses; omega
+
+/-- The fan triangulation from vertex 0: diagonals (0, k+2). -/
+def fanDiagonal (n : ℕ) (k : Fin n) : Diagonal n :=
+  facetKn2_to_diagonal n (FacetKn2.base_diagonal k)
+
+@[simp] theorem fanDiagonal_a (n : ℕ) (k : Fin n) : (fanDiagonal n k).a.val = 0 := rfl
+@[simp] theorem fanDiagonal_b (n : ℕ) (k : Fin n) : (fanDiagonal n k).b.val = k.val + 2 := rfl
+
+@[simp] theorem rootAn_diagonal_pos_a (n : ℕ) (i j : Fin n) (h : i.val ≤ j.val) :
+    (rootAn_diagonal_equiv n (RootAn.pos i j h)).a.val = i.val + 1 := rfl
+@[simp] theorem rootAn_diagonal_pos_b (n : ℕ) (i j : Fin n) (h : i.val ≤ j.val) :
+    (rootAn_diagonal_equiv n (RootAn.pos i j h)).b.val = j.val + 3 := rfl
+
+theorem rootAn_diagonal_neg_simple (n : ℕ) (k : Fin n) :
+    rootAn_diagonal_equiv n (RootAn.neg_simple k) = fanDiagonal n k := rfl
+
+/-- The fan diagonals are pairwise non-crossing (they form a triangulation). -/
+theorem fanDiagonal_not_crosses (n : ℕ) (k l : Fin n) :
+    ¬ (fanDiagonal n k).Crosses (fanDiagonal n l) := by
+  simp only [Diagonal.Crosses, fanDiagonal_a]; omega
+
+/-- **Support = crossing.** The diagonal of the positive root `α_{i..j}` crosses the
+    fan diagonal `(0, k+2)` exactly when `k` lies in the support `[i, j]`. -/
+theorem rootAn_pos_crosses_fan_iff (n : ℕ) (i j : Fin n) (hle : i.val ≤ j.val) (k : Fin n) :
+    (rootAn_diagonal_equiv n (RootAn.pos i j hle)).Crosses (fanDiagonal n k) ↔
+      i.val ≤ k.val ∧ k.val ≤ j.val := by
+  simp only [Diagonal.Crosses, rootAn_diagonal_pos_a, rootAn_diagonal_pos_b,
+    fanDiagonal_a, fanDiagonal_b]
+  omega
+
+/-- A diagonal crosses no fan diagonal iff it is itself a fan diagonal. -/
+theorem crosses_no_fan_iff (n : ℕ) (d : Diagonal n) :
+    (∀ k : Fin n, ¬ d.Crosses (fanDiagonal n k)) ↔ d.a.val = 0 := by
+  have hab := d.ha
+  have hb := d.b.isLt
+  constructor
+  · intro h
+    by_contra ha
+    apply h ⟨d.a.val - 1, by omega⟩
+    simp only [Diagonal.Crosses, fanDiagonal_a, fanDiagonal_b]
+    omega
+  · intro ha k
+    simp only [Diagonal.Crosses, fanDiagonal_a, fanDiagonal_b]
+    omega
+
+/-- The roots compatible with every element of the initial cluster (the fan) are exactly
+    the negative simple roots. -/
+theorem compatible_with_fan_iff_neg_simple (n : ℕ) (r : RootAn n) :
+    (∀ k : Fin n, ¬ (rootAn_diagonal_equiv n r).Crosses (fanDiagonal n k)) ↔
+      ∃ k, r = RootAn.neg_simple k := by
+  rw [crosses_no_fan_iff]
+  cases r with
+  | pos i j h => simp
+  | neg_simple k => exact ⟨fun _ => ⟨k, rfl⟩, fun _ => rfl⟩
 
 /-! ### Explicit A₃ ≅ K₅ Dimension-3 Specialization -/
 
@@ -1086,27 +1503,66 @@ def rootA3_to_facetKn2_3 : RootA3 → FacetKn2 3
   | alpha23    => FacetKn2.chord ⟨1, by decide⟩ ⟨2, by decide⟩ (by decide)
   | alpha123   => FacetKn2.chord ⟨0, by decide⟩ ⟨2, by decide⟩ (by decide)
 
+def rootA3_to_rootAn3 : RootA3 → RootAn 3
+  | neg_alpha1 => RootAn.neg_simple ⟨0, by decide⟩
+  | neg_alpha2 => RootAn.neg_simple ⟨1, by decide⟩
+  | neg_alpha3 => RootAn.neg_simple ⟨2, by decide⟩
+  | alpha1     => RootAn.pos ⟨0, by decide⟩ ⟨0, by decide⟩ (by decide)
+  | alpha2     => RootAn.pos ⟨1, by decide⟩ ⟨1, by decide⟩ (by decide)
+  | alpha3     => RootAn.pos ⟨2, by decide⟩ ⟨2, by decide⟩ (by decide)
+  | alpha12    => RootAn.pos ⟨0, by decide⟩ ⟨1, by decide⟩ (by decide)
+  | alpha23    => RootAn.pos ⟨1, by decide⟩ ⟨2, by decide⟩ (by decide)
+  | alpha123   => RootAn.pos ⟨0, by decide⟩ ⟨2, by decide⟩ (by decide)
+
+theorem rootA3_to_facetKn2_3_eq (r : RootA3) :
+    rootA3_to_facetKn2_3 r = rootAn_to_facetKn2 3 (rootA3_to_rootAn3 r) := by
+  cases r <;> rfl
+
+def rootAn3_to_rootA3 (r : RootAn 3) : RootA3 :=
+  if r = RootAn.neg_simple ⟨0, by decide⟩ then neg_alpha1
+  else if r = RootAn.neg_simple ⟨1, by decide⟩ then neg_alpha2
+  else if r = RootAn.neg_simple ⟨2, by decide⟩ then neg_alpha3
+  else if r = RootAn.pos ⟨0, by decide⟩ ⟨0, by decide⟩ (by decide) then alpha1
+  else if r = RootAn.pos ⟨1, by decide⟩ ⟨1, by decide⟩ (by decide) then alpha2
+  else if r = RootAn.pos ⟨2, by decide⟩ ⟨2, by decide⟩ (by decide) then alpha3
+  else if r = RootAn.pos ⟨0, by decide⟩ ⟨1, by decide⟩ (by decide) then alpha12
+  else if r = RootAn.pos ⟨1, by decide⟩ ⟨2, by decide⟩ (by decide) then alpha23
+  else if r = RootAn.pos ⟨0, by decide⟩ ⟨2, by decide⟩ (by decide) then alpha123
+  else neg_alpha1
+
+def rootA3_equiv_rootAn3 : RootA3 ≃ RootAn 3 where
+  toFun := rootA3_to_rootAn3
+  invFun := rootAn3_to_rootA3
+  left_inv := by intro x; cases x <;> rfl
+  right_inv := by
+    intro x
+    rcases x with ⟨⟨i, hi⟩, ⟨j, hj⟩, hle⟩ | ⟨⟨k, hk⟩⟩
+    · interval_cases i <;> interval_cases j <;> try rfl
+    · interval_cases k <;> rfl
+
 def rootA3_to_diagonal_3 (r : RootA3) : Diagonal 3 :=
   facetKn2_to_diagonal 3 (rootA3_to_facetKn2_3 r)
 
 def rootA3_cyclic_length (r : RootA3) : ℕ :=
   cyclicLength 3 (rootA3_to_diagonal_3 r)
 
-/-- Honest geometric mapping reflecting cyclic diagonal lengths in the hexagon (n=3+3=6). 
+/-- Classification reflecting cyclic diagonal lengths in the hexagon (n=3+3=6). 
     - Pentagons (cyclic length 2 diagonals): (0,2), (1,3), (2,4), (3,5), (0,4), (1,5).
     - Squares (cyclic length 3 diagonals): (0,3), (1,4), (2,5). -/
-def rootA3_to_facetK5 : RootA3 → FacetK5
-  | neg_alpha1 => FacetK5.pentagon 0 -- (0,2) length 2
-  | neg_alpha2 => FacetK5.square 0   -- (0,3) length 3
-  | neg_alpha3 => FacetK5.pentagon 1 -- (0,4) length 2
-  | alpha1     => FacetK5.pentagon 2 -- (1,3) length 2
-  | alpha12    => FacetK5.square 1   -- (1,4) length 3
-  | alpha123   => FacetK5.pentagon 3 -- (1,5) length 2
-  | alpha2     => FacetK5.pentagon 4 -- (2,4) length 2
-  | alpha23    => FacetK5.square 2   -- (2,5) length 3
-  | alpha3     => FacetK5.pentagon 5 -- (3,5) length 2
+def rootA3_to_facetK5 (r : RootA3) : FacetK5 :=
+  match r with
+  | neg_alpha1 => FacetK5.pentagon 0
+  | neg_alpha2 => FacetK5.square 0
+  | neg_alpha3 => FacetK5.pentagon 1
+  | alpha1     => FacetK5.pentagon 2
+  | alpha12    => FacetK5.square 1
+  | alpha123   => FacetK5.pentagon 3
+  | alpha2     => FacetK5.pentagon 4
+  | alpha23    => FacetK5.square 2
+  | alpha3     => FacetK5.pentagon 5
 
-def facetK5_to_rootA3 : FacetK5 → RootA3
+def facetK5_to_rootA3 (f : FacetK5) : RootA3 :=
+  match f with
   | FacetK5.pentagon 0 => neg_alpha1
   | FacetK5.square 0   => neg_alpha2
   | FacetK5.pentagon 1 => neg_alpha3
@@ -1127,20 +1583,30 @@ theorem rootA3_facet_right_inv (f : FacetK5) :
   | pentagon i => rcases i with ⟨v, hv⟩; interval_cases v <;> rfl
   | square j => rcases j with ⟨v, hv⟩; interval_cases v <;> rfl
 
-/-- The A₃ root system is in honest constructive bijection with the 9 facets of K₅, 
-    matching diagonal lengths correctly. -/
-def rootA3_facetK5_equiv : RootA3 ≃ FacetK5 where
+def rootA3_facetK5_equiv_direct : RootA3 ≃ FacetK5 where
   toFun := rootA3_to_facetK5
   invFun := facetK5_to_rootA3
   left_inv := rootA3_facet_left_inv
   right_inv := rootA3_facet_right_inv
 
-theorem rootA3_cyclic_length_pentagon (r : RootA3) (i : Fin 6) (h : rootA3_to_facetK5 r = FacetK5.pentagon i) :
+def diagonal3_facetK5_equiv : Diagonal 3 ≃ FacetK5 :=
+  (rootAn_diagonal_equiv 3).symm.trans (rootA3_equiv_rootAn3.symm.trans rootA3_facetK5_equiv_direct)
+
+/-- The A₃ root system is in honest constructive bijection with the 9 facets of K₅, 
+    matching diagonal lengths correctly. Routed through the general Diagonal n map. -/
+def rootA3_facetK5_equiv : RootA3 ≃ FacetK5 :=
+  rootA3_equiv_rootAn3.trans ((rootAn_diagonal_equiv 3).trans diagonal3_facetK5_equiv)
+
+theorem rootA3_cyclic_length_pentagon (r : RootA3) (i : Fin 6) (h : rootA3_facetK5_equiv r = FacetK5.pentagon i) :
     rootA3_cyclic_length r = 2 := by
+  have heq : rootA3_facetK5_equiv r = rootA3_to_facetK5 r := by cases r <;> rfl
+  rw [heq] at h
   cases r <;> (first | rfl | cases h)
 
-theorem rootA3_cyclic_length_square (r : RootA3) (j : Fin 3) (h : rootA3_to_facetK5 r = FacetK5.square j) :
+theorem rootA3_cyclic_length_square (r : RootA3) (j : Fin 3) (h : rootA3_facetK5_equiv r = FacetK5.square j) :
     rootA3_cyclic_length r = 3 := by
+  have heq : rootA3_facetK5_equiv r = rootA3_to_facetK5 r := by cases r <;> rfl
+  rw [heq] at h
   cases r <;> (first | rfl | cases h)
 
 instance : Fintype RootA3 where
@@ -1148,7 +1614,7 @@ instance : Fintype RootA3 where
   complete := by intro x; cases x <;> simp
 
 /-- The root / facet count is exactly 9. -/
-theorem a3_facet_count : (Fintype.elems : Finset RootA3).card = 9 := rfl
+theorem a3_facet_count : Fintype.card RootA3 = 9 := rfl
 
 end AssociahedraDuality
 
@@ -1429,23 +1895,182 @@ theorem rootA3_cartan_norm (r : RootA3) :
     cartanForm (rootA3_to_vec3 r) (rootA3_to_vec3 r) = 2 := by
   cases r <;> rfl
 
-/-- The Manifold Strain Energy of a state transition v in the A₃ root space. -/
-def strainEnergy (v : Vec3) : ℤ :=
-  cartanForm v v
+
+open Finset
+
+/-! ### The Dirichlet Energy is the Aₙ Cartan Matrix Form -/
+
+/-- The Aₙ Cartan matrix: 2 on the diagonal, −1 on the first off-diagonals. -/
+def cartanMatrix (n : ℕ) (i j : Fin n) : ℤ :=
+  if i.val = j.val then 2 else if i.val + 1 = j.val ∨ j.val + 1 = i.val then -1 else 0
+
+theorem cartanEnergy_eq_range (n : ℕ) (v : Fin n → ℤ) :
+    cartanEnergy n v = ∑ t ∈ range (n + 1), (extVec n v (t + 1) - extVec n v t) ^ 2 :=
+  Fin.sum_univ_eq_sum_range (fun t => (extVec n v (t + 1) - extVec n v t) ^ 2) (n + 1)
+
+theorem extVec_of_lt (n : ℕ) (v : Fin n → ℤ) (t : ℕ) (ht : n < t) : extVec n v t = 0 := by
+  unfold extVec; rw [dif_neg (by omega)]
+
+theorem extVec_of_pos (n : ℕ) (v : Fin n → ℤ) (t : ℕ) (h0 : 0 < t) (hn : t ≤ n) :
+    extVec n v t = v ⟨t - 1, by omega⟩ := by
+  unfold extVec; rw [dif_pos ⟨h0, hn⟩]
+
+/-- Discrete summation by parts (Green's identity) for sequences vanishing at 0. -/
+theorem sum_sq_diff_telescope (w : ℕ → ℤ) (h0 : w 0 = 0) (N : ℕ) :
+    ∑ t ∈ range N, (w (t + 1) - w t) ^ 2 =
+      ∑ t ∈ range N, w (t + 1) * (2 * w (t + 1) - w t - w (t + 2)) +
+        w N * (w (N + 1) - w N) := by
+  induction N with
+  | zero => simp [h0]
+  | succ N ih => rw [sum_range_succ, sum_range_succ, ih]; ring
+
+theorem range_sum_eq_fin_sum (F : ℕ → ℤ) (n : ℕ) :
+    ∑ t ∈ range n, F t = ∑ i : Fin n, F i.val :=
+  (Fin.sum_univ_eq_sum_range F n).symm
+
+/-- Row `i` of `C v`: `(C v)_i = 2 v_i − v_{i−1} − v_{i+1}` with zero boundary values. -/
+theorem cartanMatrix_row (n : ℕ) (v : Fin n → ℤ) (i : Fin n) :
+    ∑ j, cartanMatrix n i j * v j =
+      2 * v i - extVec n v i.val - extVec n v (i.val + 2) := by
+  have hi := i.isLt
+  have split : ∀ j : Fin n, cartanMatrix n i j * v j =
+      (if j.val = i.val then 2 * v j else 0) +
+      (if j.val + 1 = i.val then -v j else 0) +
+      (if i.val + 1 = j.val then -v j else 0) := by
+    intro j; unfold cartanMatrix; split_ifs <;> omega
+  simp only [split, sum_add_distrib]
+  have s1 : ∑ j : Fin n, (if j.val = i.val then 2 * v j else 0) = 2 * v i := by
+    rw [Fintype.sum_eq_single i (fun j hj => if_neg (fun h => hj (Fin.ext h)))]
+    simp
+  have s2 : ∑ j : Fin n, (if j.val + 1 = i.val then -v j else 0) = -extVec n v i.val := by
+    by_cases h0 : i.val = 0
+    · rw [h0, extVec_zero]
+      exact Finset.sum_eq_zero (fun j _ => if_neg (by omega))
+    · rw [extVec_of_pos n v i.val (by omega) (by omega),
+        Fintype.sum_eq_single ⟨i.val - 1, by omega⟩ (fun j hj => if_neg (fun h =>
+          hj (Fin.ext (by simp only; omega))))]
+      simp only
+      rw [if_pos (by omega)]
+  have s3 : ∑ j : Fin n, (if i.val + 1 = j.val then -v j else 0) =
+      -extVec n v (i.val + 2) := by
+    by_cases hn : i.val + 1 < n
+    · rw [extVec_of_pos n v (i.val + 2) (by omega) (by omega),
+        Fintype.sum_eq_single ⟨i.val + 1, hn⟩ (fun j hj => if_neg (fun h =>
+          hj (Fin.ext (by simp only; omega))))]
+      simp only [if_true]
+      rfl
+    · rw [extVec_of_lt n v (i.val + 2) (by omega)]
+      simp only [neg_zero]
+      exact Finset.sum_eq_zero (fun j _ => if_neg (by have := j.isLt; omega))
+  rw [s1, s2, s3]; ring
+
+/-- **The Dirichlet energy is the Cartan form:** `cartanEnergy n v = vᵀ C_{Aₙ} v`. -/
+theorem cartanEnergy_eq_cartanMatrix (n : ℕ) (v : Fin n → ℤ) :
+    cartanEnergy n v = ∑ i, ∑ j, cartanMatrix n i j * v i * v j := by
+  have rhs : ∀ i : Fin n, ∑ j, cartanMatrix n i j * v i * v j =
+      v i * (2 * v i - extVec n v i.val - extVec n v (i.val + 2)) := by
+    intro i
+    rw [← cartanMatrix_row, Finset.mul_sum]
+    exact sum_congr rfl (fun j _ => by ring)
+  rw [sum_congr rfl (fun i _ => rhs i), cartanEnergy_eq_range,
+    sum_sq_diff_telescope _ (extVec_zero n v), extVec_of_lt n v (n + 1) (by omega),
+    zero_mul, add_zero, sum_range_succ, extVec_of_lt n v (n + 1) (by omega), zero_mul,
+    add_zero, range_sum_eq_fin_sum]
+  exact sum_congr rfl (fun i _ => by rw [extVec_val])
+
+/-- For n = 3 the Dirichlet energy agrees with the explicit form `cartanForm` on `Vec3`. -/
+theorem cartanEnergy_three (v : Fin 3 → ℤ) :
+    cartanEnergy 3 v = cartanForm ⟨v 0, v 1, v 2⟩ ⟨v 0, v 1, v 2⟩ := by
+  rw [cartanEnergy_eq_range]
+  simp only [sum_range_succ, sum_range_zero, extVec, cartanForm]
+  norm_num
+  rw [show (⟨2, by omega⟩ : Fin 3) = 2 from rfl]
+  ring
+
+/-! ### Root Vectors and Norm 2 for Every n -/
+
+/-- Simple-root coordinates of an almost-positive root: `α_{i..j} ↦ 𝟙_{[i,j]}`, `−α_k ↦ −e_k`. -/
+def rootAn_to_vec (n : ℕ) : RootAn n → Fin n → ℤ
+  | RootAn.pos i j _ => fun m => if i.val ≤ m.val ∧ m.val ≤ j.val then 1 else 0
+  | RootAn.neg_simple k => fun m => if m.val = k.val then -1 else 0
+
+theorem extVec_rootAn_pos (n : ℕ) (i j : Fin n) (h : i.val ≤ j.val) (t : ℕ) :
+    extVec n (rootAn_to_vec n (RootAn.pos i j h)) t =
+      if i.val + 1 ≤ t ∧ t ≤ j.val + 1 then 1 else 0 := by
+  have := j.isLt
+  unfold extVec rootAn_to_vec
+  split_ifs <;> (try simp only at *) <;> omega
+
+theorem extVec_rootAn_neg (n : ℕ) (k : Fin n) (t : ℕ) :
+    extVec n (rootAn_to_vec n (RootAn.neg_simple k)) t =
+      if t = k.val + 1 then -1 else 0 := by
+  have := k.isLt
+  unfold extVec rootAn_to_vec
+  split_ifs <;> (try simp only at *) <;> omega
+
+/-- **Norm 2 for all n:** every almost-positive root of Aₙ has Cartan energy exactly 2. -/
+theorem rootAn_cartan_norm (n : ℕ) (r : RootAn n) :
+    cartanEnergy n (rootAn_to_vec n r) = 2 := by
+  rw [cartanEnergy_eq_range]
+  cases r with
+  | pos i j h =>
+    have hj := j.isLt
+    have term : ∀ t ∈ range (n + 1),
+        (extVec n (rootAn_to_vec n (RootAn.pos i j h)) (t + 1) -
+          extVec n (rootAn_to_vec n (RootAn.pos i j h)) t) ^ 2 =
+        (if t = i.val then 1 else 0) + (if t = j.val + 1 then 1 else 0) := by
+      intro t _
+      rw [extVec_rootAn_pos, extVec_rootAn_pos]
+      split_ifs <;> (try norm_num) <;> omega
+    rw [sum_congr rfl term, sum_add_distrib, sum_ite_eq', sum_ite_eq',
+      if_pos (mem_range.mpr (by omega)), if_pos (mem_range.mpr (by omega))]
+    norm_num
+  | neg_simple k =>
+    have hk := k.isLt
+    have term : ∀ t ∈ range (n + 1),
+        (extVec n (rootAn_to_vec n (RootAn.neg_simple k)) (t + 1) -
+          extVec n (rootAn_to_vec n (RootAn.neg_simple k)) t) ^ 2 =
+        (if t = k.val then 1 else 0) + (if t = k.val + 1 then 1 else 0) := by
+      intro t _
+      rw [extVec_rootAn_neg, extVec_rootAn_neg]
+      split_ifs <;> (try norm_num) <;> omega
+    rw [sum_congr rfl term, sum_add_distrib, sum_ite_eq', sum_ite_eq',
+      if_pos (mem_range.mpr (by omega)), if_pos (mem_range.mpr (by omega))]
+    norm_num
+
+/-- Distinct almost-positive roots have distinct coordinate vectors. -/
+theorem rootAn_to_vec_injective (n : ℕ) : Function.Injective (rootAn_to_vec n) := by
+  intro r s hrs
+  cases r with
+  | pos i j hij =>
+    cases s with
+    | pos i' j' hij' =>
+      have h1 := congrFun hrs i
+      have h2 := congrFun hrs i'
+      have h3 := congrFun hrs j
+      have h4 := congrFun hrs j'
+      simp only [rootAn_to_vec] at h1 h2 h3 h4
+      have hi : i = i' := Fin.ext (by split_ifs at h1 h2 h3 h4 <;> omega)
+      have hj : j = j' := Fin.ext (by split_ifs at h1 h2 h3 h4 <;> omega)
+      subst hi hj; rfl
+    | neg_simple k =>
+      have h1 := congrFun hrs i
+      simp only [rootAn_to_vec] at h1
+      split_ifs at h1 <;> omega
+  | neg_simple k =>
+    cases s with
+    | pos i' j' hij' =>
+      have h1 := congrFun hrs i'
+      simp only [rootAn_to_vec] at h1
+      split_ifs at h1 <;> omega
+    | neg_simple k' =>
+      have h1 := congrFun hrs k
+      simp only [rootAn_to_vec] at h1
+      have hk : k = k' := Fin.ext (by split_ifs at h1 <;> omega)
+      subst hk; rfl
 
 end CartanMetric
 
-#print axioms loewy_length_exists
-#print axioms loewy_residual_colimit_vanishes
-#print axioms facetKn2_diagonal_equiv
-#print axioms rootAn_diagonal_equiv
-#print axioms rootA3_facetK5_equiv
-#print axioms isAlmostPositiveRootA3_iff
-#print axioms rootA3_cartan_norm
-#print axioms rootA3_cyclic_length_pentagon
-#print axioms rootA3_cyclic_length_square
-#print axioms rootA3_cartan_norm
-#print axioms cartanEnergy_pos_def
-#print axioms cellular_shortExact
 
 end FunctorialGeometry
+#print axioms FunctorialGeometry.cyclic_length_count
