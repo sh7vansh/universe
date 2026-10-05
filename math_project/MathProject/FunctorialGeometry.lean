@@ -64,7 +64,8 @@ Part and section labels below refer to the paper.
 4. **Cartan Metric & Quadratic Form:** Positive-definite quadratic form on ℤ³,
    sum-of-squares decomposition, root norm invariance (= 2), and off-diagonal shear couplings.
 5. **The Travel Experience Monoid:** 2×2 unipotent shear group, travel state (action, transport),
-   monoid associativity/unitality, path valuation, and strict action growth on step sequences.
+   monoid associativity/unitality, path valuation, strict action growth, coordinate sums,
+   and equal arrow and valuation evaluations for all full bracket patterns of a fixed chain.
 6. **Transfinite Cellular Filtrations & Basis Discovery:** Transfinite Cellular sequence on
    semi-Artinian objects, stabilization at Cellular length Ω, reconstruction, SES presentation,
    vanishing residual colimits on restricted ordinal intervals, and well-founded novelty selection.
@@ -234,7 +235,7 @@ theorem meetInteraction_universal {A B C : L} (hCA : C ≤ A) (hCB : C ≤ B) :
 end SubmodularDefect
 
 /-! ##############################################################################
-    PART III: TRANSFINITE FILTRATIONS AND SUBOBJECT RECONSTRUCTION
+    PART III: PATH VALUATIONS AND CHAIN APPLICATIONS
     ##############################################################################
 
     SECTION 6: PATH VALUATIONS ON STEP SEQUENCES AND COVERING QUIVERS
@@ -312,7 +313,7 @@ open TravelExperience
 
 variable {L : Type*} [PartialOrder L]
 
-/-- An elementary step (`source ≤ target`) in the lattice, equipped with traversal friction cost and defect. -/
+/-- An elementary step (`source ≤ target`) in the lattice, equipped with a cost and an assigned integer label (`defect`). -/
 structure LatticeStep (L : Type*) [PartialOrder L] where
   source : L
   target : L
@@ -356,6 +357,104 @@ theorem pathExperience_append (p q : List (LatticeStep L)) :
 theorem action_strictly_increases (t : TravelExperience) (s : LatticeStep L) (hcost : 0 < s.friction_cost) :
     t.action < (t * stepExperience s).action := by
   dsimp [stepExperience]; linarith
+
+/-- The valuation of a nonempty step list starts with its first step. -/
+@[simp] theorem pathExperience_cons (s : LatticeStep L) (p : List (LatticeStep L)) :
+    pathExperience (s :: p) = stepExperience s * pathExperience p := by
+  simpa [pathExperience, TravelExperience.one_mul] using
+    pathExperience_append [s] p
+
+/-- Total path cost is the sum of the assigned step costs. -/
+theorem pathExperience_action (p : List (LatticeStep L)) :
+    (pathExperience p).action = (p.map LatticeStep.friction_cost).sum := by
+  induction p with
+  | nil => rfl
+  | cons s p ih => simp [ih, stepExperience]
+
+/-- Total shear label is the sum of the assigned integer labels. -/
+theorem pathExperience_label (p : List (LatticeStep L)) :
+    (pathExperience p).transport.e = (p.map LatticeStep.defect).sum := by
+  induction p with
+  | nil => rfl
+  | cons s p ih => simp [ih, stepExperience]
+
+/-- Evaluate a binary bracket pattern by multiplying the valuations of its subpaths.
+At each split, the left subtree consumes its number of leaves from the step list. -/
+def evalBracketPath (p : List (LatticeStep L)) : BinaryTree Unit → TravelExperience
+  | .nil => pathExperience (p.take 1)
+  | .node _ a b =>
+    evalBracketPath (p.take a.numLeaves) a * evalBracketPath (p.drop a.numLeaves) b
+
+/-- Every bracket pattern of a step list evaluates to its ordinary path valuation. -/
+theorem evalBracketPath_eq (t : BinaryTree Unit) (p : List (LatticeStep L))
+    (hp : p.length = t.numLeaves) : evalBracketPath p t = pathExperience p := by
+  induction t generalizing p with
+  | nil =>
+    simp only [BinaryTree.numLeaves] at hp
+    simp [evalBracketPath, List.take_of_length_le (by omega : p.length ≤ 1)]
+  | node u a b iha ihb =>
+    have ha : (p.take a.numLeaves).length = a.numLeaves := by
+      simp only [List.length_take]
+      have h := hp
+      simp only [BinaryTree.numLeaves] at h
+      omega
+    have hb : (p.drop a.numLeaves).length = b.numLeaves := by
+      simp only [List.length_drop]
+      simp only [BinaryTree.numLeaves] at hp
+      omega
+    rw [evalBracketPath, iha _ ha, ihb _ hb, ← pathExperience_append,
+      List.take_append_drop]
+
+/-- The labelled elementary step at index `i` of a finite monotone chain. -/
+def chainStep {n : ℕ} (x : Fin (n + 1) → L) (hx : Monotone x)
+    (cost : Fin n → ℕ) (label : Fin n → ℤ) (i : Fin n) : LatticeStep L where
+  source := x i.castSucc
+  target := x i.succ
+  le := hx (show i.val ≤ i.val + 1 from Nat.le_succ i.val)
+  friction_cost := cost i
+  defect := label i
+
+/-- The ordered list of all `n` labelled steps in a finite chain. -/
+def chainSteps {n : ℕ} (x : Fin (n + 1) → L) (hx : Monotone x)
+    (cost : Fin n → ℕ) (label : Fin n → ℤ) : List (LatticeStep L) :=
+  List.ofFn (chainStep x hx cost label)
+
+/-- The chain valuation consists of the finite sums of its costs and labels. -/
+theorem chainSteps_valuation {n : ℕ} (x : Fin (n + 1) → L) (hx : Monotone x)
+    (cost : Fin n → ℕ) (label : Fin n → ℤ) :
+    pathExperience (chainSteps x hx cost label) = ⟨∑ i, cost i, ⟨∑ i, label i⟩⟩ := by
+  ext <;> simp [pathExperience_action, pathExperience_label, chainSteps,
+    List.map_ofFn, chainStep, List.sum_ofFn]
+
+/-- Evaluate a full bracket pattern on the labelled steps of a fixed chain. -/
+def evalChainPathBracketing {n : ℕ} (x : Fin (n + 1) → L) (hx : Monotone x)
+    (cost : Fin n → ℕ) (label : Fin n → ℤ) (t : FullBracketing n) : TravelExperience :=
+  evalBracketPath (chainSteps x hx cost label) t.val
+
+/-- Each full pattern gives the fixed chain's total path valuation. -/
+theorem evalChainPathBracketing_eq {n : ℕ} (x : Fin (n + 1) → L) (hx : Monotone x)
+    (cost : Fin n → ℕ) (label : Fin n → ℤ) (t : FullBracketing n) :
+    evalChainPathBracketing x hx cost label t = pathExperience (chainSteps x hx cost label) := by
+  apply evalBracketPath_eq
+  simp [chainSteps, t.property]
+
+/-- Unit step costs count the arrows, for every full bracket pattern. -/
+theorem evalChainPathBracketing_unit_cost {n : ℕ} (x : Fin (n + 1) → L)
+    (hx : Monotone x) (label : Fin n → ℤ) (t : FullBracketing n) :
+    (evalChainPathBracketing x hx (fun _ => 1) label t).action = n := by
+  rw [evalChainPathBracketing_eq, chainSteps_valuation]
+  simp
+
+/-- For every arity, retained bracket patterns give the associahedral face order.
+For a fixed labelled chain, all full patterns give the same arrow and path valuation. -/
+theorem all_Kn_chain_path_valuations {n : ℕ} (x : Fin (n + 1) → L) (hx : Monotone x)
+    (cost : Fin n → ℕ) (label : Fin n → ℤ) :
+    Nonempty (KnBracketing n ≃o KnFace n) ∧
+      ∀ s t : FullBracketing n,
+        evalChainBracketing x hx s = evalChainBracketing x hx t ∧
+        evalChainPathBracketing x hx cost label s = evalChainPathBracketing x hx cost label t := by
+  refine ⟨⟨all_Kn_orderIso n⟩, fun s t => ⟨all_Kn_chain_composites x hx s t, ?_⟩⟩
+  rw [evalChainPathBracketing_eq, evalChainPathBracketing_eq]
 
 end TravelMonoid
 
