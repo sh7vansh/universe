@@ -1,0 +1,78 @@
+{
+  "symbolic": {
+    "coin_matches_existing_B_up_to_global_phase": true,
+    "dirac_generator": "p*sigma_z + m*sigma_x",
+    "relativistic_dispersion": "E^2 = p^2 + m^2 (continuum limit)",
+    "rational_coin_curvature": "1/m - epsilon^2*m/4; m>0, epsilon*m<2",
+    "fixed_balanced_coin_fourth_order": "-1/6",
+    "gap_and_curvature_matched_relativistic_fourth_order": "-1/(2*pi)",
+    "weak_scalar_phase_generator": "V*identity, not metric transport",
+    "lapse_characteristic_speeds": "+/-N"
+  },
+  "exact_walk": {
+    "arithmetic": "Gaussian rational, exact",
+    "epsilon": "1/8",
+    "steps": 10,
+    "graph_counts": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "norm_and_inverse": true,
+    "nonuniform_profile": "prescribed background only; no graph conversion dynamics",
+    "zero_count_chiral_translation": true,
+    "count_changes_probabilities": true
+  },
+  "continuum_comparison": {
+    "time": 1,
+    "masses": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "momenta": [
+      -2,
+      -0.5,
+      0,
+      0.5,
+      2
+    ],
+    "arithmetic": "floating point diagnostic; symbolic generator is checked separately",
+    "records": [
+      {
+        "ticks_per_unit_time": 20,
+        "epsilon": 0.05,
+        "max_propagator_frobenius_error": 0.12539459733365077,
+        "max_positive_energy_error": 0.017813557754446485
+      },
+      {
+        "ticks_per_unit_time": 40,
+        "epsilon": 0.025,
+        "max_propagator_frobenius_error": 0.0617514994645229,
+        "max_positive_energy_error": 0.00446742390923216
+      },
+      {
+        "ticks_per_unit_time": 80,
+        "epsilon": 0.0125,
+        "max_propagator_frobenius_error": 0.030754986365787645,
+        "max_positive_energy_error": 0.0011177390854868463
+      },
+      {
+        "ticks_per_unit_time": 160,
+        "epsilon": 0.00625,
+        "max_propagator_frobenius_error": 0.015362316562270465,
+        "max_positive_energy_error": 0.0002794900590474825
+      },
+      {
+        "ticks_per_unit_time": 320,
+        "epsilon": 0.003125,
+        "max_propagator_frobenius_error": 0.007679258650971528,
+        "max_positive_energy_error": 6.987597307617222e-05
+      }
+    ]
+  },
+  "status": "Dirac bridge under added coin/count coupling; no Einstein field dynamics"
+}

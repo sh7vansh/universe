@@ -1,0 +1,198 @@
+{
+  "composition": {
+    "arithmetic": "Gaussian rational, exact",
+    "epsilon": "1/16",
+    "count_compositions_checked": 25,
+    "unitary_counts_checked": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "direct_and_nonlinear_unitary_counts_checked": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "previous_rational_count_coin_is_not_exactly_compositional": true,
+    "four_quarter_turn_unit_gates_equal_identity": true,
+    "records": [
+      {
+        "count": 0,
+        "same_unit_gate_repeated_flip_probability": "0",
+        "direct_count_coin_flip_probability": "0",
+        "nonlinear_count_coin_flip_probability": "0"
+      },
+      {
+        "count": 1,
+        "same_unit_gate_repeated_flip_probability": "4096/1050625",
+        "direct_count_coin_flip_probability": "4096/1050625",
+        "nonlinear_count_coin_flip_probability": "4096/1050625"
+      },
+      {
+        "count": 2,
+        "same_unit_gate_repeated_flip_probability": "17146331136/1103812890625",
+        "direct_count_coin_flip_probability": "1024/66049",
+        "nonlinear_count_coin_flip_probability": "256/4225"
+      },
+      {
+        "count": 3,
+        "same_unit_gate_repeated_flip_probability": "40269020410187776/1159693418212890625",
+        "direct_count_coin_flip_probability": "36864/1067089",
+        "nonlinear_count_coin_flip_probability": "331776/1221025"
+      },
+      {
+        "count": 4,
+        "same_unit_gate_repeated_flip_probability": "74529378653664947798016/1218402897509918212890625",
+        "direct_count_coin_flip_probability": "256/4225",
+        "nonlinear_count_coin_flip_probability": "16/25"
+      }
+    ]
+  },
+  "cycle_spaces": [
+    {
+      "graph": "forest",
+      "vertices": 4,
+      "edges": 2,
+      "cycle_count": 0,
+      "cycle_projector_trace": "0",
+      "edge_hodge_operator_annihilates_cycles": true,
+      "basis_and_signed_relabeling_invariance": true,
+      "vertex_relabelings_checked": 24,
+      "vertex_laplacian_characteristic_polynomial": "lambda**4 - 4*lambda**3 + 3*lambda**2",
+      "degenerate_channel_masses": [],
+      "unnormalized_collective_mass": 0
+    },
+    {
+      "graph": "triangle",
+      "vertices": 3,
+      "edges": 3,
+      "cycle_count": 1,
+      "cycle_projector_trace": "1",
+      "edge_hodge_operator_annihilates_cycles": true,
+      "basis_and_signed_relabeling_invariance": true,
+      "vertex_relabelings_checked": 6,
+      "vertex_laplacian_characteristic_polynomial": "lambda**3 - 6*lambda**2 + 9*lambda",
+      "degenerate_channel_masses": [
+        1
+      ],
+      "unnormalized_collective_mass": 1
+    },
+    {
+      "graph": "square",
+      "vertices": 4,
+      "edges": 4,
+      "cycle_count": 1,
+      "cycle_projector_trace": "1",
+      "edge_hodge_operator_annihilates_cycles": true,
+      "basis_and_signed_relabeling_invariance": true,
+      "vertex_relabelings_checked": 24,
+      "vertex_laplacian_characteristic_polynomial": "lambda**4 - 8*lambda**3 + 20*lambda**2 - 16*lambda",
+      "degenerate_channel_masses": [
+        1
+      ],
+      "unnormalized_collective_mass": 1
+    },
+    {
+      "graph": "pentagon",
+      "vertices": 5,
+      "edges": 5,
+      "cycle_count": 1,
+      "cycle_projector_trace": "1",
+      "edge_hodge_operator_annihilates_cycles": true,
+      "basis_and_signed_relabeling_invariance": true,
+      "vertex_relabelings_checked": 120,
+      "vertex_laplacian_characteristic_polynomial": "lambda**5 - 10*lambda**4 + 35*lambda**3 - 50*lambda**2 + 25*lambda",
+      "degenerate_channel_masses": [
+        1
+      ],
+      "unnormalized_collective_mass": 1
+    },
+    {
+      "graph": "square_with_diagonal",
+      "vertices": 4,
+      "edges": 5,
+      "cycle_count": 2,
+      "cycle_projector_trace": "2",
+      "edge_hodge_operator_annihilates_cycles": true,
+      "basis_and_signed_relabeling_invariance": true,
+      "vertex_relabelings_checked": 24,
+      "vertex_laplacian_characteristic_polynomial": "lambda**4 - 10*lambda**3 + 32*lambda**2 - 32*lambda",
+      "degenerate_channel_masses": [
+        1,
+        1
+      ],
+      "unnormalized_collective_mass": 2
+    },
+    {
+      "graph": "two_triangles_one_shared_vertex",
+      "vertices": 5,
+      "edges": 6,
+      "cycle_count": 2,
+      "cycle_projector_trace": "2",
+      "edge_hodge_operator_annihilates_cycles": true,
+      "basis_and_signed_relabeling_invariance": true,
+      "vertex_relabelings_checked": 120,
+      "vertex_laplacian_characteristic_polynomial": "lambda**5 - 12*lambda**4 + 50*lambda**3 - 84*lambda**2 + 45*lambda",
+      "degenerate_channel_masses": [
+        1,
+        1
+      ],
+      "unnormalized_collective_mass": 2
+    },
+    {
+      "graph": "complete_K4",
+      "vertices": 4,
+      "edges": 6,
+      "cycle_count": 3,
+      "cycle_projector_trace": "3",
+      "edge_hodge_operator_annihilates_cycles": true,
+      "basis_and_signed_relabeling_invariance": true,
+      "vertex_relabelings_checked": 24,
+      "vertex_laplacian_characteristic_polynomial": "lambda**4 - 12*lambda**3 + 48*lambda**2 - 64*lambda",
+      "degenerate_channel_masses": [
+        1,
+        1,
+        1
+      ],
+      "unnormalized_collective_mass": 3
+    }
+  ],
+  "canonical_internal_travel": [
+    {
+      "cycle_length": 3,
+      "cycle_count": 1,
+      "directed_edge_states": 6,
+      "exact_period": 3,
+      "unitary_and_relabeling_invariant": true,
+      "trace_of_step_cubed": "6",
+      "characteristic_polynomial": "lambda**6 - 2*lambda**3 + 1"
+    },
+    {
+      "cycle_length": 4,
+      "cycle_count": 1,
+      "directed_edge_states": 8,
+      "exact_period": 4,
+      "unitary_and_relabeling_invariant": true,
+      "trace_of_step_cubed": "0",
+      "characteristic_polynomial": "lambda**8 - 2*lambda**4 + 1"
+    },
+    {
+      "cycle_length": 5,
+      "cycle_count": 1,
+      "directed_edge_states": 10,
+      "exact_period": 5,
+      "unitary_and_relabeling_invariant": true,
+      "trace_of_step_cubed": "0",
+      "characteristic_polynomial": "lambda**10 - 2*lambda**5 + 1"
+    }
+  ],
+  "status": "Count proportionality follows from extra shared-direction composition; cycle space alone does not supply it."
+}

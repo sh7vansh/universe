@@ -1,0 +1,496 @@
+{
+  "mixer_family": [
+    {
+      "name": "identity",
+      "xi": "1",
+      "probabilities_from_R": [
+        "1",
+        "0"
+      ],
+      "involutive": true,
+      "square_root_of_swap": false
+    },
+    {
+      "name": "swap",
+      "xi": "-1",
+      "probabilities_from_R": [
+        "0",
+        "1"
+      ],
+      "involutive": true,
+      "square_root_of_swap": false
+    },
+    {
+      "name": "balanced",
+      "xi": "(0 + 1i)",
+      "probabilities_from_R": [
+        "1/2",
+        "1/2"
+      ],
+      "involutive": false,
+      "square_root_of_swap": true
+    },
+    {
+      "name": "inverse_balanced",
+      "xi": "(0 - 1i)",
+      "probabilities_from_R": [
+        "1/2",
+        "1/2"
+      ],
+      "involutive": false,
+      "square_root_of_swap": true
+    },
+    {
+      "name": "unequal_split",
+      "xi": "(3/5 + 4/5i)",
+      "probabilities_from_R": [
+        "4/5",
+        "1/5"
+      ],
+      "involutive": false,
+      "square_root_of_swap": false
+    }
+  ],
+  "reflection_candidates": [
+    {
+      "degree": 2,
+      "diagonal": "0",
+      "off_diagonal": "1",
+      "probabilities_from_one_neighbor": [
+        "0",
+        "1"
+      ]
+    },
+    {
+      "degree": 3,
+      "diagonal": "-1/3",
+      "off_diagonal": "2/3",
+      "probabilities_from_one_neighbor": [
+        "1/9",
+        "4/9",
+        "4/9"
+      ]
+    },
+    {
+      "degree": 6,
+      "diagonal": "-2/3",
+      "off_diagonal": "1/3",
+      "probabilities_from_one_neighbor": [
+        "4/9",
+        "1/9",
+        "1/9",
+        "1/9",
+        "1/9",
+        "1/9"
+      ]
+    }
+  ],
+  "join_associativity": {
+    "triples_checked": 512,
+    "integer_defect_associativity_violations": 24,
+    "pairwise_disjoint_triples_checked": 64,
+    "counterexample": {
+      "A": "two triangle edges",
+      "B": "missing edge",
+      "C": "whole triangle",
+      "left_total_defect": 1,
+      "right_total_defect": 0
+    }
+  },
+  "cube_rules": {
+    "nontrivial_sign": [
+      {
+        "step": 0,
+        "probabilities": [
+          "1",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0"
+        ],
+        "empty_probability": "1",
+        "cycle_probability": "0"
+      },
+      {
+        "step": 1,
+        "probabilities": [
+          "0",
+          "1/3",
+          "1/3",
+          "0",
+          "1/3",
+          "0",
+          "0",
+          "0"
+        ],
+        "empty_probability": "0",
+        "cycle_probability": "0"
+      },
+      {
+        "step": 2,
+        "probabilities": [
+          "1/9",
+          "0",
+          "0",
+          "8/27",
+          "0",
+          "8/27",
+          "8/27",
+          "0"
+        ],
+        "empty_probability": "1/9",
+        "cycle_probability": "0"
+      },
+      {
+        "step": 3,
+        "probabilities": [
+          "0",
+          "17/243",
+          "17/243",
+          "0",
+          "17/243",
+          "0",
+          "0",
+          "64/81"
+        ],
+        "empty_probability": "0",
+        "cycle_probability": "64/81"
+      },
+      {
+        "step": 4,
+        "probabilities": [
+          "121/729",
+          "0",
+          "0",
+          "608/2187",
+          "0",
+          "608/2187",
+          "608/2187",
+          "0"
+        ],
+        "empty_probability": "121/729",
+        "cycle_probability": "0"
+      },
+      {
+        "step": 5,
+        "probabilities": [
+          "0",
+          "6497/19683",
+          "6497/19683",
+          "0",
+          "6497/19683",
+          "0",
+          "0",
+          "64/6561"
+        ],
+        "empty_probability": "0",
+        "cycle_probability": "64/6561"
+      },
+      {
+        "step": 6,
+        "probabilities": [
+          "58081/59049",
+          "0",
+          "0",
+          "968/177147",
+          "0",
+          "968/177147",
+          "968/177147",
+          "0"
+        ],
+        "empty_probability": "58081/59049",
+        "cycle_probability": "0"
+      },
+      {
+        "step": 7,
+        "probabilities": [
+          "0",
+          "525041/1594323",
+          "525041/1594323",
+          "0",
+          "525041/1594323",
+          "0",
+          "0",
+          "6400/531441"
+        ],
+        "empty_probability": "0",
+        "cycle_probability": "6400/531441"
+      },
+      {
+        "step": 8,
+        "probabilities": [
+          "344569/4782969",
+          "0",
+          "0",
+          "4438400/14348907",
+          "0",
+          "4438400/14348907",
+          "4438400/14348907",
+          "0"
+        ],
+        "empty_probability": "344569/4782969",
+        "cycle_probability": "0"
+      },
+      {
+        "step": 9,
+        "probabilities": [
+          "0",
+          "10784321/129140163",
+          "10784321/129140163",
+          "0",
+          "10784321/129140163",
+          "0",
+          "0",
+          "32262400/43046721"
+        ],
+        "empty_probability": "0",
+        "cycle_probability": "32262400/43046721"
+      },
+      {
+        "step": 10,
+        "probabilities": [
+          "92179201/387420489",
+          "0",
+          "0",
+          "295241288/1162261467",
+          "0",
+          "295241288/1162261467",
+          "295241288/1162261467",
+          "0"
+        ],
+        "empty_probability": "92179201/387420489",
+        "cycle_probability": "0"
+      },
+      {
+        "step": 11,
+        "probabilities": [
+          "0",
+          "3370317137/10460353203",
+          "3370317137/10460353203",
+          "0",
+          "3370317137/10460353203",
+          "0",
+          "0",
+          "116467264/3486784401"
+        ],
+        "empty_probability": "0",
+        "cycle_probability": "116467264/3486784401"
+      },
+      {
+        "step": 12,
+        "probabilities": [
+          "29368019641/31381059609",
+          "0",
+          "0",
+          "2013039968/94143178827",
+          "0",
+          "2013039968/94143178827",
+          "2013039968/94143178827",
+          "0"
+        ],
+        "empty_probability": "29368019641/31381059609",
+        "cycle_probability": "0"
+      }
+    ],
+    "nontrivial_quarter_turn": [
+      {
+        "step": 0,
+        "probabilities": [
+          "1",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0"
+        ],
+        "empty_probability": "1",
+        "cycle_probability": "0"
+      },
+      {
+        "step": 1,
+        "probabilities": [
+          "0",
+          "1/3",
+          "1/3",
+          "0",
+          "1/3",
+          "0",
+          "0",
+          "0"
+        ],
+        "empty_probability": "0",
+        "cycle_probability": "0"
+      },
+      {
+        "step": 2,
+        "probabilities": [
+          "1/9",
+          "0",
+          "0",
+          "8/27",
+          "0",
+          "8/27",
+          "8/27",
+          "0"
+        ],
+        "empty_probability": "1/9",
+        "cycle_probability": "0"
+      },
+      {
+        "step": 3,
+        "probabilities": [
+          "0",
+          "17/243",
+          "17/243",
+          "0",
+          "17/243",
+          "0",
+          "0",
+          "64/81"
+        ],
+        "empty_probability": "0",
+        "cycle_probability": "64/81"
+      },
+      {
+        "step": 4,
+        "probabilities": [
+          "121/729",
+          "0",
+          "0",
+          "608/2187",
+          "0",
+          "608/2187",
+          "608/2187",
+          "0"
+        ],
+        "empty_probability": "121/729",
+        "cycle_probability": "0"
+      },
+      {
+        "step": 5,
+        "probabilities": [
+          "0",
+          "5729/19683",
+          "5729/19683",
+          "0",
+          "5729/19683",
+          "0",
+          "0",
+          "832/6561"
+        ],
+        "empty_probability": "0",
+        "cycle_probability": "832/6561"
+      },
+      {
+        "step": 6,
+        "probabilities": [
+          "39265/59049",
+          "0",
+          "0",
+          "19784/177147",
+          "0",
+          "19784/177147",
+          "19784/177147",
+          "0"
+        ],
+        "empty_probability": "39265/59049",
+        "cycle_probability": "0"
+      },
+      {
+        "step": 7,
+        "probabilities": [
+          "0",
+          "442865/1594323",
+          "442865/1594323",
+          "0",
+          "442865/1594323",
+          "0",
+          "0",
+          "88576/531441"
+        ],
+        "empty_probability": "0",
+        "cycle_probability": "88576/531441"
+      },
+      {
+        "step": 8,
+        "probabilities": [
+          "1532665/4782969",
+          "0",
+          "0",
+          "3250304/14348907",
+          "0",
+          "3250304/14348907",
+          "3250304/14348907",
+          "0"
+        ],
+        "empty_probability": "1532665/4782969",
+        "cycle_probability": "0"
+      },
+      {
+        "step": 9,
+        "probabilities": [
+          "0",
+          "27794753/129140163",
+          "27794753/129140163",
+          "0",
+          "27794753/129140163",
+          "0",
+          "0",
+          "15251968/43046721"
+        ],
+        "empty_probability": "0",
+        "cycle_probability": "15251968/43046721"
+      },
+      {
+        "step": 10,
+        "probabilities": [
+          "201221761/387420489",
+          "0",
+          "0",
+          "186198728/1162261467",
+          "0",
+          "186198728/1162261467",
+          "186198728/1162261467",
+          "0"
+        ],
+        "empty_probability": "201221761/387420489",
+        "cycle_probability": "0"
+      },
+      {
+        "step": 11,
+        "probabilities": [
+          "0",
+          "2535392849/10460353203",
+          "2535392849/10460353203",
+          "0",
+          "2535392849/10460353203",
+          "0",
+          "0",
+          "951391552/3486784401"
+        ],
+        "empty_probability": "0",
+        "cycle_probability": "951391552/3486784401"
+      },
+      {
+        "step": 12,
+        "probabilities": [
+          "3547311289/31381059609",
+          "0",
+          "0",
+          "27833748320/94143178827",
+          "0",
+          "27833748320/94143178827",
+          "27833748320/94143178827",
+          "0"
+        ],
+        "empty_probability": "3547311289/31381059609",
+        "cycle_probability": "0"
+      }
+    ]
+  }
+}
