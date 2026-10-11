@@ -188,6 +188,27 @@ section SubmodularDefect
 
 variable {L : Type*} [Lattice L]
 
+/-- The signed departure from modularity for an arbitrary integer-valued function. -/
+def modularityDefect (rk : L → ℤ) (A B : L) : ℤ :=
+  (rk A + rk B) - (rk (A ⊔ B) + rk (A ⊓ B))
+
+/-- The sign of the defect is independent of the order of its arguments. -/
+theorem modularityDefect_comm (rk : L → ℤ) (A B : L) :
+    modularityDefect rk A B = modularityDefect rk B A := by
+  simp [modularityDefect, sup_comm, inf_comm, add_comm]
+
+/-- Pairwise vanishing is exactly the modular valuation equality. -/
+theorem modularityDefect_zero_iff (rk : L → ℤ) (A B : L) :
+    modularityDefect rk A B = 0 ↔ rk (A ⊔ B) + rk (A ⊓ B) = rk A + rk B := by
+  unfold modularityDefect
+  constructor <;> intro h <;> linarith
+
+/-- Non-negativity is a condition on the valuation, not on the defect definition. -/
+theorem modularityDefect_nonneg_iff (rk : L → ℤ) (A B : L) :
+    0 ≤ modularityDefect rk A B ↔ rk (A ⊔ B) + rk (A ⊓ B) ≤ rk A + rk B := by
+  unfold modularityDefect
+  constructor <;> intro h <;> linarith
+
 /-- A submodular rank function on a lattice L. -/
 structure SubmodularRank (L : Type*) [Lattice L] where
   rk : L → ℤ
@@ -196,6 +217,9 @@ structure SubmodularRank (L : Type*) [Lattice L] where
 /-- The Submodular Defect Δ(A, B) = (rk A + rk B) - (rk(A ⊔ B) + rk(A ⊓ B)). -/
 def submodularDefect (R : SubmodularRank L) (A B : L) : ℤ :=
   (R.rk A + R.rk B) - (R.rk (A ⊔ B) + R.rk (A ⊓ B))
+
+theorem submodularDefect_eq_modularityDefect (R : SubmodularRank L) (A B : L) :
+    submodularDefect R A B = modularityDefect R.rk A B := rfl
 
 /-- The defect is strictly non-negative. -/
 theorem defect_nonneg (R : SubmodularRank L) (A B : L) :
@@ -681,12 +705,44 @@ theorem cellular_length_exists (h_semi : IsSemiArtinian U₀) :
   rw [hΩ] at h_lt
   exact lt_irrefl _ h_lt
 
+/-- The first ordinal at which the cellular sequence reaches the top subobject. -/
 noncomputable def cellularLength (h_semi : IsSemiArtinian U₀) : Ordinal.{u} :=
-  (cellular_length_exists U₀ h_semi).choose
+  wellFounded_lt.min {o | cellularSequence U₀ h_semi o = ⊤}
+    (cellular_length_exists U₀ h_semi)
 
 theorem reconstruction (h_semi : IsSemiArtinian U₀) :
     cellularSequence U₀ h_semi (cellularLength U₀ h_semi) = ⊤ :=
-  (cellular_length_exists U₀ h_semi).choose_spec
+  wellFounded_lt.min_mem {o | cellularSequence U₀ h_semi o = ⊤}
+    (cellular_length_exists U₀ h_semi)
+
+/-- Every stage reaching top is bounded below by the cellular length. -/
+theorem cellularLength_le_of_eq_top (h_semi : IsSemiArtinian U₀) (o : Ordinal.{u})
+    (ho : cellularSequence U₀ h_semi o = ⊤) : cellularLength U₀ h_semi ≤ o :=
+  wellFounded_lt.min_le (s := {o : Ordinal.{u} | cellularSequence U₀ h_semi o = ⊤}) ho
+
+/-- No stage strictly before the cellular length has reached top. -/
+theorem cellularSequence_ne_top_of_lt_length (h_semi : IsSemiArtinian U₀)
+    (o : Ordinal.{u}) (ho : o < cellularLength U₀ h_semi) :
+    cellularSequence U₀ h_semi o ≠ ⊤ := by
+  intro htop
+  exact (not_le_of_gt ho) (cellularLength_le_of_eq_top U₀ h_semi o htop)
+
+/-- The top stages are exactly the ordinals at or beyond the cellular length. -/
+theorem cellularSequence_eq_top_iff (h_semi : IsSemiArtinian U₀) (o : Ordinal.{u}) :
+    cellularSequence U₀ h_semi o = ⊤ ↔ cellularLength U₀ h_semi ≤ o := by
+  constructor
+  · exact cellularLength_le_of_eq_top U₀ h_semi o
+  · intro ho
+    apply top_unique
+    rw [← reconstruction U₀ h_semi]
+    exact cellularSequence_le U₀ h_semi _ _ ho
+
+/-- Every successor before the endpoint of the truncated series is nontrivial. -/
+theorem cellularSequence_strict_before_length (h_semi : IsSemiArtinian U₀)
+    (o : Ordinal.{u}) (ho : o < cellularLength U₀ h_semi) :
+    cellularSequence U₀ h_semi o < cellularSequence U₀ h_semi (o + 1) :=
+  cellularSequence_strict_mono U₀ h_semi o
+    (cellularSequence_ne_top_of_lt_length U₀ h_semi o ho)
 
 theorem reconstruction_iso (h_semi : IsSemiArtinian U₀) :
     IsIso (cellularSequence U₀ h_semi (cellularLength U₀ h_semi)).arrow := by

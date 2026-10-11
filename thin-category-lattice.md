@@ -2,7 +2,7 @@
 
 **Author:** Shivansh Singh<br>
 **Date:** March 2026<br>
-**Formalization:** Machine-checked in Lean 4 (Mathlib-compatible, zero `sorry` placeholders, standard core axioms)
+**Formalization:** The declarations listed in §8 are machine-checked in Lean 4 (Mathlib-compatible, zero `sorry` placeholders, standard core axioms). The signed-defect and directed-reassociation modules are audited by `CheckSignedStructures.lean`.
 
 ---
 
@@ -12,11 +12,11 @@ The main question is how the thin category of a poset relates to the associahedr
 
 We study the algebraic, categorical, and geometric structure of partially ordered sets and subobject lattices. By formulating a poset $(L, \le)$ as a thin category, we develop a unified formal framework spanning three core areas:
 
-1. **Order and Submodular Defects:** We realize meets and joins as universal categorical products and coproducts, instantiate closure operators as idempotent categorical monads (`CategoryTheory.Monad`), and characterize submodular defects $\Delta(A, B) \ge 0$, showing that $\Delta$ vanishes identically if and only if the rank valuation is modular. We define the meet interaction $A \sqcap B$.
+1. **Order and Signed Modularity Defects:** We realize meets and joins as universal categorical products and coproducts, instantiate closure operators as idempotent categorical monads (`CategoryTheory.Monad`), and study the signed modularity defect $\Delta(A, B)$. Submodularity is the special case $\Delta \ge 0$; modularity is the case $\Delta \equiv 0$. We define the meet interaction $A \sqcap B$. A mathematical extension applies the signed defect to the completed associahedral face lattice with its natural face rank.
 2. **Polyhedral and Root Geometry:** We analyze higher associativity through the Tamari lattice $\mathcal{T}_4$ and formalize a bijection in the fan-triangulation model via a machine-checked, two-sided constructive equivalence $\mathrm{Root}_{A_n} \simeq \mathrm{Facet}_{K_{n+2}} \simeq \mathrm{Diagonal}(n)$ between almost-positive roots, Stasheff associahedron facets, and geometric polygon diagonals. For $n=3$, we prove mechanically that the 9 roots of $A_3$ classify into cyclic length-2 diagonals (6 pentagons) and cyclic length-3 diagonals (3 squares), where every almost-positive root has norm $\langle v, v \rangle_{A_3} = 2$ under the discrete Dirichlet–Cartan quadratic form on $\mathbb{Z}^3$.
-3. **Path Valuations and Chain Applications:** On directed step sequences (representing covering chains in discrete quivers), we define a path valuation into the product monoid $(\mathbb{N}, +) \times (\mathbb{Z}, +)$ tracking accumulated cost alongside integer shear labels, proving functorial path concatenation. For each fixed labelled chain, all full bracket patterns give the same arrow and the same valuation. As an application, for semi-Artinian objects in universe-stratified abelian categories ($\mathcal{A} : \mathrm{Type}(u+1)$ with $\mathrm{Type}(u)$ morphisms), we construct a one-simple-at-a-time transfinite filtration, a transfinite composition series, establish ordinal stabilization at cellular length $\Omega$, and prove the vanishing of directed residual colimits on the restricted interval category $\mathrm{OrdinalInterval}(\Omega)$.
+3. **Path Valuations and Chain Applications:** On directed step sequences (representing covering chains in discrete quivers), we define a path valuation into the product monoid $(\mathbb{N}, +) \times (\mathbb{Z}, +)$ tracking accumulated cost alongside integer shear labels, proving functorial path concatenation. For each fixed labelled chain, all full bracket patterns give the same arrow and the same valuation. As an application, for semi-Artinian objects in universe-stratified abelian categories ($\mathcal{A} : \mathrm{Type}(u+1)$ with $\mathrm{Type}(u)$ morphisms), we construct a one-simple-at-a-time transfinite filtration continuous by joins in the subobject lattice. Truncation at the first stage reaching the top gives an order-theoretic transfinite composition series. We prove the vanishing of directed residual colimits on the restricted interval category $\mathrm{OrdinalInterval}(\Omega)$.
 
-The Lean results listed in Section 8 are machine-checked with zero `sorry` placeholders and use only standard core axioms (`propext`, `Classical.choice`, `Quot.sound`). The general convex realization and its geometric counts are included in these proofs.
+The Lean results listed in Section 8 are machine-checked with zero `sorry` placeholders and use only standard core axioms (`propext`, `Classical.choice`, `Quot.sound`). The general convex realization and its geometric counts are included in these proofs. Sections 3.3 and 6.4 extend the discussion with signed face-rank defects and directed reassociation paths. Their principal formulas, preservation laws, signed examples, and pentagon obstruction are formalized and audited by `CheckSignedStructures.lean`.
 
 ---
 
@@ -26,8 +26,8 @@ Partially ordered sets $(L, \le)$ and subobject lattices $\mathrm{Sub}(X)$ are f
 
 This paper presents a formal categorical and geometric study of subobject lattices, structured across three major mathematical stages:
 
-- **Stage I: Categorical Foundations & Submodular Defects (Part I, §§2–3):**
-  We formulate posets as thin categories $\mathcal{C}_L$, translating meets and joins into universal categorical products and coproducts, and closure operators into fully coherent idempotent monads (`CategoryTheory.Monad`). We analyze submodular rank functions $\mathrm{rk} : L \to \mathbb{Z}$ via their defect $\Delta(A, B) = \mathrm{rk}(A) + \mathrm{rk}(B) - \mathrm{rk}(A \vee B) - \mathrm{rk}(A \wedge B)$, showing non-negativity $\Delta \ge 0$ characterizes submodularity and $\Delta \equiv 0$ characterizes modular valuations.
+- **Stage I: Categorical Foundations & Signed Modularity Defects (Part I, §§2–3):**
+  We formulate posets as thin categories $\mathcal{C}_L$, translating meets and joins into universal categorical products and coproducts, and closure operators into fully coherent idempotent monads (`CategoryTheory.Monad`). For an integer-valued function $\mathrm{rk} : L \to \mathbb{Z}$, we study the signed defect $\Delta(A, B) = \mathrm{rk}(A) + \mathrm{rk}(B) - \mathrm{rk}(A \vee B) - \mathrm{rk}(A \wedge B)$. Non-negativity for every pair characterizes submodularity; vanishing for every pair characterizes modularity. Section 3.3 derives both signs for the natural rank on the completed associahedral face lattice.
 
 - **Stage II: Associahedra, Higher Associativity & Root Geometry (Part II, §§4–5):**
   We formalize the Stasheff associahedra $K_{n+2}$ and establish a machine-checked, two-sided constructive equivalence $\mathrm{Root}_{A_n} \simeq \mathrm{Facet}_{K_{n+2}} \simeq \mathrm{Diagonal}(n)$ between almost-positive roots, associahedron facets, and polygon diagonals. For $n=3$, we mechanically classify roots into 6 pentagons and 3 squares by cyclic chord length. Finally, we formalize the $A_n$ Cartan form as a discrete 1D Dirichlet energy on $\mathbb{Z}^n$ with Dirichlet boundary conditions, proving positive definiteness and intrinsic norm invariance $\langle v, v \rangle = 2$.
@@ -35,11 +35,11 @@ This paper presents a formal categorical and geometric study of subobject lattic
 - **Stage III: Path Valuations & Chain Applications (Part III, §§6–7):**
   On covering quivers, we define functorial path valuations into the monoid $(\mathbb{N}, +) \times \mathbf{U}_2(\mathbb{Z})$ tracking path cost alongside integer shear labels. We prove that all full bracket patterns of a fixed labelled chain give the same arrow and the same valuation. As an application, in universe-stratified abelian categories ($\mathcal{A} : \mathrm{Type}(u+1)$ with $\mathrm{Type}(u)$ morphisms, avoiding Freyd's size collapse), we build fine transfinite cellular filtrations for semi-Artinian objects attaching single simple cells via short exact sequences $0 \to C_\alpha \to C_{\alpha+1} \to a \to 0$. We prove ordinal stabilization at length $\Omega$, top reconstruction $C_\Omega = \top$, and vanishing residual cokernel colimits over $\mathrm{OrdinalInterval}(\Omega)$.
 
-The formal results are checked in Lean 4 without `sorry` placeholders. The bracket, polygon, and convex supporting-face models are connected by proved order isomorphisms.
+The formal results listed in §8 are checked in Lean 4 without `sorry` placeholders. The bracket, polygon, and convex supporting-face models are connected by proved order isomorphisms. The signed face-lattice formulas, geometric rank identification, and directed rotation-path results are formalized in three additional modules listed in §8.
 
 ---
 
-# Part I: Categorical Foundations and Submodular Defects
+# Part I: Categorical Foundations and Signed Modularity Defects
 
 ## 2. Posets as Thin Categories
 
@@ -64,7 +64,7 @@ In a lattice $(L, \wedge, \vee)$, meets and joins satisfy universal categorical 
 - **Meets as Products:** The infimum $x \wedge y$ satisfies $x \wedge y \le x$, $x \wedge y \le y$, and $(z \le x \text{ and } z \le y) \implies z \le x \wedge y$. In $\mathcal{C}_L$, $x \wedge y$ is the categorical product $x \times y$.
 - **Joins as Coproducts:** The supremum $x \vee y$ satisfies $x \le x \vee y$, $y \le x \vee y$, and $(x \le z \text{ and } y \le z) \implies x \vee y \le z$. In $\mathcal{C}_L$, $x \vee y$ is the categorical coproduct $x \amalg y$.
 
-For any object $X$ in a category $\mathcal{C}$, the subobject lattice $\mathrm{Sub}(X)$ forms a thin category where meets and joins represent intersections and sums of subobjects.
+For any object $X$ in a category $\mathcal{C}$, the subobject poset $\mathrm{Sub}(X)$ forms a thin category. It need not be a lattice without additional assumptions on $\mathcal{C}$. If $\mathcal{C}$ has pullbacks, binary meets are intersections formed by pullback. If $\mathcal{C}$ has images and binary coproducts, binary joins are the images of the induced maps $A\amalg B\to X$. Together these assumptions give a subobject lattice. In an abelian category they hold automatically, and the joins are the usual sums of subobjects. These products and coproducts are taken in the thin category $\mathrm{Sub}(X)$.
 
 ### 2.3 Closure Operators and Categorical Monads
 
@@ -75,24 +75,26 @@ A *closure operator* on $(L, \le)$ is a map $\mathrm{cl} : L \to L$ satisfying:
 3. **Idempotent:** $\mathrm{cl}(\mathrm{cl}(x)) = \mathrm{cl}(x)$ for all $x \in L$.
 
 **Proposition 2.2 (Closure Operators as Idempotent Monads).** *A closure operator $\mathrm{cl} : L \to L$ canonically defines an idempotent monad $(T, \eta, \mu)$ on the thin category $\mathcal{C}_L$ (`CategoryTheory.Monad`), where:*
-- *Functor:* $T(x) = \mathrm{cl}(x)$, with morphism mapping $T(f) = \mathrm{homOfLE}(\mathrm{cl}(x \le y))$.
+- *Functor:* $T(x) = \mathrm{cl}(x)$. For $f:x\to y$, let $h_f:x\le y$ be the corresponding inequality. Monotonicity gives $\mathrm{cl}(x)\le\mathrm{cl}(y)$, defining $T(f)=\mathrm{homOfLE}(\mathrm{cl.monotone}(h_f))$.
 - *Unit:* $\eta_x : x \to T(x)$ is the unique morphism $\mathrm{homOfLE}(x \le \mathrm{cl}(x))$.
 - *Multiplication:* $\mu_x : T^2(x) \to T(x)$ is the unique morphism $\mathrm{homOfLE}(\mathrm{cl}(\mathrm{cl}(x)) \le \mathrm{cl}(x))$.
 
-*Proof.* Monad associativity $\mu \circ T\mu = \mu \circ \mu T$ and unit laws $\mu \circ \eta T = \mathbb{1} = \mu \circ T\eta$ hold automatically by subsingleton hom-set uniqueness (`Subsingleton.elim`). $\blacksquare$
+*Proof.* Functoriality, naturality of $\eta$ and $\mu$, monad associativity $\mu \circ T\mu = \mu \circ \mu T$, and the unit laws $\mu \circ \eta T = \mathbb{1} = \mu \circ T\eta$ hold by subsingleton hom-set uniqueness (`Subsingleton.elim`). Closure idempotence gives $T^2(x)=T(x)$. The reverse equality defines a morphism $T(x)\to T^2(x)$; its composites with $\mu_x$ are identities by thinness. Thus every $\mu_x$ is invertible, so $\mu$ is a natural isomorphism and the monad is idempotent. $\blacksquare$
 
 **Lemma 2.3 (Galois Connections Induce Closure Monads).** *Any Galois connection (adjunction) $l \dashv u$ between posets $L$ and $M$ induces an idempotent closure operator $\mathrm{cl} = u \circ l$ on $L$, and hence an idempotent monad on $\mathcal{C}_L$.*
 
 ---
 
-## 3. Submodular Defects and Modularity
+## 3. Signed Modularity Defects and Submodularity
 
-### 3.1 The Submodular Defect
+### 3.1 The Signed Modularity Defect
 
-Let $(L, \wedge, \vee)$ be a lattice. A rank function $\mathrm{rk} : L \to \mathbb{Z}$ is *submodular* if $\mathrm{rk}(A \vee B) + \mathrm{rk}(A \wedge B) \le \mathrm{rk}(A) + \mathrm{rk}(B)$.
+Let $(L, \wedge, \vee)$ be a lattice and let $\mathrm{rk} : L \to \mathbb{Z}$ be an integer-valued function. No sign condition is assumed initially. The notation $\mathrm{rk}$ need not denote a graded lattice rank. The function is *submodular* if $\mathrm{rk}(A \vee B) + \mathrm{rk}(A \wedge B) \le \mathrm{rk}(A) + \mathrm{rk}(B)$ for every pair.
 
-**Definition 3.1 (Submodular Defect).** For any pair $A, B \in L$, the submodular defect is:
+**Definition 3.1 (Signed Modularity Defect).** For any pair $A, B \in L$, the signed modularity defect is:
 $$\Delta(A, B) = \big(\mathrm{rk}(A) + \mathrm{rk}(B)\big) - \big(\mathrm{rk}(A \vee B) + \mathrm{rk}(A \wedge B)\big)$$
+
+The defect may be positive, zero, or negative. Submodularity means $\Delta(A,B)\ge0$ for every pair; supermodularity means $\Delta(A,B)\le0$ for every pair. A modular valuation satisfies both inequalities. The Lean declaration `modularityDefect` takes an arbitrary integer-valued function. The existing `submodularDefect` takes a bundled `SubmodularRank`, which includes a proof of submodularity; `submodularDefect_eq_modularityDefect` identifies it with the general formula on the underlying function. The defect is symmetric: $\Delta(A,B)=\Delta(B,A)$ (`modularityDefect_comm`), so its sign is not a direction of traversal. The declarations `modularityDefect_zero_iff` and `modularityDefect_nonneg_iff` establish the modular equality and submodular inequality for each pair without bundling a global sign assumption.
 
 **Lemma 3.2 (Non-Negativity and Modularity Characterization).**
 
@@ -111,7 +113,53 @@ We define the meet interaction $A \wedge B$.
 $$\mathrm{meetInteraction}(A, B) := A \wedge B$$
 This operation is commutative ($A \wedge B = B \wedge A$), associative ($(A \wedge B) \wedge C = A \wedge (B \wedge C)$), and satisfies the universal property $C \le \mathrm{meetInteraction}(A, B) \iff (C \le A) \text{ and } (C \le B)$.
 
-The submodular defect $\Delta(A, B)$ measures failure of modular additivity of valuations across meets and joins.
+The signed modularity defect $\Delta(A, B)$ measures failure of modular additivity of valuations across meets and joins.
+
+### 3.3 Signed Defects on the Completed Associahedral Face Lattice
+
+**Lean formalization:** `AssociahedralSignedDefects.lean`. Fix $n\ge2$. The model $P_n$ in §4.1 contains the nonempty faces of $K_n$, represented by compatible sets of proper brackets and ordered by reverse inclusion. It is generally not a lattice: incompatible bracket requirements have no common nonempty subface. Adjoin a new bottom element $\bot$ representing the empty geometric face, and call the resulting lattice $\widehat P_n$. This bottom is different from the empty bracket set $\varnothing$, which represents the whole polytope and is the top element.
+
+For nonempty faces represented by bracket sets $S,T$:
+$$S\vee T=S\cap T,\qquad
+S\wedge T=\begin{cases}
+S\cup T,&\text{if }S\cup T\text{ is compatible},\\
+\bot,&\text{otherwise}.
+\end{cases}$$
+Also $S\vee\bot=S$ and $S\wedge\bot=\bot$. The union imposes both bracket requirements; when they conflict, no nonempty face can satisfy them. The intersection retains exactly the requirements shared by the two faces.
+
+Use the natural face rank, namely dimension plus one on nonempty faces:
+$$\rho_n(\bot)=0,\qquad \rho_n(S)=n-1-|S|.$$
+This identification with actual geometric dimension is proved, not assigned by definition. With $n=r+2$, `Loday_bracketFace_dimension` establishes
+$$\dim(\operatorname{bracketExposedFace}_r(S))+|S|=r,$$
+and `completedFaceRank_eq_geometric_dimension` identifies $\rho_n(S)$ with that affine dimension plus one. For the upper bound, remove the $|S|$ specified brackets to reach the whole polytope: each strict face inclusion increases dimension. For the lower bound, complete $S$ to a full tree, then remove its $n-2-|S|$ additional brackets to reach $S$. Each step again increases dimension. The two bounds agree.
+
+Thus vertices have rank $1$, facets rank $n-2$, and the whole polytope rank $n-1$. This rank depends on bracket structure and input positions, not on the values or distinctness of the inputs.
+
+**Proposition 3.5 (Signed Face-Rank Formula).** If either argument is $\bot$, its defect is zero. For nonempty faces,
+$$\Delta_n(S,T)=\begin{cases}
+0,&\text{if }S\cup T\text{ is compatible},\\
+n-1-|S\cup T|,&\text{otherwise}.
+\end{cases}$$
+
+*Proof.* In the compatible case, substitute the rank formula and use $|S|+|T|=|S\cap T|+|S\cup T|$. In the incompatible case the meet has rank zero, so substitution gives $n-1-|S|-|T|+|S\cap T|=n-1-|S\cup T|$. The bottom cases follow directly from the lattice identities. $\blacksquare$
+
+For $K_4$, ranks are $0$ at bottom, $1$ at vertices, $2$ at edges, and $3$ at the whole pentagon. All three signs occur:
+
+| $S$ | $T$ | Join | Meet | Defect |
+| :--- | :--- | :--- | :--- | :--- |
+| $(AB)CD$ | $A(BC)D$ | $ABCD$ | $\bot$ | $2+2-3-0=+1$ |
+| $(AB)CD$ | $AB(CD)$ | $ABCD$ | $(AB)(CD)$ | $2+2-3-1=0$ |
+| $((AB)C)D$ | $A(B(CD))$ | $ABCD$ | $\bot$ | $1+1-3-0=-1$ |
+
+Consequently the natural face rank is neither submodular nor supermodular on $\widehat P_4$. The same bracket patterns remain distinct when all inputs have the same value; positions and nesting are retained.
+
+For two distinct full bracketings $S,T$, each has $n-2$ proper brackets, and their union is incompatible by maximality. Thus
+$$\Delta_n(S,T)=3-n+|S\cap T|.$$
+One elementary reassociation changes one proper bracket, so adjacent vertices have defect zero. This bridge between rotations and face defects is proved in `AssociahedralStructuralBridges.lean`: `RightRotation.changed_span` proves that a rotation removes one old internal interval and retains every other one, even within a subtree; `RightRotation.proper_bracket_intersection_card` gives $|S\cap T|=n-3$; and `rotationStep_signedFaceDefect_zero` concludes $\Delta_n(S,T)=0$ for either direction. The theorem `rightRotation_commonFace_dimension` also proves that their common supporting face has actual affine dimension one, identifying it as a geometric edge. More generally, if each full bracketing has $k$ brackets absent from the other, the defect is $1-k$. This bracket disagreement count need not equal shortest-path distance in the rotation graph.
+
+**Proposition 3.6 (Preservation under a Fixed Surrounding Group).** Append one input and group all original inputs together. On nonempty faces this maps $S$ to $\iota(S)=S\cup\{[0,n)\}$ in $\widehat P_{n+1}$, and maps bottom to bottom. Then $\iota$ preserves meets, joins, ranks, and signed defects.
+
+*Proof.* The added bracket contains every original bracket, so compatibility of the union is unchanged. Intersections and compatible unions retain this common bracket; incompatible unions still have meet bottom. Since $|\iota(S)|=|S|+1$, we have $\rho_{n+1}(\iota(S))=n-(|S|+1)=\rho_n(S)$. Substitute into the defect formula. Iteration gives preservation under repeated identical surrounding extensions. $\blacksquare$
 
 ---
 
@@ -144,7 +192,7 @@ For every $m \ge 0$, the general count is also proved:
 $$\#\mathrm{FullBracketing}(m+1)=C_m=\frac{1}{m+1}\binom{2m}{m}.$$
 The declarations are `fullBracketing_card` and `fullBracketing_card_formula`. The theorem `fullBracketing_vertex_equiv` now identifies full binary trees with the minimal polygon faces. Its proof completes each compatible interval family to a tree, proves that the interval family determines the tree, and proves maximality from the group-count bound.
 
-**Theorem 4.0.1 (Convex Realization, Dimension, and Counts).** For every $r \ge 0$, let $Q_r$ be the convex hull of the binary-tree points in $\mathbb{R}^{r+1}$. At each internal tree split, the gap coordinate is the number of leaves in the left child times the number in the right child. Then:
+**Theorem 4.0.1 (Convex Realization, Dimension, and Counts).** For every $r \ge 0$, let $Q_r$ be the convex hull in $\mathbb{R}^{r+1}$ of the points indexed by planar full binary trees with $r+2$ ordered leaves. At each internal tree split, the coordinate of the gap between the left and right children is the number of leaves in the left child times the number in the right child. Then:
 
 1. $Q_r$ is nonempty, compact, and convex (`LodayPolytope_nonempty`, `LodayPolytope_compact`, `LodayPolytope_convex`).
 2. Its nonempty supporting-face order is isomorphic to $F_{r+2}$ (`polygon_loday_face_orderIso`). A supporting face is the set where a linear functional has its minimum on $Q_r$.
@@ -223,7 +271,9 @@ The facet shapes now follow from Theorem 4.0.2. A cyclic length-2 diagonal split
 
 ### 5.1 Universal $N$-Dimensional Dirichlet-Cartan Energy
 
-For arbitrary rank $n \in \mathbb{N}$, any vector $v \in \mathbb{Z}^n$ induces an extended vector $\tilde{v} : \{0, 1, \dots, n+1\} \to \mathbb{Z}$ satisfying Dirichlet boundary conditions $\tilde{v}(0) = \tilde{v}(n+1) = 0$. The $A_n$ Cartan quadratic form is given by the discrete Dirichlet energy:
+For arbitrary rank $n \in \mathbb{N}$, write $v=(v_1,\dots,v_n)\in\mathbb{Z}^n$ in the simple-root basis, so it represents $\sum_{i=1}^n v_i\alpha_i$. Define the extended vector $\tilde{v} : \{0, 1, \dots, n+1\} \to \mathbb{Z}$ by
+$$\tilde{v}(0)=\tilde{v}(n+1)=0,\qquad \tilde{v}(i)=v_i\quad(1\le i\le n).$$
+The endpoint values impose Dirichlet boundary conditions. The $A_n$ Cartan quadratic form is given by the discrete Dirichlet energy:
 $$Q_n(v) = \sum_{i=0}^n (\tilde{v}(i+1) - \tilde{v}(i))^2$$
 
 **Theorem 5.1 (Universal Positive Definiteness).**
@@ -255,7 +305,7 @@ Under the form $\langle \cdot, \cdot \rangle_{A_3}$, the roots satisfy exact geo
 1. **Norm Invariance:** Every root has squared norm exactly $2$ (`rootA3_cartan_norm`):
    $$\langle r, r \rangle_{A_3} = 2 \quad \forall r \in \mathrm{Root}_{A_3}$$
 2. **Adjacent Shear Strain:** Adjacent simple roots have inner product $\langle \alpha_1, \alpha_2 \rangle = \langle \alpha_2, \alpha_3 \rangle = -1$ (`strain_adjacent_12`).
-3. **Orthogonality:** Non-adjacent roots are orthogonal: $\langle \alpha_1, \alpha_3 \rangle = 0$ (`strain_orthogonal_13`).
+3. **Orthogonality:** Non-adjacent simple roots in the $A_3$ Dynkin diagram are orthogonal: $\langle \alpha_1, \alpha_3 \rangle = 0$ (`strain_orthogonal_13`).
 4. **Coupled Decomposition:** Composite roots decompose with cross-terms: $\langle \alpha_{12}, \alpha_{12} \rangle = \langle \alpha_1, \alpha_1 \rangle + \langle \alpha_2, \alpha_2 \rangle + 2\langle \alpha_1, \alpha_2 \rangle = 2 + 2 - 2 = 2$ (`coupled_strain_alpha12`).
 
 ---
@@ -310,6 +360,46 @@ For example, three steps with costs $(2,3,5)$ and labels $(4,-7,1)$ give total c
 
 At $n=0$, the empty step list has valuation $(0,\mathbf{I})$, and the empty categorical composite is the identity. There is no full binary tree in this case, and $K_0$ remains the empty member by convention.
 
+### 6.4 Directed Reassociation and Signed Rotation Paths
+
+**Lean formalization:** `DirectedReassociation.lean`. Retaining brackets also allows us to retain moves between full bracketings. Orient an elementary reassociation, at any subtree, as a right rotation:
+$$((S\,T)\,U)\longrightarrow(S\,(T\,U)).$$
+Its reverse is a left rotation. Both moves preserve the order and number of input occurrences. Orienting all such edges by right rotation gives the usual Tamari order on full bracketings. This order is different from the face-inclusion order on partial bracketings: full bracketings are incomparable vertices in the latter.
+
+Assign each right rotation label $+1$ and each left rotation label $-1$. For a path $p$ in the bidirected rotation graph, define
+$$\sigma(p)=\sum_{e\text{ in }p}\varepsilon(e),\qquad
+\varepsilon(e)=\begin{cases}+1,&e\text{ is a right rotation},\\-1,&e\text{ is a left rotation}.\end{cases}$$
+Then
+$$\sigma(p\mathbin{+\!+}q)=\sigma(p)+\sigma(q),\qquad
+\sigma(\mathrm{reverse}(p))=-\sigma(p).$$
+The empty path has label zero. The pair $(\ell(p),\sigma(p))\in\mathbb N\times\mathbb Z$, where $\ell$ counts elementary moves, is likewise additive under concatenation. These identities follow from addition over lists of edge labels. They have the same algebraic form as §6.2, but the rotation paths are a new domain, distinct from the fixed labelled chain of §6.3.
+
+**Example 6.6 (The Directed Pentagon Has Unequal Route Labels).** In $K_4$, two right-rotation paths have the same endpoints:
+
+```text
+((AB)C)D → (AB)(CD) → A(B(CD))
+             two right rotations: σ = +2
+
+((AB)C)D → (A(BC))D → A((BC)D) → A(B(CD))
+             three right rotations: σ = +3
+```
+
+Following the first path and then the reverse of the second gives a closed walk with label $2-3=-1$. Reversing this walk gives label $+1$. Therefore unit signed rotation labels are path-dependent: they cannot be differences of a single integer-valued function on vertices. If $\varepsilon(S\to T)=h(T)-h(S)$ for such a function $h$, every closed walk would have label zero, contrary to this pentagon.
+
+This valuation lives on the free path category of the bidirected rotation graph. Its restriction to right-directed paths does not descend to the thin Tamari category, which identifies directed paths with the same endpoints: the two pentagon routes already have unequal labels. The signed valuation likewise does not descend to a path quotient imposing the pentagon relation. Adding further relations on the source cannot repair that mismatch.
+
+There is also a precise obstruction to repairing it by an additive target quotient while retaining the unit labels. For any additive homomorphism $f:\mathbb Z\to G$ to an abelian group, identifying the two route labels forces $f(2)=f(3)$, hence $f(1)=0$ and $f=0$. The Lean theorem `pentagon_sign_additive_quotient_trivial` proves this statement for arbitrary $G$. Thus every such target quotient annihilates the entire signed valuation. A nontrivial endpoint-invariant valuation would require changing the edge labels so they respect the path relations; retaining the present labels requires retaining path information.
+
+The three retained layers should be distinguished:
+
+| Layer | Objects or data retained | Relevant quantity |
+| :--- | :--- | :--- |
+| Face structure | Compatible partial bracket sets, plus bottom when a lattice is needed | Signed modularity defect $\Delta_n(S,T)$ |
+| Directed moves | Right and left rotations between full bracketings | Edge sign $\varepsilon$ |
+| Rotation paths | Ordered sequences of elementary moves | Accumulated sign $\sigma(p)$ |
+
+The defect is symmetric in its arguments; path sign reverses under reversal of traversal. Neither quantity requires distinct input values. Equality of composite arrows in a thin category, or of associative evaluations, does not erase this retained syntax unless we explicitly identify the bracketings or paths. Unit rotation signs are an orientation convention, not an intrinsic signed value of an individual bracketing.
+
 ---
 
 ## 7. Application: Transfinite Cellular Filtrations and Basis Discovery
@@ -325,29 +415,29 @@ An object $U_0 \in \mathcal{A}$ is *semi-Artinian* if for every proper subobject
 #### Cellular Filtrations vs. Classical Loewy Filtrations
 
 In standard algebra, the classical ascending Loewy series attaches the entire socle (the sum of all simple subobjects) simultaneously at each step: $S_{\alpha+1} / S_\alpha = \mathrm{Soc}(U_0 / S_\alpha)$.
-In our formal development, we construct a **fine transfinite cellular filtration**—a one-simple-at-a-time transfinite filtration, a transfinite composition series—where each non-trivial successor step attaches a **single simple cell** $a \hookrightarrow \mathrm{coker}(C_\alpha)$ via categorical pullback. Each non-trivial successor step has a simple quotient.
+In our formal development, we construct a **fine transfinite cellular filtration** where each non-trivial successor step attaches a **single simple cell** $a \hookrightarrow \mathrm{coker}(C_\alpha\hookrightarrow U_0)$ via categorical pullback. Continuity means taking joins in $\mathrm{Sub}(U_0)$ at limit ordinals. Truncating at the first stage reaching the top gives an **order-theoretic transfinite composition series**: every successor before its endpoint is strict and has a simple quotient. To identify its limit stages with colimits of the underlying objects in $\mathcal{A}$ requires an additional comparison theorem under suitable assumptions, such as exact filtered colimits.
 
 **Definition 7.1 (Transfinite Cellular Sequence).** The cellular sequence is constructed transfinitely for ordinals $o \in \mathrm{Ordinal}.\{u\}$:
 
 - **Base Case:** $C_0 = \bot$.
-- **Successor Step:** $C_{\alpha+1} = C_\alpha$ if $\mathrm{coker}(C_\alpha \hookrightarrow U_0) = 0$; otherwise, choose a simple subobject $a \hookrightarrow \mathrm{coker}(C_\alpha)$ and pull it back to form $C_{\alpha+1} = \mathrm{pb}(a \to \mathrm{coker}(C_\alpha))$.
+- **Successor Step:** Write $q_\alpha:U_0\to U_0/C_\alpha$ for the cokernel of $C_\alpha\hookrightarrow U_0$. If this cokernel is a zero object, set $C_{\alpha+1}=C_\alpha$. Otherwise choose a simple inclusion $i_\alpha:a\hookrightarrow U_0/C_\alpha$. Define $C_{\alpha+1}$ to be the subobject represented by the pullback projection $U_0\times_{U_0/C_\alpha}a\hookrightarrow U_0$, using both $q_\alpha$ and $i_\alpha$.
 - **Limit Ordinal:** $C_\lambda = \sup_{\beta < \lambda} C_\beta$.
 
 **Theorem 7.2 (Cellular Length Existence, Reconstruction, and Colimit Vanishing).**
 *Let $U_0$ be semi-Artinian. Because the subobject lattice $\mathrm{Sub}(U_0)$ is small (`Small.{u} (Subobject U₀)`), the monotone transfinite sequence $C_\alpha$ must stabilize. Consequently:*
 
-1. *Cellular Length Existence:* There exists an ordinal $\Omega \in \mathrm{Ordinal}.\{u\}$ such that $C_\Omega = \top = U_0$ (`cellular_length_exists`).
+1. *Cellular Length Existence and Minimality:* There exists an ordinal reaching the top (`cellular_length_exists`). Define $\Omega=\min\{\alpha:C_\alpha=\top\}$ (`cellularLength`). Then $C_\Omega=\top$ (`reconstruction`), and $C_\alpha=\top$ if and only if $\Omega\le\alpha$ (`cellularSequence_eq_top_iff`). Thus $\Omega$ is the first stage reaching the top.
 2. *Top Reconstruction:* The canonical inclusion morphism $C_\Omega \hookrightarrow U_0$ is an isomorphism (`reconstruction_iso`).
-3. *Cellular Short Exact Sequence:* Every non-trivial cellular successor step forms a short exact sequence $0 \longrightarrow C_\alpha \longrightarrow C_{\alpha+1} \longrightarrow a \longrightarrow 0$ (`cellular_shortExact`), presenting a length-1 extension.
+3. *Cellular Short Exact Sequence:* For every $\alpha<\Omega$, the successor step is strict (`cellularSequence_strict_before_length`). Its chosen simple cell gives a short exact sequence $0 \longrightarrow C_\alpha \longrightarrow C_{\alpha+1} \longrightarrow a \longrightarrow 0$ (`cellularSequence_step_exists`, `cellular_shortExact`), presenting a length-1 extension.
 
 **Corollary 7.3 (Vanishing Residual Colimit).** Restrict the residual diagram to the small filtered category $\mathrm{OrdinalInterval}(\Omega) := \mathrm{Shrink}.\{u\}(\{b \le \Omega\})$. Its terminal object is $\Omega$, where $\mathrm{coker}(C_\Omega \hookrightarrow U_0) \cong 0$. Thus the colimit of the residual diagram is zero (`cellular_residual_colimit_vanishes`):
    $$\varinjlim_{j \in \mathrm{OrdinalInterval}(\Omega)} \mathrm{coker}(C_j \hookrightarrow U_0) \cong 0$$
 
 ### 7.2 Well-Founded Basis Selection
 
-In a discrete complete lattice $L$ generated by an indexed set $\{e(j) \mid j \in J\}$ under a well-founded priority order $(J, \le)$, the greedy choice function:
+Let $L$ be a complete lattice and $e:J\to L$ a join-dense family, meaning $x=\bigvee_{j:\,e(j)\le x}e(j)$ for every $x\in L$ (`IsGenerated`). Equip $J$ with a well-founded linear priority order (`LinearOrder J`, `WellFoundedLT J`). The greedy choice function:
 $$\phi(x) = \min_{<} \{j \in J \mid e(j) \not\le x\}$$
-is well-defined for all $x < \top$. It satisfies the **novelty property**: $e(\phi(x)) \not\le x$, guaranteeing strict progress at every transfinite step toward $\top = \bigvee_{j} e(j)$. The transfinite supremum $\mathrm{sieveOutput} = \sup_{o} x(o)$ defines a supremum with the expected order properties, satisfying $x(o) \le \mathrm{sieveOutput}$ (`xSeq_le_sieveOutput`) and least upper bound characterization $\mathrm{sieveOutput} \le x \iff \forall o,\, x(o) \le x$ (`sieveOutput_is_lub`).
+is well-defined for all $x < \top$. It satisfies the **novelty property**: $e(\phi(x)) \not\le x$. Start with $x(0)=\bot$, set $x(\alpha+1)=x(\alpha)\vee e(\phi(x(\alpha)))$ while $x(\alpha)<\top$, retain $\top$ once reached, and take joins at limit ordinals. Novelty guarantees strict progress at every successor before reaching $\top=\bigvee_j e(j)$. The transfinite supremum $\mathrm{sieveOutput}=\sup_o x(o)$ satisfies $x(o)\le\mathrm{sieveOutput}$ (`xSeq_le_sieveOutput`) and $\mathrm{sieveOutput}\le x\iff\forall o,\,x(o)\le x$ (`sieveOutput_is_lub`). The theorem `sieveOutput_eq_top` proves that this output is $\top$.
 
 ---
 
@@ -362,7 +452,17 @@ The entry point is [`FunctorialGeometry.lean`](math_project/MathProject/Functori
 - [`AssociahedralDimension.lean`](math_project/MathProject/AssociahedralDimension.lean): actual affine dimension, geometric counts, and the combined theorem for poset chains.
 - [`AssociahedralFacetProducts.lean`](math_project/MathProject/AssociahedralFacetProducts.lean): facet product face orders, convex subface orders, and the pentagon and square shapes and counts for $K_5$.
 
+The signed extensions use three additional modules:
+
+- [`AssociahedralSignedDefects.lean`](math_project/MathProject/AssociahedralSignedDefects.lean): the actual `Lattice` instance on `WithBot (PartialBracketing n)`, natural face rank, signed defect formula, full-bracketing overlap formula, preservation under a fixed surrounding group, and positive/zero/negative K4 examples.
+- [`DirectedReassociation.lean`](math_project/MathProject/DirectedReassociation.lean): right rotations at any subtree, directed and reverse steps, composable paths, concatenation and reversal laws, leaf-count preservation, and the explicit pentagon obstruction to a vertex potential, and the additive target-quotient obstruction.
+- [`AssociahedralStructuralBridges.lean`](math_project/MathProject/AssociahedralStructuralBridges.lean): actual affine dimension of every bracket face, identification of face rank with dimension plus one, and the theorems that every elementary rotation has zero signed face defect and joins its vertices along an actual geometric edge.
+
+[`CheckSignedStructures.lean`](math_project/MathProject/CheckSignedStructures.lean) imports all three modules, audits their axiom dependencies, checks a K4 defect embedded in K5, and checks the reversed pentagon loop, a geometric edge dimension, and a rotation inside a subtree.
+
 [`CheckAssociahedra.lean`](math_project/MathProject/CheckAssociahedra.lean) checks the axiom dependencies and the small geometric cases. [`CheckPathValuations.lean`](math_project/MathProject/CheckPathValuations.lean) audits the path-valuation theorems and checks labelled examples and the empty path. [`CheckFacetProducts.lean`](math_project/MathProject/CheckFacetProducts.lean) audits the facet product proofs and checks the root-to-shape conclusions.
+
+[`CheckCellularFiltrations.lean`](math_project/MathProject/CheckCellularFiltrations.lean) audits order continuity, endpoint minimality, strict successors, short exact sequences, residual-colimit vanishing, and greedy selection. It checks the zero-length boundary case, retention of the top at later stages, and existence of simple cells before the endpoint.
 
 ### 8.1 Design Principles and Axiomatic Foundations
 
@@ -371,7 +471,7 @@ The formal development follows four structural principles:
 1. **Categorical Integration with Mathlib:** Rather than using ad-hoc posetal order structures, thin categories and subobject lattices are expressed directly through Mathlib's native category theory library (`CategoryTheory.Subobject`, `CategoryTheory.Abelian`, `CategoryTheory.Monad`, and `CategoryTheory.Limits`).
 2. **Constructive Computational Core:** Discrete and algebraic structures—including the travel monoid $(\mathbb{N}, +) \times \mathbf{U}_2(\mathbb{Z})$, the Tamari poset $\mathcal{T}_4$, the general $A_n \leftrightarrow K_{n+2}$ equivalence, the polygon diagonal mapping $\mathrm{Diagonal}(n)$, the $A_3 \leftrightarrow K_5$ root-facet bijection, and the Cartan quadratic forms—are defined constructively with `DecidableEq` instances and verified by computation (`rfl`, `decide`, `ring`, `omega`).
 3. **Classical Homological Framework:** Abstract abelian categories and transfinite ordinals use standard classical logic (`Classical.choice`, `open Classical`) for subobject selection and non-constructive colimits (Theorem 7.2).
-4. **Cellular Sequence Nomenclature:** In the Lean formalization, the declarations `cellularSequence` and `cellularLength` name this one-simple-at-a-time transfinite cellular sequence and its stabilization length, a transfinite composition series.
+4. **Cellular Sequence Nomenclature:** In the Lean formalization, `cellularSequence` is the one-simple-at-a-time sequence continuous by joins in the subobject lattice, and `cellularLength` is its first stage reaching the top. Truncation at this length gives an order-theoretic transfinite composition series.
 
 The `#print axioms` command confirms that all declarations compile without `sorry` placeholders and depend exclusively on Lean's standard foundational axioms (`propext`, `Classical.choice`, `Quot.sound`).
 
@@ -382,7 +482,14 @@ The `#print axioms` command confirms that all declarations compile without `sorr
 | **Proposition 2.1** | Subsingleton homs, monic/epic collapse, split extensions | [`thin_mono`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L98), [`thin_epi`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L104), [`thin_extension_splits`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L114) | `Subsingleton.elim` |
 | **Section 2.2** | Meets as categorical products, joins as coproducts | [`meet_universal`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L153), [`join_universal`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L161), [`subobject_mono`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L175) | `le_inf`, `sup_le`, `inferInstance` |
 | **Proposition 2.2 / Lemma 2.3** | Closure operators as idempotent monads & Galois induction | [`ClosureOperator.toMonad`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L129), `GaloisConnection.closureOperator` (Mathlib) | `CategoryTheory.Monad`, `thin_hom_unique`, `GaloisConnection` |
-| **Lemma 3.2** | Submodular defect $\Delta \ge 0$, modularity criterion $\Delta = 0$ | [`submodularDefect`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L197), [`defect_nonneg`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L201), [`defect_zero_iff_modular`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L208) | `linarith` |
+| **Lemma 3.2** | Signed defect; non-negativity under submodularity; modularity criterion $\Delta = 0$ | [`submodularDefect`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L197), [`defect_nonneg`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L201), [`defect_zero_iff_modular`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L208) | `linarith` |
+| **Section 3.1** | General signed defect, symmetry, and pairwise modularity/submodularity criteria | `modularityDefect`, `modularityDefect_comm`, `modularityDefect_zero_iff`, `modularityDefect_nonneg_iff`, `submodularDefect_eq_modularityDefect` in `FunctorialGeometry.lean` | Lattice commutativity, `linarith`, `rfl` |
+| **Proposition 3.5 / Section 3.3** | Completed face lattice, signed formula, full-bracketing overlap, and three K4 signs | `signedFaceDefect_formula`, `signedFaceDefect_fullBracketings`, `k4_signedDefect_positive`, `k4_signedDefect_zero`, `k4_signedDefect_negative` in `AssociahedralSignedDefects.lean` | Lattice bounds, finite-set cardinal identities, vertex maximality, `omega`, `decide` |
+| **Section 3.3: geometric rank** | Actual face dimension and its identification with integer face rank | `Loday_bracketFace_dimension`, `completedFaceRank_eq_geometric_dimension` in `AssociahedralStructuralBridges.lean` | Strict geometric face inclusions, tree completion, matching dimension bounds |
+| **Section 3.3: elementary rotations** | Every right or left elementary reassociation has zero face defect | `RightRotation.changed_span`, `RightRotation.proper_bracket_intersection_card`, `rotationStep_signedFaceDefect_zero`, `rightRotation_commonFace_dimension` | Tree induction, retained interval sets, full-bracketing overlap formula |
+| **Proposition 3.6** | Fixed surrounding group preserves meets, joins, ranks, and defects | `surroundingCompletedFace_sup`, `surroundingCompletedFace_inf`, `surroundingCompletedFace_rank`, `surroundingCompletedFace_defect` | Interval embedding, compatible unions, finite-set maps |
+| **Section 6.4 / Example 6.6** | Signed rotation paths, nonzero pentagon loop, and no vertex potential | `RotationPath.sign_append`, `RotationPath.sign_reverse`, `RotationPath.valuation_append`, `pentagonClosedPath_sign`, `rotation_sign_path_dependent`, `rotation_sign_no_vertex_potential` in `DirectedReassociation.lean` | Indexed paths, induction, explicit rotation witnesses, integer arithmetic |
+| **Section 6.4: additive target quotient** | Identifying the two pentagon route labels annihilates any additive image of the signed valuation | `pentagon_sign_additive_quotient_trivial` | Additive cancellation and integer generation by $1$ |
 | **Section 3.2** | Meet interaction realized as categorical meet | [`meetInteraction`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L223), [`meetInteraction_comm`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L225), [`meetInteraction_universal`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L231) | Infimum symmetry and universal properties |
 | **Section 4.1** | Tamari $\mathcal{T}_4$ Catalan cardinality $C_3 = 5$ | [`tamari_le`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L1089), [`tamari4_card`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L1188) | Finite case exhaustion (`rfl`) |
 | **Theorem 4.0** | Bracket-to-diagonal compatibility and face order for every arity | `bracketCompatible_iff_noncrossing`, `all_Kn_orderIso`, `all_Kn_categoryEquivalence` | Endpoint inequalities, finite-set maps, `OrderIso` |
@@ -399,8 +506,8 @@ The `#print axioms` command confirms that all declarations compile without `sorr
 | **Theorem 6.3** | Travel monoid laws, path concatenation, strict growth | [`Unipotent2`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L248), [`TravelExperience`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L279), [`pathExperience_append`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L349), [`action_strictly_increases`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L357) | Additive group model $(\mathbb{Z}, +)$, `omega`, `linarith` |
 | **Theorem 6.4** | Fixed-chain arrow and valuation invariance on every full bracket pattern | `evalBracketPath_eq`, `evalChainPathBracketing_eq`, `chainSteps_valuation`, `all_Kn_chain_path_valuations` | Binary-tree induction, list splitting, concatenation, thinness |
 | **Corollary 6.5** | Unit step costs count the arrows | `evalChainPathBracketing_unit_cost` | Finite sum of ones |
-| **Theorem 7.2 (1–2)** | Cellular length existence $\Omega$, stabilization, top reconstruction | [`cellularSequence_mono`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L606), [`cellular_length_exists`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L675), [`reconstruction`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L687), [`reconstruction_iso`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L691) | `Ordinal.limitRecOn`, `eventuallyConst`, `Subobject.top_arrow_isIso` |
-| **Theorem 7.2 (3)** | Cellular Short Exact Sequence | [`cellularShortComplex`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L820), [`cellular_shortExact`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L893) | `ShortComplex.exact_of_f_is_kernel`, `pullback` |
+| **Theorem 7.2 (1–2)** | First top stage $\Omega$, endpoint minimality, and top reconstruction | `cellular_length_exists`, `cellularLength`, `cellularLength_le_of_eq_top`, `cellularSequence_eq_top_iff`, `reconstruction`, `reconstruction_iso` in `FunctorialGeometry.lean` | Ordinal stabilization, well-founded minimum, monotonicity, `Subobject.top_arrow_isIso` |
+| **Theorem 7.2 (3)** | Strict successors and simple short exact extensions before $\Omega$ | `cellularSequence_strict_before_length`, `cellularSequence_step_exists`, `cellularShortComplex`, `cellular_shortExact` in `FunctorialGeometry.lean` | Endpoint minimality, semi-Artinian selection, pullback, kernel universal property |
 | **Corollary 7.3** | Vanishing residual colimit over $\mathrm{OrdinalInterval}$ | [`cellularIntervalFunctor`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L764), [`cellular_residual_colimit_vanishes`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L771) | Filtered colimit absorption, `isZero_cokernel_of_epi` |
 | **Section 7.2** | Well-founded basis selection, novelty property, and sieve supremum | [`candidates_nonempty`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L912), [`fixedPriorityPhi`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L924), [`novelty_of_fixedPriorityPhi`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L929), [`sieveOutput`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L941), [`xSeq_le_sieveOutput`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L1024), [`sieveOutput_is_lub`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L1028) | `WellFounded.min_mem`, `le_iSup`, `iSup_le_iff` |
 
@@ -410,11 +517,20 @@ The file `FunctorialGeometry.lean` was verified against Lean 4 (version `v4.33.1
 ```bash
 lake build MathProject.FunctorialGeometry
 lake build MathProject.CheckPathValuations MathProject.CheckAssociahedra MathProject.CheckFacetProducts
+lake build MathProject.CheckSignedStructures
+lake build MathProject.CheckCellularFiltrations
 ```
 
 The axiomatic dependency commands:
 ```lean
 #print axioms cellular_length_exists
+#print axioms cellularLength_le_of_eq_top
+#print axioms cellularSequence_eq_top_iff
+#print axioms cellularSequence_strict_before_length
+#print axioms modularityDefect_comm
+#print axioms modularityDefect_zero_iff
+#print axioms modularityDefect_nonneg_iff
+#print axioms submodularDefect_eq_modularityDefect
 #print axioms cellular_residual_colimit_vanishes
 #print axioms facetKn2_diagonal_equiv
 #print axioms rootAn_diagonal_equiv
@@ -442,7 +558,7 @@ The axiomatic dependency commands:
 #print axioms rootA3_geometric_pentagonal_facet
 #print axioms rootA3_geometric_square_facet
 ```
-reduce exclusively to the standard core foundations `[propext, Classical.choice, Quot.sound]`.
+use only subsets of the standard core foundations `[propext, Classical.choice, Quot.sound]`.
 
 ---
 
@@ -451,12 +567,12 @@ reduce exclusively to the standard core foundations `[propext, Classical.choice,
 We have established a formal categorical and geometric framework for partially ordered sets and subobject lattices:
 
 1. **Category Structure:** Meets, joins, and closure operators emerge as limits, colimits, and idempotent monads (`CategoryTheory.Monad`).
-2. **Defect Theory:** Modularity of valuations is governed by the non-negative defect $\Delta \ge 0$, whose vanishing characterizes modular rank functions.
+2. **Defect Theory:** The signed modularity defect measures departure from valuation balance. Submodularity is its non-negative special case, while vanishing for every pair characterizes modular valuations. Section 3.3 derives positive, zero, and negative defects for the natural rank on the completed associahedral face lattice and proves preservation under a fixed surrounding group.
 3. **Associahedral Presentations:** For every arity, the bracket and polygon face models have isomorphic orders. All full bracket patterns of a poset chain give the same composite arrow. The Lean development also identifies the facet labels with $A_n$ almost-positive roots and polygon diagonals, classifies the $A_3$ labels by cyclic length, proves their pentagonal and square facet types and counts, and proves Cartan norm 2. The convex realization, complete supporting-face order, actual affine dimension, and geometric counts are now proved for every rank, including the rank-zero point.
-4. **Monoidal Dynamics:** Path valuations into $(\mathbb{N}, +) \times \mathbf{U}_2(\mathbb{Z})$ capture accumulated cost and unipotent shear labels with homomorphic path concatenation. For every fixed labelled chain, all full bracket patterns give the same arrow and the same valuation.
+4. **Monoidal Dynamics:** Path valuations into $(\mathbb{N}, +) \times \mathbf{U}_2(\mathbb{Z})$ capture accumulated cost and unipotent shear labels with homomorphic path concatenation. For every fixed labelled chain, all full bracket patterns give the same arrow and the same valuation. Separately, §6.4 assigns signs to directed reassociations and accumulates them along rotation paths. The pentagon example proves that these unit signed labels depend on the path, even when the endpoints agree.
 5. **Filtration Limits:** Semi-Artinian objects in universe-stratified abelian categories admit transfinite cellular reconstructions with vanishing residual colimits over restricted ordinal intervals at stabilization.
 
-All results compile in Lean 4 without `sorry` placeholders and depend solely on standard foundational axioms (`propext`, `Classical.choice`, `Quot.sound`).
+The formalized results listed in §8 compile in Lean 4 without `sorry` placeholders and depend solely on standard foundational axioms (`propext`, `Classical.choice`, `Quot.sound`). The extensions in §§3.3 and 6.4 include Lean proofs of the signed face-rank formula, fixed-context preservation, full-bracketing overlap formula, geometric rank identification, zero defect of elementary rotations, all three K4 signs, signed rotation-path laws, and the nonzero pentagon loop, vertex-potential obstruction, and triviality of any additive target quotient identifying its two routes.
 
 ---
 
