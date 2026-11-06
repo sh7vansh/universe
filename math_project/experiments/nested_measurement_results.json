@@ -1,0 +1,167 @@
+{
+  "verdict": "Nesting permits both classical and quantum observer models; quantum measurement is not forced by the geometry alone.",
+  "geometric_system": "actual K3 x K4 facet inside K6",
+  "classical_observer_states": 5,
+  "subsystem_states": 2,
+  "commuting_geometric_observable_pairs_tested": 91,
+  "checks": {
+    "actual_product_facet": {
+      "status": "PASS",
+      "checks": 4,
+      "maximum_residual": 0.0
+    },
+    "geometric_bracket_events": {
+      "status": "PASS",
+      "checks": 92,
+      "maximum_residual": 0.0
+    },
+    "classical_nested_observer": {
+      "status": "PASS",
+      "checks": 4,
+      "maximum_residual": 0.0
+    },
+    "isolated_natural_dynamics": {
+      "status": "PASS",
+      "checks": 12,
+      "maximum_residual": 8.881784197001252e-16
+    },
+    "added_quantum_recording": {
+      "status": "PASS",
+      "checks": 5,
+      "maximum_residual": 4.440892098500626e-16
+    },
+    "phase_sensitive_interference": {
+      "status": "PASS",
+      "checks": 5,
+      "maximum_residual": 4.440892098500626e-16
+    },
+    "recording_vs_interference": {
+      "status": "PASS",
+      "checks": 18,
+      "maximum_residual": 4.440892098500626e-16
+    },
+    "added_measurement_incompatibility": {
+      "status": "PASS",
+      "checks": 3,
+      "maximum_residual": 2.220446049250313e-16
+    },
+    "classical_order_counterexample": {
+      "status": "PASS",
+      "checks": 1,
+      "maximum_residual": 0.0
+    },
+    "bell_benchmark": {
+      "status": "PASS",
+      "checks": 5,
+      "maximum_residual": 8.881784197001252e-16
+    },
+    "no_signalling_identity": {
+      "status": "PASS",
+      "checks": 2,
+      "maximum_residual": 1.1102230246251565e-16
+    },
+    "full_environment_postselection": {
+      "status": "PASS",
+      "checks": 6,
+      "maximum_residual": 0.0
+    },
+    "ordinary_connection_control": {
+      "status": "PASS",
+      "checks": 6,
+      "maximum_residual": 1.7763568394002505e-15
+    }
+  },
+  "quantitative_results": {
+    "classical_record_accuracy": 1.0,
+    "isolated_product_subsystem_purities": [
+      1.0000000000000004,
+      1.0000000000000004,
+      1.0000000000000004,
+      1.0000000000000007
+    ],
+    "added_entangled_subsystem_purity": 0.4999999999999998,
+    "selective_joint_probabilities_Z_then_X_and_X_then_Z": [
+      0.4999999999999998,
+      0.2499999999999999
+    ],
+    "classical_local_CHSH_bound": 2,
+    "added_quantum_CHSH": 2.8284271247461894,
+    "dephased_correlated_state_CHSH": 1.414213562373095,
+    "recording_strength_tradeoff": [
+      {
+        "record_angle": 0.0,
+        "visibility": 1.0,
+        "record_distinguishability": 0.0
+      },
+      {
+        "record_angle": 0.19634954084936207,
+        "visibility": 0.9807852804032304,
+        "record_distinguishability": 0.19509032201612825
+      },
+      {
+        "record_angle": 0.39269908169872414,
+        "visibility": 0.9238795325112867,
+        "record_distinguishability": 0.3826834323650898
+      },
+      {
+        "record_angle": 0.5890486225480862,
+        "visibility": 0.8314696123025452,
+        "record_distinguishability": 0.5555702330196022
+      },
+      {
+        "record_angle": 0.7853981633974483,
+        "visibility": 0.7071067811865476,
+        "record_distinguishability": 0.7071067811865475
+      },
+      {
+        "record_angle": 0.9817477042468103,
+        "visibility": 0.5555702330196023,
+        "record_distinguishability": 0.8314696123025452
+      },
+      {
+        "record_angle": 1.1780972450961724,
+        "visibility": 0.38268343236508984,
+        "record_distinguishability": 0.9238795325112867
+      },
+      {
+        "record_angle": 1.3744467859455345,
+        "visibility": 0.19509032201612833,
+        "record_distinguishability": 0.9807852804032304
+      },
+      {
+        "record_angle": 1.5707963267948966,
+        "visibility": 6.123233995736766e-17,
+        "record_distinguishability": 1.0
+      }
+    ],
+    "full_environment_with_added_quantum_postselection": [
+      {
+        "time": 0.2,
+        "facet_probability": 0.9610473968235251,
+        "conditional_subsystem_purity": 0.999999963708062,
+        "ordinary_connection_purity": 0.999999963708062
+      },
+      {
+        "time": 0.7,
+        "facet_probability": 0.639753022367922,
+        "conditional_subsystem_purity": 0.9990537541773096,
+        "ordinary_connection_purity": 0.9990537541773096
+      },
+      {
+        "time": 1.4,
+        "facet_probability": 0.30782128625499783,
+        "conditional_subsystem_purity": 0.8833156440392618,
+        "ordinary_connection_purity": 0.88331564403926
+      }
+    ]
+  },
+  "added_quantum_assumptions": [
+    "complex Hilbert state space",
+    "tensor-product state representation",
+    "unitary time evolution",
+    "Born probabilities",
+    "projective instruments",
+    "chosen controlled recording interaction"
+  ],
+  "qualification": "Algebraic and numerical model tests, not a physical Bell experiment or derivation of single measurement outcomes."
+}

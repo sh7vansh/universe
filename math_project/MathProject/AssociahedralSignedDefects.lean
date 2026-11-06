@@ -40,7 +40,7 @@ def completedSup {n : ℕ} : CompletedBracketing n → CompletedBracketing n →
   | s, ⊥ => s
   | (s : PartialBracketing n), (t : PartialBracketing n) => WithBot.some (bracketIntersection s t)
 
-noncomputable def completedInf {n : ℕ} : CompletedBracketing n → CompletedBracketing n →
+def completedInf {n : ℕ} : CompletedBracketing n → CompletedBracketing n →
     CompletedBracketing n
   | ⊥, _ => ⊥
   | _, ⊥ => ⊥
@@ -49,7 +49,7 @@ noncomputable def completedInf {n : ℕ} : CompletedBracketing n → CompletedBr
         WithBot.some (⟨s.val ∪ t.val, h⟩ : PartialBracketing n)
       else ⊥
 
-noncomputable instance (n : ℕ) : Lattice (CompletedBracketing n) where
+instance (n : ℕ) : Lattice (CompletedBracketing n) where
   sup := completedSup
   inf := completedInf
   le_sup_left := by
@@ -135,7 +135,7 @@ def completedFaceRank {n : ℕ} : CompletedBracketing n → ℤ
   | ⊥ => 0
   | (s : PartialBracketing n) => (n : ℤ) - 1 - s.val.card
 
-noncomputable def signedFaceDefect {n : ℕ} (s t : CompletedBracketing n) : ℤ :=
+def signedFaceDefect {n : ℕ} (s t : CompletedBracketing n) : ℤ :=
   modularityDefect completedFaceRank s t
 
 @[simp] theorem signedFaceDefect_bot_left {n : ℕ} (t : CompletedBracketing n) :
@@ -150,7 +150,6 @@ noncomputable def signedFaceDefect {n : ℕ} (s t : CompletedBracketing n) : ℤ
 theorem signedFaceDefect_formula {n : ℕ} (s t : PartialBracketing n) :
     signedFaceDefect (WithBot.some s) (WithBot.some t) =
       if BracketFamily (s.val ∪ t.val) then 0 else (n : ℤ) - 1 - (s.val ∪ t.val).card := by
-  classical
   have hc := Finset.card_union_add_card_inter s.val t.val
   have hci : ((s.val ∪ t.val).card : ℤ) + (s.val ∩ t.val).card =
       s.val.card + t.val.card := by exact_mod_cast hc

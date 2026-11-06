@@ -1,0 +1,64 @@
+{
+  "verdict": "Completion constrains the growth trigger, but does not uniquely select the field law, its parameters, the exploration order, or a physical clock.",
+  "counterexamples": {
+    "distinct_valid_completion_orders": 2,
+    "completion_times_for_same_record": {
+      "unit_clock": 84.0,
+      "scaled_clock": 210.0
+    },
+    "heat_rates_1_vs_2_final_probability_L1_difference": 0.42799754922804667,
+    "heat_vs_quantum_final_probability_L1_difference": 0.8104588045650016,
+    "mass_squared_0_25_vs_2_25_spectral_shift": 2.0
+  },
+  "expansion_constraints": {
+    "K6_to_K7_intrinsic_embedding": "isometric, graph edges preserved",
+    "full_generator_intertwining": false,
+    "generator_intertwining_Frobenius_residual": 9.16515138991168,
+    "unit_negative_link_short_time_leakage": [
+      {
+        "time": 0.02,
+        "outside_probability": 0.0003999200087105549,
+        "probability_over_time_squared": 0.9998000217763873
+      },
+      {
+        "time": 0.01,
+        "outside_probability": 9.999500013610958e-05,
+        "probability_over_time_squared": 0.9999500013610958
+      },
+      {
+        "time": 0.005,
+        "outside_probability": 2.4999687502126876e-05,
+        "probability_over_time_squared": 0.999987500085075
+      }
+    ]
+  },
+  "workloads": [
+    {
+      "complete_K": 7,
+      "next_K": 8,
+      "new_relation_completions_this_stage": 246
+    },
+    {
+      "complete_K": 8,
+      "next_K": 9,
+      "new_relation_completions_this_stage": 957
+    },
+    {
+      "complete_K": 9,
+      "next_K": 10,
+      "new_relation_completions_this_stage": 3718
+    },
+    {
+      "complete_K": 10,
+      "next_K": 11,
+      "new_relation_completions_this_stage": 14443
+    }
+  ],
+  "conditional_time_prediction": "With one new relation completed per unit time, no repeats and inherited work retained, completion time equals the new-edge count; cumulative stage time grows approximately as 4^n/sqrt(n).",
+  "missing_coupling": "A completion memory and a rule connecting it to field evolution/interaction events are not yet supplied.",
+  "completion_vs_face_lattice": {
+    "two_vertices_can_already_join_to_whole_K6": true,
+    "edge_record_cardinality_modularity_defect": 0,
+    "finite_completion_scope": "all configurations and elementary relations, not all paths; cycles give infinitely many paths"
+  }
+}

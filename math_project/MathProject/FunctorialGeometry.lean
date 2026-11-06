@@ -73,7 +73,7 @@ Part and section labels below refer to the paper.
 
 namespace FunctorialGeometry
 
-open CategoryTheory Limits Classical
+open CategoryTheory Limits
 
 /-! ##############################################################################
     PART I: CATEGORICAL FOUNDATIONS AND SUBMODULAR DEFECTS
@@ -199,15 +199,13 @@ theorem modularityDefect_comm (rk : L → ℤ) (A B : L) :
 
 /-- Pairwise vanishing is exactly the modular valuation equality. -/
 theorem modularityDefect_zero_iff (rk : L → ℤ) (A B : L) :
-    modularityDefect rk A B = 0 ↔ rk (A ⊔ B) + rk (A ⊓ B) = rk A + rk B := by
-  unfold modularityDefect
-  constructor <;> intro h <;> linarith
+    modularityDefect rk A B = 0 ↔ rk (A ⊔ B) + rk (A ⊓ B) = rk A + rk B :=
+  sub_eq_zero.trans eq_comm
 
 /-- Non-negativity is a condition on the valuation, not on the defect definition. -/
 theorem modularityDefect_nonneg_iff (rk : L → ℤ) (A B : L) :
-    0 ≤ modularityDefect rk A B ↔ rk (A ⊔ B) + rk (A ⊓ B) ≤ rk A + rk B := by
-  unfold modularityDefect
-  constructor <;> intro h <;> linarith
+    0 ≤ modularityDefect rk A B ↔ rk (A ⊔ B) + rk (A ⊓ B) ≤ rk A + rk B :=
+  sub_nonneg
 
 /-- A submodular rank function on a lattice L. -/
 structure SubmodularRank (L : Type*) [Lattice L] where
@@ -223,16 +221,13 @@ theorem submodularDefect_eq_modularityDefect (R : SubmodularRank L) (A B : L) :
 
 /-- The defect is strictly non-negative. -/
 theorem defect_nonneg (R : SubmodularRank L) (A B : L) :
-    0 ≤ submodularDefect R A B := by
-  dsimp [submodularDefect]
-  have h := R.submodular A B
-  linarith
+    0 ≤ submodularDefect R A B :=
+  sub_nonneg.mpr (R.submodular A B)
 
 /-- The defect vanishes if and only if the modular equality holds on {A, B}. -/
 theorem defect_zero_iff_modular (R : SubmodularRank L) (A B : L) :
-    submodularDefect R A B = 0 ↔ R.rk (A ⊔ B) + R.rk (A ⊓ B) = R.rk A + R.rk B := by
-  dsimp [submodularDefect]
-  constructor <;> intro h <;> linarith
+    submodularDefect R A B = 0 ↔ R.rk (A ⊔ B) + R.rk (A ⊓ B) = R.rk A + R.rk B :=
+  sub_eq_zero.trans eq_comm
 
 /-- A modular rank function where the defect vanishes everywhere. -/
 structure ModularRank (L : Type*) [Lattice L] extends SubmodularRank L where
@@ -379,8 +374,8 @@ theorem pathExperience_append (p q : List (LatticeStep L)) :
 
 /-- Non-trivial steps strictly increase accumulated action. -/
 theorem action_strictly_increases (t : TravelExperience) (s : LatticeStep L) (hcost : 0 < s.friction_cost) :
-    t.action < (t * stepExperience s).action := by
-  dsimp [stepExperience]; linarith
+    t.action < (t * stepExperience s).action :=
+  Nat.lt_add_of_pos_right hcost
 
 /-- The valuation of a nonempty step list starts with its first step. -/
 @[simp] theorem pathExperience_cons (s : LatticeStep L) (p : List (LatticeStep L)) :
@@ -487,6 +482,8 @@ end TravelMonoid
     ============================================================================== -/
 
 section CellularFiltration
+
+open Classical
 
 universe u
 variable {A : Type (u+1)} [Category.{u} A] [Abelian A] [HasLimitsOfSize.{u, u} A] [HasColimitsOfSize.{u, u} A] [WellPowered.{u} A]
@@ -956,6 +953,8 @@ end CellularFiltration
 
 section BasisDiscovery
 
+open Classical
+
 variable {L : Type} [CompleteLattice L]
 variable {J : Type} [LinearOrder J] [WellFoundedLT J]
 variable (embed : J → L)
@@ -1299,7 +1298,7 @@ def diagonal_to_facetKn2 (n : ℕ) (d : Diagonal n) : FacetKn2 n :=
     have hk : d.b.val - 2 < n := by
       have ha := d.ha
       have hb := d.b.isLt
-      have hnb := d.h_not_base
+      have hnb : d.b.val ≠ n + 2 := fun hb2 => d.h_not_base ⟨h0, hb2⟩
       omega
     FacetKn2.base_diagonal ⟨d.b.val - 2, hk⟩
   else
@@ -1309,6 +1308,7 @@ def diagonal_to_facetKn2 (n : ℕ) (d : Diagonal n) : FacetKn2 n :=
       have ha_lt := d.a.isLt
       omega
     have hj : d.b.val - 3 < n := by
+      have ha := d.ha
       have hb := d.b.isLt
       omega
     have hle : d.a.val - 1 ≤ d.b.val - 3 := by
@@ -1323,14 +1323,16 @@ theorem facetKn2_diagonal_left_inv (n : ℕ) (f : FacetKn2 n) :
 theorem facetKn2_diagonal_right_inv (n : ℕ) (d : Diagonal n) :
     facetKn2_to_diagonal n (diagonal_to_facetKn2 n d) = d := by
   dsimp [diagonal_to_facetKn2]
-  split_ifs with h0
-  · dsimp [facetKn2_to_diagonal]
+  refine Decidable.byCases (fun h0 : d.a.val = 0 => ?_) (fun h0 => ?_)
+  · rw [dif_pos h0]
+    dsimp [facetKn2_to_diagonal]
     have ha := d.ha
     have hb := d.b.isLt
     apply Diagonal.ext
     · ext; dsimp; omega
     · ext; dsimp; omega
-  · dsimp [facetKn2_to_diagonal]
+  · rw [dif_neg h0]
+    dsimp [facetKn2_to_diagonal]
     have ha := d.ha
     have hb := d.b.isLt
     have ha_lt := d.a.isLt
@@ -1588,8 +1590,8 @@ def Diagonal.Crosses {n : ℕ} (d e : Diagonal n) : Prop :=
 instance {n : ℕ} (d e : Diagonal n) : Decidable (d.Crosses e) := by
   unfold Diagonal.Crosses; infer_instance
 
-theorem Diagonal.crosses_comm {n : ℕ} (d e : Diagonal n) : d.Crosses e ↔ e.Crosses d := by
-  unfold Diagonal.Crosses; omega
+theorem Diagonal.crosses_comm {n : ℕ} (d e : Diagonal n) : d.Crosses e ↔ e.Crosses d :=
+  Or.comm
 
 /-- The fan triangulation from vertex 0: diagonals (0, k+2). -/
 def fanDiagonal (n : ℕ) (k : Fin n) : Diagonal n :=
@@ -1618,7 +1620,12 @@ theorem rootAn_pos_crosses_fan_iff (n : ℕ) (i j : Fin n) (hle : i.val ≤ j.va
       i.val ≤ k.val ∧ k.val ≤ j.val := by
   simp only [Diagonal.Crosses, rootAn_diagonal_pos_a, rootAn_diagonal_pos_b,
     fanDiagonal_a, fanDiagonal_b]
-  omega
+  constructor
+  · rintro (⟨h1, h2, h3⟩ | ⟨h1, h2, h3⟩)
+    · exfalso; omega
+    · exact ⟨by omega, by omega⟩
+  · rintro ⟨h1, h2⟩
+    exact Or.inr ⟨by omega, by omega, by omega⟩
 
 /-- A diagonal crosses no fan diagonal iff it is itself a fan diagonal. -/
 theorem crosses_no_fan_iff (n : ℕ) (d : Diagonal n) :
@@ -1627,13 +1634,14 @@ theorem crosses_no_fan_iff (n : ℕ) (d : Diagonal n) :
   have hb := d.b.isLt
   constructor
   · intro h
-    by_contra ha
+    apply Decidable.byContradiction
+    intro ha
     apply h ⟨d.a.val - 1, by omega⟩
     simp only [Diagonal.Crosses, fanDiagonal_a, fanDiagonal_b]
-    omega
+    exact Or.inr ⟨by omega, by omega, by omega⟩
   · intro ha k
     simp only [Diagonal.Crosses, fanDiagonal_a, fanDiagonal_b]
-    omega
+    rintro (⟨h1, _, _⟩ | ⟨h1, _, _⟩) <;> omega
 
 /-- The roots compatible with every element of the initial cluster (the fan) are exactly
     the negative simple roots. -/
@@ -1835,9 +1843,10 @@ def extVec (n : ℕ) (v : Fin n → ℤ) (i : ℕ) : ℤ :=
 
 theorem extVec_val (n : ℕ) (v : Fin n → ℤ) (k : Fin n) :
     extVec n v (k.val + 1) = v k := by
-  dsimp [extVec]
-  have h : 0 < k.val + 1 ∧ k.val + 1 ≤ n := by omega
-  simp [h]
+  unfold extVec
+  have h : 0 < k.val + 1 ∧ k.val + 1 ≤ n := ⟨Nat.succ_pos _, k.isLt⟩
+  rw [dif_pos h]
+  rfl
 
 /-- The General Aₙ Cartan Quadratic Form as a discrete Dirichlet energy on ℤⁿ. -/
 def cartanEnergy (n : ℕ) (v : Fin n → ℤ) : ℤ :=
@@ -1922,21 +1931,52 @@ theorem cartanForm_sum_of_squares (v : Vec3) :
     cartanForm v v = v.x^2 + (v.x - v.y)^2 + (v.y - v.z)^2 + v.z^2 := by
   dsimp [cartanForm]; ring
 
+private theorem int_sq_nonneg (x : ℤ) : 0 ≤ x ^ 2 := by
+  rw [sq]
+  rcases Int.le_total 0 x with h | h
+  · exact Int.mul_nonneg h h
+  · have h' : 0 ≤ -x := Int.neg_nonneg_of_nonpos h
+    have hm : (-x) * (-x) = x * x := by ring
+    rw [← hm]
+    exact Int.mul_nonneg h' h'
+
+private theorem int_sq_eq_zero (x : ℤ) (h : x ^ 2 = 0) : x = 0 := by
+  rw [sq] at h
+  rcases Int.mul_eq_zero.mp h with hx | hx <;> exact hx
+
+private theorem int_sq_le_two (x : ℤ) (h : x ^ 2 ≤ 2) : -1 ≤ x ∧ x ≤ 1 := by
+  rw [sq] at h
+  constructor
+  · apply Decidable.byContradiction; intro hc
+    have h1 : 2 ≤ -x := by omega
+    have h2 : 2 * 2 ≤ (-x) * (-x) := Int.mul_le_mul h1 h1 (by decide) (by omega)
+    have hm : (-x) * (-x) = x * x := by ring
+    omega
+  · apply Decidable.byContradiction; intro hc
+    have h1 : 2 ≤ x := by omega
+    have h2 : 2 * 2 ≤ x * x := Int.mul_le_mul h1 h1 (by decide) (by omega)
+    omega
+
 theorem cartanForm_nonneg (v : Vec3) : 0 ≤ cartanForm v v := by
   rw [cartanForm_sum_of_squares]
-  have h1 : 0 ≤ v.x^2 := sq_nonneg v.x
-  have h2 : 0 ≤ (v.x - v.y)^2 := sq_nonneg (v.x - v.y)
-  have h3 : 0 ≤ (v.y - v.z)^2 := sq_nonneg (v.y - v.z)
-  have h4 : 0 ≤ v.z^2 := sq_nonneg v.z
-  linarith
+  have h1 := int_sq_nonneg v.x
+  have h2 := int_sq_nonneg (v.x - v.y)
+  have h3 := int_sq_nonneg (v.y - v.z)
+  have h4 := int_sq_nonneg v.z
+  omega
 
 theorem cartanForm_pos_def (v : Vec3) : cartanForm v v = 0 ↔ v = 0 := by
   constructor
   · intro h
     rw [cartanForm_sum_of_squares] at h
-    have hx0 : v.x = 0 := by nlinarith [sq_nonneg v.x, sq_nonneg (v.x - v.y), sq_nonneg (v.y - v.z), sq_nonneg v.z]
-    have hz0 : v.z = 0 := by nlinarith [sq_nonneg v.x, sq_nonneg (v.x - v.y), sq_nonneg (v.y - v.z), sq_nonneg v.z]
-    have hy0 : v.y = 0 := by nlinarith [sq_nonneg v.x, sq_nonneg (v.x - v.y), sq_nonneg (v.y - v.z), sq_nonneg v.z]
+    have h1 := int_sq_nonneg v.x
+    have h2 := int_sq_nonneg (v.x - v.y)
+    have h3 := int_sq_nonneg (v.y - v.z)
+    have h4 := int_sq_nonneg v.z
+    have hx0 : v.x = 0 := int_sq_eq_zero v.x (by omega)
+    have hxy0 : v.x - v.y = 0 := int_sq_eq_zero (v.x - v.y) (by omega)
+    have hz0 : v.z = 0 := int_sq_eq_zero v.z (by omega)
+    have hy0 : v.y = 0 := by omega
     ext <;> assumption
   · rintro rfl; rfl
 
@@ -1995,39 +2035,14 @@ theorem root_bounds (v : Vec3) (h : IsRootA3 v) :
   have hsq : v.x ^ 2 + (v.x - v.y) ^ 2 + (v.y - v.z) ^ 2 + v.z ^ 2 = 2 := by
     rw [← cartanForm_sum_of_squares]
     exact h
-  have hx : v.x ^ 2 ≤ 2 := by nlinarith [sq_nonneg (v.x - v.y), sq_nonneg (v.y - v.z), sq_nonneg v.z]
-  have hz : v.z ^ 2 ≤ 2 := by nlinarith [sq_nonneg v.x, sq_nonneg (v.x - v.y), sq_nonneg (v.y - v.z)]
-  have hxy : (v.x - v.y) ^ 2 ≤ 2 := by nlinarith [sq_nonneg v.x, sq_nonneg (v.y - v.z), sq_nonneg v.z]
-  have hyz : (v.y - v.z) ^ 2 ≤ 2 := by nlinarith [sq_nonneg v.x, sq_nonneg (v.x - v.y), sq_nonneg v.z]
-  have hx_bd : -1 ≤ v.x ∧ v.x ≤ 1 := by
-    constructor
-    · by_contra hc
-      have : v.x ≤ -2 := by omega
-      nlinarith [hx]
-    · by_contra hc
-      have : v.x ≥ 2 := by omega
-      nlinarith [hx]
-  have hz_bd : -1 ≤ v.z ∧ v.z ≤ 1 := by
-    constructor
-    · by_contra hc
-      have : v.z ≤ -2 := by omega
-      nlinarith [hz]
-    · by_contra hc
-      have : v.z ≥ 2 := by omega
-      nlinarith [hz]
-  have hy_bd : -2 ≤ v.y ∧ v.y ≤ 2 := by
-    constructor
-    · by_contra hc
-      have : v.y ≤ -3 := by omega
-      have hx1 : -1 ≤ v.x := hx_bd.1
-      have : (v.x - v.y) ≥ 2 := by omega
-      nlinarith [hxy]
-    · by_contra hc
-      have : v.y ≥ 3 := by omega
-      have hx2 : v.x ≤ 1 := hx_bd.2
-      have : (v.x - v.y) ≤ -2 := by omega
-      nlinarith [hxy]
-  exact ⟨hx_bd.1, hx_bd.2, hy_bd.1, hy_bd.2, hz_bd.1, hz_bd.2⟩
+  have s1 := int_sq_nonneg v.x
+  have s2 := int_sq_nonneg (v.x - v.y)
+  have s3 := int_sq_nonneg (v.y - v.z)
+  have s4 := int_sq_nonneg v.z
+  have hx := int_sq_le_two v.x (by omega)
+  have hxy := int_sq_le_two (v.x - v.y) (by omega)
+  have hz := int_sq_le_two v.z (by omega)
+  refine ⟨hx.1, hx.2, by omega, by omega, hz.1, hz.2⟩
 
 /-- The root embedding rootA3_to_vec3 is injective. -/
 theorem rootA3_to_vec3_injective : Function.Injective rootA3_to_vec3 := by
@@ -2039,42 +2054,40 @@ theorem isAlmostPositiveRootA3_iff (v : Vec3) :
     IsAlmostPositiveRootA3 v ↔ ∃ r : RootA3, rootA3_to_vec3 r = v := by
   constructor
   · rintro ⟨hroot, hpos | hneg⟩
-    · by_cases h1 : v = alpha1
-      · exact ⟨RootA3.alpha1, h1 ▸ rfl⟩
-      · by_cases h2 : v = alpha2
-        · exact ⟨RootA3.alpha2, h2 ▸ rfl⟩
-        · by_cases h3 : v = alpha3
-          · exact ⟨RootA3.alpha3, h3 ▸ rfl⟩
-          · by_cases h12 : v = alpha12
-            · exact ⟨RootA3.alpha12, h12 ▸ rfl⟩
-            · by_cases h23 : v = alpha23
-              · exact ⟨RootA3.alpha23, h23 ▸ rfl⟩
-              · by_cases h123 : v = alpha123
-                · exact ⟨RootA3.alpha123, h123 ▸ rfl⟩
-                · exfalso
-                  have hbd := root_bounds v hroot
-                  have hnorm : v.x ^ 2 + (v.x - v.y) ^ 2 + (v.y - v.z) ^ 2 + v.z ^ 2 = 2 := by
-                    rw [← cartanForm_sum_of_squares]; exact hroot
-                  rcases v with ⟨vx, vy, vz⟩
-                  dsimp at hbd hpos
-                  rcases hbd with ⟨hx1, hx2, hy1, hy2, hz1, hz2⟩
-                  have hx_cases : vx = 0 ∨ vx = 1 := by omega
-                  have hy_cases : vy = 0 ∨ vy = 1 ∨ vy = 2 := by omega
-                  have hz_cases : vz = 0 ∨ vz = 1 := by omega
-                  dsimp [alpha1, alpha2, alpha3, alpha12, alpha23, alpha123] at h1 h2 h3 h12 h23 h123 hnorm
-                  rcases hx_cases with rx | rx <;> rcases hy_cases with ry | ry | ry <;> rcases hz_cases with rz | rz
-                  · rw [rx, ry, rz] at hnorm; revert hnorm; decide
-                  · subst rx ry rz; exact h3 rfl
-                  · subst rx ry rz; exact h2 rfl
-                  · subst rx ry rz; exact h23 rfl
-                  · rw [rx, ry, rz] at hnorm; revert hnorm; decide
-                  · rw [rx, ry, rz] at hnorm; revert hnorm; decide
-                  · subst rx ry rz; exact h1 rfl
-                  · rw [rx, ry, rz] at hnorm; revert hnorm; decide
-                  · subst rx ry rz; exact h12 rfl
-                  · subst rx ry rz; exact h123 rfl
-                  · rw [rx, ry, rz] at hnorm; revert hnorm; decide
-                  · rw [rx, ry, rz] at hnorm; revert hnorm; decide
+    · refine Decidable.byCases (fun h1 : v = alpha1 => ⟨RootA3.alpha1, h1 ▸ rfl⟩) (fun h1 => ?_)
+      refine Decidable.byCases (fun h2 : v = alpha2 => ⟨RootA3.alpha2, h2 ▸ rfl⟩) (fun h2 => ?_)
+      refine Decidable.byCases (fun h3 : v = alpha3 => ⟨RootA3.alpha3, h3 ▸ rfl⟩) (fun h3 => ?_)
+      refine Decidable.byCases (fun h12 : v = alpha12 => ⟨RootA3.alpha12, h12 ▸ rfl⟩) (fun h12 => ?_)
+      refine Decidable.byCases (fun h23 : v = alpha23 => ⟨RootA3.alpha23, h23 ▸ rfl⟩) (fun h23 => ?_)
+      refine Decidable.byCases (fun h123 : v = alpha123 => ⟨RootA3.alpha123, h123 ▸ rfl⟩) (fun h123 => ?_)
+      exfalso
+      have hbd := root_bounds v hroot
+      have hnorm : v.x ^ 2 + (v.x - v.y) ^ 2 + (v.y - v.z) ^ 2 + v.z ^ 2 = 2 := by
+        rw [← cartanForm_sum_of_squares]; exact hroot
+      rcases v with ⟨vx, vy, vz⟩
+      dsimp at hbd hpos
+      rcases hbd with ⟨hx1, hx2, hy1, hy2, hz1, hz2⟩
+      have hx_cases : vx = 0 ∨ vx = 1 :=
+        Decidable.byCases (fun h0 : vx = 0 => Or.inl h0) (fun _ => Or.inr (by omega))
+      have hy_cases : vy = 0 ∨ vy = 1 ∨ vy = 2 :=
+        Decidable.byCases (fun h0 : vy = 0 => Or.inl h0) (fun _ =>
+          Decidable.byCases (fun h1 : vy = 1 => Or.inr (Or.inl h1)) (fun _ => Or.inr (Or.inr (by omega))))
+      have hz_cases : vz = 0 ∨ vz = 1 :=
+        Decidable.byCases (fun h0 : vz = 0 => Or.inl h0) (fun _ => Or.inr (by omega))
+      dsimp [alpha1, alpha2, alpha3, alpha12, alpha23, alpha123] at h1 h2 h3 h12 h23 h123 hnorm
+      rcases hx_cases with rx | rx <;> rcases hy_cases with ry | ry | ry <;> rcases hz_cases with rz | rz
+      · rw [rx, ry, rz] at hnorm; revert hnorm; decide
+      · subst rx ry rz; exact h3 rfl
+      · subst rx ry rz; exact h2 rfl
+      · subst rx ry rz; exact h23 rfl
+      · rw [rx, ry, rz] at hnorm; revert hnorm; decide
+      · rw [rx, ry, rz] at hnorm; revert hnorm; decide
+      · subst rx ry rz; exact h1 rfl
+      · rw [rx, ry, rz] at hnorm; revert hnorm; decide
+      · subst rx ry rz; exact h12 rfl
+      · subst rx ry rz; exact h123 rfl
+      · rw [rx, ry, rz] at hnorm; revert hnorm; decide
+      · rw [rx, ry, rz] at hnorm; revert hnorm; decide
     · rcases hneg with rfl | rfl | rfl
       · exact ⟨RootA3.neg_alpha1, rfl⟩
       · exact ⟨RootA3.neg_alpha2, rfl⟩
@@ -2195,16 +2208,26 @@ def rootAn_to_vec (n : ℕ) : RootAn n → Fin n → ℤ
 theorem extVec_rootAn_pos (n : ℕ) (i j : Fin n) (h : i.val ≤ j.val) (t : ℕ) :
     extVec n (rootAn_to_vec n (RootAn.pos i j h)) t =
       if i.val + 1 ≤ t ∧ t ≤ j.val + 1 then 1 else 0 := by
-  have := j.isLt
-  unfold extVec rootAn_to_vec
-  split_ifs <;> (try simp only at *) <;> omega
+  have hj := j.isLt
+  dsimp [extVec, rootAn_to_vec]
+  refine Decidable.byCases (fun ht : 0 < t ∧ t ≤ n => ?_) (fun ht => ?_)
+  · rw [dif_pos ht]
+    refine Decidable.byCases (fun hij : i.val ≤ t - 1 ∧ t - 1 ≤ j.val => ?_) (fun hij => ?_)
+    · rw [if_pos hij, if_pos ⟨by omega, by omega⟩]
+    · rw [if_neg hij, if_neg (fun h' => hij ⟨by omega, by omega⟩)]
+  · rw [dif_neg ht, if_neg (fun h' => ht ⟨by omega, by omega⟩)]
 
 theorem extVec_rootAn_neg (n : ℕ) (k : Fin n) (t : ℕ) :
     extVec n (rootAn_to_vec n (RootAn.neg_simple k)) t =
       if t = k.val + 1 then -1 else 0 := by
-  have := k.isLt
-  unfold extVec rootAn_to_vec
-  split_ifs <;> (try simp only at *) <;> omega
+  have hk := k.isLt
+  dsimp [extVec, rootAn_to_vec]
+  refine Decidable.byCases (fun ht : 0 < t ∧ t ≤ n => ?_) (fun ht => ?_)
+  · rw [dif_pos ht]
+    refine Decidable.byCases (fun htk : t - 1 = k.val => ?_) (fun htk => ?_)
+    · rw [if_pos htk, if_pos (by omega)]
+    · rw [if_neg htk, if_neg (fun h' => htk (by omega))]
+  · rw [dif_neg ht, if_neg (fun h' => ht ⟨by omega, by omega⟩)]
 
 /-- **Norm 2 for all n:** every almost-positive root of Aₙ has Cartan energy exactly 2. -/
 theorem rootAn_cartan_norm (n : ℕ) (r : RootAn n) :
@@ -2247,25 +2270,47 @@ theorem rootAn_to_vec_injective (n : ℕ) : Function.Injective (rootAn_to_vec n)
       have h2 := congrFun hrs i'
       have h3 := congrFun hrs j
       have h4 := congrFun hrs j'
-      simp only [rootAn_to_vec] at h1 h2 h3 h4
-      have hi : i = i' := Fin.ext (by split_ifs at h1 h2 h3 h4 <;> omega)
-      have hj : j = j' := Fin.ext (by split_ifs at h1 h2 h3 h4 <;> omega)
+      dsimp [rootAn_to_vec] at h1 h2 h3 h4
+      rw [if_pos (⟨le_rfl, hij⟩ : i.val ≤ i.val ∧ i.val ≤ j.val)] at h1
+      rw [if_pos (⟨le_rfl, hij'⟩ : i'.val ≤ i'.val ∧ i'.val ≤ j'.val)] at h2
+      rw [if_pos (⟨hij, le_rfl⟩ : i.val ≤ j.val ∧ j.val ≤ j.val)] at h3
+      rw [if_pos (⟨hij', le_rfl⟩ : i'.val ≤ j'.val ∧ j'.val ≤ j'.val)] at h4
+      have hi1 : i'.val ≤ i.val ∧ i.val ≤ j'.val :=
+        Decidable.byContradiction (fun hc => by rw [if_neg hc] at h1; omega)
+      have hi2 : i.val ≤ i'.val ∧ i'.val ≤ j.val :=
+        Decidable.byContradiction (fun hc => by rw [if_neg hc] at h2; omega)
+      have hj1 : i'.val ≤ j.val ∧ j.val ≤ j'.val :=
+        Decidable.byContradiction (fun hc => by rw [if_neg hc] at h3; omega)
+      have hj2 : i.val ≤ j'.val ∧ j'.val ≤ j.val :=
+        Decidable.byContradiction (fun hc => by rw [if_neg hc] at h4; omega)
+      have hi : i = i' := Fin.ext (Nat.le_antisymm hi2.1 hi1.1)
+      have hj : j = j' := Fin.ext (Nat.le_antisymm hj1.2 hj2.2)
       subst hi hj; rfl
     | neg_simple k =>
       have h1 := congrFun hrs i
-      simp only [rootAn_to_vec] at h1
-      split_ifs at h1 <;> omega
+      dsimp [rootAn_to_vec] at h1
+      rw [if_pos (⟨le_rfl, hij⟩ : i.val ≤ i.val ∧ i.val ≤ j.val)] at h1
+      exfalso
+      exact Decidable.byCases
+        (fun h : i.val = k.val => by rw [if_pos h] at h1; omega)
+        (fun h => by rw [if_neg h] at h1; omega)
   | neg_simple k =>
     cases s with
     | pos i' j' hij' =>
       have h1 := congrFun hrs i'
-      simp only [rootAn_to_vec] at h1
-      split_ifs at h1 <;> omega
+      dsimp [rootAn_to_vec] at h1
+      rw [if_pos (⟨le_rfl, hij'⟩ : i'.val ≤ i'.val ∧ i'.val ≤ j'.val)] at h1
+      exfalso
+      exact Decidable.byCases
+        (fun h : i'.val = k.val => by rw [if_pos h] at h1; omega)
+        (fun h => by rw [if_neg h] at h1; omega)
     | neg_simple k' =>
       have h1 := congrFun hrs k
-      simp only [rootAn_to_vec] at h1
-      have hk : k = k' := Fin.ext (by split_ifs at h1 <;> omega)
-      subst hk; rfl
+      dsimp [rootAn_to_vec] at h1
+      rw [if_pos rfl] at h1
+      have hk : k.val = k'.val :=
+        Decidable.byContradiction (fun hc => by rw [if_neg hc] at h1; omega)
+      exact congrArg RootAn.neg_simple (Fin.ext hk)
 
 end CartanMetric
 

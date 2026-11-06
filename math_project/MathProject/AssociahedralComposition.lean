@@ -82,10 +82,24 @@ def bracketDiagonalEquiv (n : ℕ) : ProperBracket n ≃ PolygonDiagonal n where
 theorem bracketCompatible_iff_noncrossing {n : ℕ} (p q : ProperBracket n) :
     BracketCompatible p q ↔
       ¬ DiagonalsCross (bracketDiagonalEquiv n p) (bracketDiagonalEquiv n q) := by
-  have hp := p.length_two
-  have hq := q.length_two
   dsimp [BracketCompatible, DiagonalsCross, bracketDiagonalEquiv]
-  omega
+  constructor
+  · rintro (h | h | ⟨h1, h2⟩ | ⟨h1, h2⟩) (⟨c1, c2, c3⟩ | ⟨c1, c2, c3⟩) <;> omega
+  · intro h
+    rcases le_or_gt p.right.val q.left.val with h1 | h1
+    · exact Or.inl h1
+    · rcases le_or_gt q.right.val p.left.val with h2 | h2
+      · exact Or.inr (Or.inl h2)
+      · rcases lt_trichotomy p.left.val q.left.val with h3 | h3 | h3
+        · rcases le_or_gt q.right.val p.right.val with h4 | h4
+          · exact Or.inr (Or.inr (Or.inl ⟨Nat.le_of_lt h3, h4⟩))
+          · exfalso; exact h (Or.inl ⟨h3, h1, h4⟩)
+        · rcases le_or_gt q.right.val p.right.val with h4 | h4
+          · exact Or.inr (Or.inr (Or.inl ⟨Nat.le_of_eq h3, h4⟩))
+          · exact Or.inr (Or.inr (Or.inr ⟨Nat.le_of_eq h3.symm, Nat.le_of_lt h4⟩))
+        · rcases le_or_gt p.right.val q.right.val with h4 | h4
+          · exact Or.inr (Or.inr (Or.inr ⟨Nat.le_of_lt h3, h4⟩))
+          · exfalso; exact h (Or.inr ⟨h3, h2, h4⟩)
 
 /-- Compatible partial bracket patterns, ordered by adding brackets. -/
 abbrev PartialBracketing (n : ℕ) :=
@@ -220,11 +234,11 @@ variable {L : Type*} [PartialOrder L]
 /-- Evaluate a tree by actual categorical composition, using consecutive chain arrows. -/
 def evalBracketTree (x : ℕ → L) (hx : Monotone x) :
     (t : BinaryTree Unit) → (start : ℕ) → (x start ⟶ x (start + t.numLeaves))
-  | .nil, start => homOfLE (hx (by simp))
-  | .node _ a b, start => by
-    have f := evalBracketTree x hx a start
-    have g := evalBracketTree x hx b (start + a.numLeaves)
-    simpa only [BinaryTree.numLeaves, Nat.add_assoc] using f ≫ g
+  | .nil, start => homOfLE (hx (Nat.le_add_right start 1))
+  | .node _ a b, start =>
+    let f := evalBracketTree x hx a start
+    let g := evalBracketTree x hx b (start + a.numLeaves)
+    Eq.mp (by rw [BinaryTree.numLeaves, Nat.add_assoc]) (f ≫ g)
 
 /-- Every tree evaluates to the unique chain arrow. -/
 theorem evalBracketTree_eq (x : ℕ → L) (hx : Monotone x)
@@ -234,9 +248,8 @@ theorem evalBracketTree_eq (x : ℕ → L) (hx : Monotone x)
 
 /-- Evaluate a full bracketing to a morphism with the common endpoints. -/
 def evalFullBracketing (x : ℕ → L) (hx : Monotone x) {n : ℕ}
-    (t : FullBracketing n) (start : ℕ) : x start ⟶ x (start + n) := by
-  have f := evalBracketTree x hx t.val start
-  simpa only [t.property] using f
+    (t : FullBracketing n) (start : ℕ) : x start ⟶ x (start + n) :=
+  t.property ▸ evalBracketTree x hx t.val start
 
 /-- In every arity, any two full bracketings have the same composite. -/
 theorem all_bracketings_same_composite (x : ℕ → L) (hx : Monotone x)
@@ -246,7 +259,7 @@ theorem all_bracketings_same_composite (x : ℕ → L) (hx : Monotone x)
 
 /-- Extend a finite chain by repeating its last object. -/
 def extendFiniteChain {n : ℕ} (x : Fin (n + 1) → L) (i : ℕ) : L :=
-  x ⟨min i n, by omega⟩
+  x ⟨min i n, Nat.lt_succ_of_le (Nat.min_le_right i n)⟩
 
 theorem extendFiniteChain_monotone {n : ℕ} (x : Fin (n + 1) → L)
     (hx : Monotone x) : Monotone (extendFiniteChain x) := by
@@ -256,9 +269,12 @@ theorem extendFiniteChain_monotone {n : ℕ} (x : Fin (n + 1) → L)
 
 /-- Evaluate a bracketing of a finite chain of exactly `n` arrows. -/
 def evalChainBracketing {n : ℕ} (x : Fin (n + 1) → L) (hx : Monotone x)
-    (t : FullBracketing n) : x 0 ⟶ x (Fin.last n) := by
-  simpa [extendFiniteChain, Fin.last] using
-    evalFullBracketing (extendFiniteChain x) (extendFiniteChain_monotone x hx) t 0
+    (t : FullBracketing n) : x 0 ⟶ x (Fin.last n) :=
+  have h0 : extendFiniteChain x 0 = x 0 := rfl
+  have hn : extendFiniteChain x (0 + n) = x (Fin.last n) := by
+    change x ⟨min (0 + n) n, _⟩ = x ⟨n, Nat.lt_succ_self n⟩
+    congr 1; apply Fin.ext; simp only [Nat.zero_add, Nat.min_self]
+  h0 ▸ hn ▸ evalFullBracketing (extendFiniteChain x) (extendFiniteChain_monotone x hx) t 0
 
 /-- The thin-category conclusion for every finite chain and every positive arity. -/
 theorem all_Kn_chain_composites {n : ℕ} (x : Fin (n + 1) → L)

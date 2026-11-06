@@ -12,3 +12,7 @@ build/
 node_modules/
 
 .pi/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
