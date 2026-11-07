@@ -2,7 +2,7 @@
 
 > **First-Principles Stock-Flow Consistent (SFC) Debt Dynamics Confronted with 156 Years of Real Macroeconomic History (Jordà–Schularick–Taylor Database, 1870–2025)**
 
-This directory contains the mathematical treatise ([`UNIFIED_MATHEMATICAL_REALITY.md`](UNIFIED_MATHEMATICAL_REALITY.md)), the first-principles 3-tier Stock-Flow Consistent simulation engine ([`fractal_debt_model.py`](fractal_debt_model.py)), the empirical macrohistory verification suite ([`empirical_jst_wavelet_analysis.py`](empirical_jst_wavelet_analysis.py)), and the interactive web laboratory ([`index.html`](index.html)).
+This directory contains the working technical notes ([`model_notes.md`](model_notes.md)), the first-principles 3-tier Stock-Flow Consistent simulation engine ([`fractal_debt_model.py`](fractal_debt_model.py)), the empirical macrohistory verification suite ([`empirical_jst_wavelet_analysis.py`](empirical_jst_wavelet_analysis.py)), and the interactive web laboratory ([`index.html`](index.html)).
 
 ---
 
@@ -21,7 +21,7 @@ In this repository, **zero forced sinusoidal clocks or deterministic crash timer
 
 Passing **156 years (`1870–2025`) of real US and 18-Country Total Debt-to-GDP** from the **Jordà–Schularick–Taylor (JST) Macrohistory Database R6** ([`JSTdatasetR6.xlsx`](JSTdatasetR6.xlsx)) through the **exact unmodified [`compute_morlet_cwt`](fractal_debt_model.py) and [`compute_multifractal_wavelet_spectrum`](fractal_debt_model.py)** functions yields:
 
-| Observable / Invariant | Theoretical Treatise ([`UNIFIED_MATHEMATICAL_REALITY.md`](UNIFIED_MATHEMATICAL_REALITY.md)) | First-Principles SFC Simulation ([`fractal_debt_model.py`](fractal_debt_model.py)) | **Empirical JST Data (`1870–2025`)** ([`empirical_jst_wavelet_analysis.py`](empirical_jst_wavelet_analysis.py)) |
+| Observable / Invariant | Analytical Notes ([`model_notes.md`](model_notes.md)) | First-Principles SFC Simulation ([`fractal_debt_model.py`](fractal_debt_model.py)) | **Empirical JST Data (`1870–2025`)** ([`empirical_jst_wavelet_analysis.py`](empirical_jst_wavelet_analysis.py)) |
 | :--- | :--- | :--- | :--- |
 | **Short Business / Credit Cycle ($T_1$)** | $4\tau_{\text{eff}} = \mathbf{6.00\text{ yrs}}$ | $\mathbf{6.67\text{ yrs}}$ *(autonomous DDE Hopf)* | **`6.17 yrs`** *(CWT peak on YoY credit impulse)* |
 | **Kuznets Capex / Real Estate Swing ($T_{\text{mid}}$)** | Intermediate harmonic | $15\text{–}18\text{ yrs}$ | **`14.72 yrs`** *(CWT intermediate peak)* |
@@ -47,7 +47,7 @@ Passing **156 years (`1870–2025`) of real US and 18-Country Total Debt-to-GDP*
 
 | File | Description |
 | :--- | :--- |
-| [`UNIFIED_MATHEMATICAL_REALITY.md`](UNIFIED_MATHEMATICAL_REALITY.md) | Complete mathematical treatise & empirical confrontation (`1870–2025`). |
+| [`model_notes.md`](model_notes.md) | Working mathematical notes & empirical confrontation (`1870–2025`). |
 | [`fractal_debt_model.py`](fractal_debt_model.py) | 600-year First-Principles SFC 3-Tier Engine + Complex Morlet CWT + Multifractal Spectrum. |
 | [`empirical_jst_wavelet_analysis.py`](empirical_jst_wavelet_analysis.py) | Empirical verification pipeline on the 1870–2025 JST Macrohistory Database. |
 | [`pure_fractal_debt_model.py`](pure_fractal_debt_model.py) | Zero-dependency pure Python SFC simulation & terminal ASCII Morlet scalogram. |

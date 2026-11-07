@@ -1,16 +1,16 @@
-# The Unified Mathematical Reality
-## Information Geometry, Causal Set Theory, and Multifractal Wavelet Dynamics Across Spacetime and Credit Networks
+# Notes on Delay-Differential Credit Cycles and Balance-Sheet Dynamics
+## Non-Markovian Debt Networks, Stock-Flow Consistent Loss Socialization, and Wavelet Scaling
 
 > **Author:** Shivansh  
 > **Date:** November 2026  
-> **Status:** Foundational Mathematical Treatise & Empirical Proof (`1870–2025`)  
-> **Scope:** Theoretical Physics (Quantum Gravity, Holography) $\otimes$ Theoretical & Empirical Macroeconomics (Stock-Flow Consistent Credit Networks, Delay-Differential Hopf Bifurcations, Multifractal Wavelet Geometry)
+> **Status:** Working Technical Notes & Empirical Verification (`1870–2025`)  
+> **Scope:** Non-Linear Credit Dynamics, Stock-Flow Consistent (SFC) Accounting, Multifractal Wavelet Analysis, and Network Geometry
 
 ---
 
 ## Abstract
 
-This treatise formalizes the mathematical equivalence between the emergent geometry of spacetime in quantum gravity and the macro-structural dynamics of economic debt networks. We reject the classical premise that reality consists of fundamental objects embedded within a pre-existing container (absolute spacetime in physics, or frictionless barter/DSGE equilibrium in economics). Instead, we prove—both analytically from first principles and empirically across **156 years of macroeconomic history (`1870–2025`)**—that both domains are macroscopic manifestations of a single underlying mathematical structure: **Non-Equilibrium Information Geometry on Dynamic, Non-Markovian Directed Hypergraphs**.
+These notes document a mathematical mapping between discrete network geometry and the macro-structural dynamics of multi-tier credit systems. Rather than modeling macroeconomic fluctuations as stationary Gaussian shocks around a frictionless equilibrium, we examine how **Non-Equilibrium Information Geometry on Dynamic, Non-Markovian Directed Graphs** reproduces the empirical scaling properties of historical debt cycles (`1870–2025`).
 
 By formalizing five foundational axioms—*Indivisibility*, *Conserved Attention (Monogamy)*, *Non-Markovian Memory*, *Power-Law Selection*, and *Stochasticity*—we derive:
 1. The emergence of continuous metric space ($g_{\mu\nu}$) and the linearized Einstein Field Equations ($G_{\mu\nu} = 8\pi G T_{\mu\nu}$).
@@ -222,7 +222,7 @@ To subject this mathematical framework to the strictest possible empirical falsi
 
 ### 8.1 Head-to-Head Comparison: Theory vs. First-Principles SFC Engine vs. Real History (`1870–2025`)
 
-| Macro-Geometric Invariant | Analytical Derivation (`UNIFIED_MATHEMATICAL_REALITY.md`) | First-Principles SFC Simulation ([`fractal_debt_model.py`](fractal_debt_model.py)) | **Empirical Historical Data (`1870–2025` JST)** ([`empirical_jst_wavelet_analysis.py`](empirical_jst_wavelet_analysis.py)) |
+| Macro-Geometric Invariant | Analytical Derivation (`model_notes.md`) | First-Principles SFC Simulation ([`fractal_debt_model.py`](fractal_debt_model.py)) | **Empirical Historical Data (`1870–2025` JST)** ([`empirical_jst_wavelet_analysis.py`](empirical_jst_wavelet_analysis.py)) |
 | :--- | :--- | :--- | :--- |
 | **Short Business / Credit Cycle ($T_1$)** | $4\tau_{\text{eff}} = \mathbf{6.00\text{ yrs}}$ | $\mathbf{6.67\text{ yrs}}$ *(autonomous DDE Hopf)* | **`6.17 yrs`** *(CWT peak on YoY credit impulse)* |
 | **Kuznets Capex / Real Estate Swing ($T_{\text{mid}}$)** | Intermediate harmonic | $15\text{–}18\text{ yrs}$ | **`14.72 yrs`** *(CWT intermediate peak)* |
