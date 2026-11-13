@@ -1,0 +1,358 @@
+[
+  {
+    "N": 2,
+    "trees": 5,
+    "rotation_edges": 5,
+    "stationary_weights": {
+      "00": 1,
+      "01": 1,
+      "10": 2,
+      "11": 1
+    },
+    "exact_weight_balance": true,
+    "rotation_canopy_hamming_histogram": {
+      "0": 1,
+      "1": 4
+    },
+    "missing_rotation_lifts_per_microstate_event": {
+      "hop": 2
+    },
+    "cao_lift": {
+      "moves": 6,
+      "strong_lumpability": true,
+      "uniform_tree_stationarity": true,
+      "marked_tree_bijection": true,
+      "single_rotation_moves": 4,
+      "rotation_distance_histogram": {
+        "1": 4,
+        "2": 2
+      },
+      "distance_histograms_by_kind": {
+        "inject": {
+          "1": 2
+        },
+        "hop": {
+          "2": 2
+        },
+        "extract": {
+          "1": 2
+        }
+      },
+      "mean_rotation_distance": {
+        "numerator": 8,
+        "denominator": 6
+      }
+    },
+    "bond_current": {
+      "numerator": 2,
+      "denominator": 5,
+      "formula": "(N+2)/(4*N+2)"
+    },
+    "capacity_obstruction": {
+      "N": 2,
+      "configuration": "01",
+      "weight": 1,
+      "outgoing": 2,
+      "incoming_capacity": 0,
+      "incoming_demand": 2,
+      "slack": -2,
+      "predecessors": [
+        "10"
+      ]
+    },
+    "arbitrary_assignment_search": {
+      "status": 2,
+      "message": "The problem is infeasible. (HiGHS Status 8: model_status is Infeasible; primal_status is None)",
+      "time_limit_seconds": 60.0,
+      "variables": 20,
+      "constraints": 34,
+      "requires_uniform_tree_stationarity": false,
+      "independent_brute_force": {
+        "assignments": 60,
+        "feasible": 0
+      }
+    }
+  },
+  {
+    "N": 3,
+    "trees": 14,
+    "rotation_edges": 21,
+    "stationary_weights": {
+      "000": 1,
+      "001": 1,
+      "010": 2,
+      "011": 1,
+      "100": 3,
+      "101": 2,
+      "110": 3,
+      "111": 1
+    },
+    "exact_weight_balance": true,
+    "rotation_canopy_hamming_histogram": {
+      "0": 6,
+      "1": 15
+    },
+    "missing_rotation_lifts_per_microstate_event": {
+      "hop": 10
+    },
+    "cao_lift": {
+      "moves": 20,
+      "strong_lumpability": true,
+      "uniform_tree_stationarity": true,
+      "marked_tree_bijection": true,
+      "single_rotation_moves": 8,
+      "rotation_distance_histogram": {
+        "1": 8,
+        "2": 10,
+        "3": 2
+      },
+      "distance_histograms_by_kind": {
+        "inject": {
+          "1": 4,
+          "2": 1
+        },
+        "hop": {
+          "2": 8,
+          "3": 2
+        },
+        "extract": {
+          "1": 4,
+          "2": 1
+        }
+      },
+      "mean_rotation_distance": {
+        "numerator": 34,
+        "denominator": 20
+      }
+    },
+    "bond_current": {
+      "numerator": 5,
+      "denominator": 14,
+      "formula": "(N+2)/(4*N+2)"
+    },
+    "capacity_obstruction": {
+      "N": 3,
+      "configuration": "010",
+      "weight": 2,
+      "outgoing": 2,
+      "incoming_capacity": 2,
+      "incoming_demand": 4,
+      "slack": -2,
+      "predecessors": [
+        "011",
+        "100"
+      ]
+    },
+    "arbitrary_assignment_search": {
+      "status": 2,
+      "message": "The problem is infeasible. (HiGHS Status 8: model_status is Infeasible; primal_status is None)",
+      "time_limit_seconds": 60.0,
+      "variables": 112,
+      "constraints": 190,
+      "requires_uniform_tree_stationarity": false
+    }
+  },
+  {
+    "N": 4,
+    "trees": 42,
+    "rotation_edges": 84,
+    "stationary_weights": {
+      "0000": 1,
+      "0001": 1,
+      "0010": 2,
+      "0011": 1,
+      "0100": 3,
+      "0101": 2,
+      "0110": 3,
+      "0111": 1,
+      "1000": 4,
+      "1001": 3,
+      "1010": 5,
+      "1011": 2,
+      "1100": 6,
+      "1101": 3,
+      "1110": 4,
+      "1111": 1
+    },
+    "exact_weight_balance": true,
+    "rotation_canopy_hamming_histogram": {
+      "0": 28,
+      "1": 56
+    },
+    "missing_rotation_lifts_per_microstate_event": {
+      "hop": 42
+    },
+    "cao_lift": {
+      "moves": 70,
+      "strong_lumpability": true,
+      "uniform_tree_stationarity": true,
+      "marked_tree_bijection": true,
+      "single_rotation_moves": 18,
+      "rotation_distance_histogram": {
+        "1": 18,
+        "2": 36,
+        "3": 14,
+        "4": 2
+      },
+      "distance_histograms_by_kind": {
+        "inject": {
+          "1": 9,
+          "2": 4,
+          "3": 1
+        },
+        "hop": {
+          "2": 28,
+          "3": 12,
+          "4": 2
+        },
+        "extract": {
+          "1": 9,
+          "2": 4,
+          "3": 1
+        }
+      },
+      "mean_rotation_distance": {
+        "numerator": 140,
+        "denominator": 70
+      }
+    },
+    "bond_current": {
+      "numerator": 14,
+      "denominator": 42,
+      "formula": "(N+2)/(4*N+2)"
+    },
+    "capacity_obstruction": {
+      "N": 4,
+      "configuration": "0101",
+      "weight": 2,
+      "outgoing": 3,
+      "incoming_capacity": 2,
+      "incoming_demand": 6,
+      "slack": -4,
+      "predecessors": [
+        "1001",
+        "0110"
+      ]
+    },
+    "arbitrary_assignment_search": {
+      "status": 2,
+      "message": "The problem is infeasible. (HiGHS Status 8: model_status is Infeasible; primal_status is None)",
+      "time_limit_seconds": 60.0,
+      "variables": 672,
+      "constraints": 1234,
+      "requires_uniform_tree_stationarity": false
+    }
+  },
+  {
+    "N": 5,
+    "trees": 132,
+    "rotation_edges": 330,
+    "stationary_weights": {
+      "00000": 1,
+      "00001": 1,
+      "00010": 2,
+      "00011": 1,
+      "00100": 3,
+      "00101": 2,
+      "00110": 3,
+      "00111": 1,
+      "01000": 4,
+      "01001": 3,
+      "01010": 5,
+      "01011": 2,
+      "01100": 6,
+      "01101": 3,
+      "01110": 4,
+      "01111": 1,
+      "10000": 5,
+      "10001": 4,
+      "10010": 7,
+      "10011": 3,
+      "10100": 9,
+      "10101": 5,
+      "10110": 7,
+      "10111": 2,
+      "11000": 10,
+      "11001": 6,
+      "11010": 9,
+      "11011": 3,
+      "11100": 10,
+      "11101": 4,
+      "11110": 5,
+      "11111": 1
+    },
+    "exact_weight_balance": true,
+    "rotation_canopy_hamming_histogram": {
+      "0": 120,
+      "1": 210
+    },
+    "missing_rotation_lifts_per_microstate_event": {
+      "hop": 168
+    },
+    "cao_lift": {
+      "moves": 252,
+      "strong_lumpability": true,
+      "uniform_tree_stationarity": true,
+      "marked_tree_bijection": true,
+      "single_rotation_moves": 46,
+      "rotation_distance_histogram": {
+        "1": 46,
+        "2": 122,
+        "3": 64,
+        "4": 18,
+        "5": 2
+      },
+      "distance_histograms_by_kind": {
+        "inject": {
+          "1": 23,
+          "2": 12,
+          "3": 6,
+          "4": 1
+        },
+        "hop": {
+          "2": 98,
+          "3": 52,
+          "4": 16,
+          "5": 2
+        },
+        "extract": {
+          "1": 23,
+          "2": 12,
+          "3": 6,
+          "4": 1
+        }
+      },
+      "mean_rotation_distance": {
+        "numerator": 564,
+        "denominator": 252
+      }
+    },
+    "bond_current": {
+      "numerator": 42,
+      "denominator": 132,
+      "formula": "(N+2)/(4*N+2)"
+    },
+    "capacity_obstruction": {
+      "N": 5,
+      "configuration": "01010",
+      "weight": 5,
+      "outgoing": 3,
+      "incoming_capacity": 10,
+      "incoming_demand": 15,
+      "slack": -5,
+      "predecessors": [
+        "01011",
+        "10010",
+        "01100"
+      ]
+    },
+    "arbitrary_assignment_search": {
+      "status": 1,
+      "message": "Time limit reached. (HiGHS Status 13: model_status is Time limit reached; primal_status is None)",
+      "time_limit_seconds": 60.0,
+      "variables": 4224,
+      "constraints": 8612,
+      "requires_uniform_tree_stationarity": false
+    }
+  }
+]
