@@ -2,7 +2,7 @@
 
 > **First-Principles Stock-Flow Consistent (SFC) Debt Dynamics Confronted with 156 Years of Real Macroeconomic History (Jordà–Schularick–Taylor Database, 1870–2025)**
 
-This directory contains the working technical notes ([`model_notes.md`](model_notes.md)), the first-principles 3-tier Stock-Flow Consistent simulation engine ([`fractal_debt_model.py`](fractal_debt_model.py)), the empirical macrohistory verification suite ([`empirical_jst_wavelet_analysis.py`](empirical_jst_wavelet_analysis.py)), and the interactive web laboratory ([`index.html`](index.html)).
+This directory contains the working technical notes ([`model_notes.md`](model_notes.md)), the first-principles 3-tier Stock-Flow Consistent simulation engine ([`fractal_debt_model.py`](fractal_debt_model.py)), and the empirical macrohistory verification suite ([`empirical_jst_wavelet_analysis.py`](empirical_jst_wavelet_analysis.py)).
 
 ---
 
@@ -52,7 +52,6 @@ Passing **156 years (`1870–2025`) of real US and 18-Country Total Debt-to-GDP*
 | [`empirical_jst_wavelet_analysis.py`](empirical_jst_wavelet_analysis.py) | Empirical verification pipeline on the 1870–2025 JST Macrohistory Database. |
 | [`pure_fractal_debt_model.py`](pure_fractal_debt_model.py) | Zero-dependency pure Python SFC simulation & terminal ASCII Morlet scalogram. |
 | [`keen_minsky_simulation.py`](keen_minsky_simulation.py) | 4th-Order Runge-Kutta solver for Steve Keen's continuous Minsky ODE system. |
-| [`index.html`](index.html) / [`app.js`](app.js) / [`styles.css`](styles.css) | Interactive browser simulation suite (5 engines including live Empirical JST Explorer). |
 | [`JSTdatasetR6.xlsx`](JSTdatasetR6.xlsx) / [`empirical_jst_data.json`](empirical_jst_data.json) | Official Jordà–Schularick–Taylor R6 database (`1870–2020`, extended to `2025` via Fed Z.1) & exported JSON telemetry. |
 
 ### Run the Simulations

@@ -286,7 +286,6 @@ Inspecting the right boundary (`2008–2025`) of [`empirical_jst_wavelet_proof.p
 * [**`empirical_jst_wavelet_analysis.py`**](empirical_jst_wavelet_analysis.py): Empirical confrontation script running the exact unmodified CWT and Multifractal pipeline on the official **Jordà–Schularick–Taylor Macrohistory Database (`1870–2025`)** ([`JSTdatasetR6.xlsx`](JSTdatasetR6.xlsx)), generating [`empirical_jst_wavelet_proof.png`](empirical_jst_wavelet_proof.png) and [`empirical_jst_data.json`](empirical_jst_data.json).
 * [**`pure_fractal_debt_model.py`**](pure_fractal_debt_model.py): Zero-dependency pure Python standard-library SFC engine and ASCII Morlet wavelet scalogram.
 * [**`keen_minsky_simulation.py`**](keen_minsky_simulation.py): 4th-Order Runge-Kutta (RK4) integrator for Steve Keen's continuous non-linear Minsky differential equations.
-* [**`index.html`**](index.html) & [**`app.js`**](app.js): Interactive multi-engine scientific web laboratory with live HTML5 Canvas wavelet scalograms, parameter sliders, and 3D WebGL geometry views.
 
 ---
 *“To exist is to connect. Spacetime is its crystal; Economics is its memory; Geometry is its consequence.”*
