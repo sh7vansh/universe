@@ -515,7 +515,7 @@ The `#print axioms` command confirms that all declarations compile without `sorr
 
 ### 8.3 Compilation and Machine Verification
 
-The file `FunctorialGeometry.lean` was verified against Lean 4 (version `v4.33.1`) and Mathlib. The build process runs without errors (note: some linters are disabled):
+The file `FunctorialGeometry.lean` was verified against Lean 4 (version `v4.35.0`) and Mathlib. The build process runs without errors (note: some linters are disabled):
 ```bash
 lake build MathProject.FunctorialGeometry
 lake build MathProject.CheckPathValuations MathProject.CheckAssociahedra MathProject.CheckFacetProducts

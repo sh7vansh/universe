@@ -94,7 +94,7 @@ $$\mathbb{E}[n_k](N) = \frac{C_{k-1}}{4^{k-1}}\,N + \frac{C_{k-1}(k - 1)}{2 \cdo
 
 ## 6. Lean 4 Formalization and Machine Verification
 
-All results above are formalized without `sorry` placeholders in Lean 4 (`v4.33.1`, Mathlib) and depend solely on the standard core axioms `[propext, Classical.choice, Quot.sound]`:
+All results above are formalized without `sorry` placeholders in Lean 4 (`v4.35.0`, Mathlib) and depend solely on the standard core axioms `[propext, Classical.choice, Quot.sound]`:
 
 * **Main module:** [`AssociahedralSubtreeEmbeddings.lean`](math_project/MathProject/AssociahedralSubtreeEmbeddings.lean)
 * **Axiom audit & small-case checks:** [`CheckSubtreeEmbeddings.lean`](math_project/MathProject/CheckSubtreeEmbeddings.lean)
@@ -105,7 +105,7 @@ All results above are formalized without `sorry` placeholders in Lean 4 (`v4.33.
 | **Theorem 2.1** | Explicit grafting/extraction bijection $\mathcal{T}_{N-k+1} \times \mathcal{T}_k \simeq \{T \in \mathcal{T}_N \mid I \triangleleft T\}$ and fiber cardinality $C_{k-1} C_{N-k}$ | `graftTree`, `extractAt`, `contractAt`, `operadicFactorizationEquiv`, `subtree_fiber_card` |
 | **Theorem 3.1** | Double counting across intervals and trees; Loday vertex–facet incidence sum; global multiplicity $\Phi(N, k) = C_{k-1}\binom{2(N-k)}{N-k}$ | `globalSubtreeMultiplicity`, `globalSubtreeMultiplicity_eq_tree_sum`, `globalSubtreeMultiplicity_eq_loday_incidence`, `globalSubtreeMultiplicity_eq` |
 | **Corollary 4.1** | Minimal binary generators ($k = 2$): $\Phi(N, 2) = \binom{2N-4}{N-2}$ | `globalSubtreeMultiplicity_k2` |
-| **Theorem 5.1** | Average over trees, `PMF.uniformOfFintype` expectation form, and exact closed-form density $\mathbb{E}[n_k](N)$ | `expectedSubtreeDensity`, `expectedSubtreeDensity_eq_tree_avg`, `expectedSubtreeDensity_eq_uniform_expectation`, `expectedSubtreeDensity_eq` |
+| **Theorem 5.1** | Average over trees, `MeasureTheory.Measure.uniformOfFinset` expectation form, and exact closed-form density $\mathbb{E}[n_k](N)$ | `expectedSubtreeDensity`, `expectedSubtreeDensity_eq_tree_avg`, `expectedSubtreeDensity_eq_uniform_expectation`, `expectedSubtreeDensity_eq` |
 | **Theorem 5.2** | Limit $\mathbb{E}[n_k](N) - \frac{C_{k-1}}{4^{k-1}} N \to \frac{C_{k-1}(k-1)}{2 \cdot 4^{k-1}}$, $+\,\mathcal{O}(1)$ bound, and exact $+\,\mathcal{O}(1/N)$ remainder bound | `expectedSubtreeDensity_sub_linear_tendsto`, `expectedSubtreeDensity_asymptotic`, `expectedSubtreeDensity_asymptotic_inv` |
 
 Verified with:

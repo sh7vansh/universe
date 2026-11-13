@@ -2195,7 +2195,6 @@ theorem cartanEnergy_three (v : Fin 3 → ℤ) :
   rw [cartanEnergy_eq_range]
   simp only [sum_range_succ, sum_range_zero, extVec, cartanForm]
   norm_num
-  rw [show (⟨2, by omega⟩ : Fin 3) = 2 from rfl]
   ring
 
 /-! ### Root Vectors and Norm 2 for Every n -/

@@ -605,18 +605,21 @@ private theorem fullBracketing_nonempty_of_pos (N : ℕ) (hN : 1 ≤ N) :
     exact hcat
   exact Fintype.card_pos_iff.mp hpos
 
+local instance (N : ℕ) : MeasurableSpace (FullBracketing N) := ⊤
+
 /-- **Theorem 5.1 (Uniform Probability Expectation Form).**
-Under the uniform distribution `PMF.uniformOfFintype (FullBracketing N)`,
+Under the uniform measure `MeasureTheory.Measure.uniformOfFinset (Finset.univ : Finset (FullBracketing N))`,
 `expectedSubtreeDensity N k` equals the expectation of the `k`-leaf subtree count. -/
 theorem expectedSubtreeDensity_eq_uniform_expectation (N k : ℕ) (hk : 2 ≤ k) (hkN : k ≤ N)
     [Nonempty (FullBracketing N)] :
     expectedSubtreeDensity N k =
       ∑ T : FullBracketing N,
-        (PMF.uniformOfFintype (FullBracketing N) T).toReal *
+        (MeasureTheory.Measure.uniformOfFinset
+          (Finset.univ : Finset (FullBracketing N)) {T}).toReal *
           (((treeSpans T.val 0).filter (fun p => p.2 - p.1 = k)).card : ℝ) := by
   rw [expectedSubtreeDensity_eq_tree_avg N k hk hkN]
-  simp only [PMF.uniformOfFintype_apply, ENNReal.toReal_inv, ENNReal.toReal_natCast,
-    ← Finset.mul_sum, div_eq_inv_mul]
+  simp only [MeasureTheory.Measure.uniformOfFinset_apply_singleton, Finset.mem_univ, ↓reduceIte,
+    Finset.card_univ, ENNReal.toReal_inv, ENNReal.toReal_natCast, ← Finset.mul_sum, div_eq_inv_mul]
 
 /-- **Theorem 5.2 (Expected Density per Vertex).** -/
 theorem expectedSubtreeDensity_eq (N k : ℕ) (hk : 2 ≤ k) (hkN : k ≤ N) :
