@@ -14,7 +14,7 @@ We study the algebraic, categorical, and geometric structure of partially ordere
 
 1. **Order and Signed Modularity Defects:** We realize meets and joins as universal categorical products and coproducts, instantiate closure operators as idempotent categorical monads (`CategoryTheory.Monad`), and study the signed modularity defect $\Delta(A, B)$. Submodularity is the special case $\Delta \ge 0$; modularity is the case $\Delta \equiv 0$. We define the meet interaction $A \sqcap B$. A mathematical extension applies the signed defect to the completed associahedral face lattice with its natural face rank.
 2. **Polyhedral and Root Geometry:** We analyze higher associativity through the Tamari lattice $\mathcal{T}_4$ and formalize a bijection in the fan-triangulation model via a machine-checked, two-sided constructive equivalence $\mathrm{Root}_{A_n} \simeq \mathrm{Facet}_{K_{n+2}} \simeq \mathrm{Diagonal}(n)$ between almost-positive roots, Stasheff associahedron facets, and geometric polygon diagonals. For $n=3$, we prove mechanically that the 9 roots of $A_3$ classify into cyclic length-2 diagonals (6 pentagons) and cyclic length-3 diagonals (3 squares), where every almost-positive root has norm $\langle v, v \rangle_{A_3} = 2$ under the discrete Dirichlet–Cartan quadratic form on $\mathbb{Z}^3$.
-3. **Path Valuations and Chain Applications:** On directed step sequences (representing covering chains in discrete quivers), we define a path valuation into the product monoid $(\mathbb{N}, +) \times (\mathbb{Z}, +)$ tracking accumulated cost alongside integer shear labels, proving functorial path concatenation. For each fixed labelled chain, all full bracket patterns give the same arrow and the same valuation. As an application, for semi-Artinian objects in universe-stratified abelian categories ($\mathcal{A} : \mathrm{Type}(u+1)$ with $\mathrm{Type}(u)$ morphisms), we construct a one-simple-at-a-time transfinite filtration continuous by joins in the subobject lattice. Truncation at the first stage reaching the top gives an order-theoretic transfinite composition series. We prove the vanishing of directed residual colimits on the restricted interval category $\mathrm{OrdinalInterval}(\Omega)$.
+3. **Path Valuations and Chain Applications:** On directed step sequences (representing covering chains in discrete quivers), we define a path valuation into the product monoid $(\mathbb{N}, +) \times (\mathbb{Z}, +)$ tracking accumulated cost alongside integer shear labels, proving functorial path concatenation. For each fixed labelled chain, all full bracket patterns give the same arrow and the same valuation. As an application, for semi-Artinian objects in universe-stratified abelian categories ($\mathcal{A} : \mathrm{Type}(u+1)$ with $\mathrm{Type}(u)$ morphisms), we construct the ascending Loewy filtration by joining all single-cell extensions at each successor and taking joins at limits. Its first top stage measures Loewy depth. The covering quiver retains every single-cell route for path valuation. We prove the vanishing of directed residual colimits on the restricted interval category $\mathrm{OrdinalInterval}(\Omega)$.
 
 The Lean results listed in Section 8 are machine-checked with zero `sorry` placeholders and use only standard core axioms (`propext`, `Classical.choice`, `Quot.sound`). The general convex realization and its geometric counts are included in these proofs. Sections 3.3 and 6.4 extend the discussion with signed face-rank defects and directed reassociation paths. Their principal formulas, preservation laws, signed examples, and pentagon obstruction are formalized and audited by `CheckSignedStructures.lean`.
 
@@ -33,7 +33,7 @@ This paper presents a formal categorical and geometric study of subobject lattic
   We formalize the Stasheff associahedra $K_{n+2}$ and establish a machine-checked, two-sided constructive equivalence $\mathrm{Root}_{A_n} \simeq \mathrm{Facet}_{K_{n+2}} \simeq \mathrm{Diagonal}(n)$ between almost-positive roots, associahedron facets, and polygon diagonals. For $n=3$, we mechanically classify roots into 6 pentagons and 3 squares by cyclic chord length. Finally, we formalize the $A_n$ Cartan form as a discrete 1D Dirichlet energy on $\mathbb{Z}^n$ with Dirichlet boundary conditions, proving positive definiteness and intrinsic norm invariance $\langle v, v \rangle = 2$.
 
 - **Stage III: Path Valuations & Chain Applications (Part III, §§6–7):**
-  On covering quivers, we define functorial path valuations into the monoid $(\mathbb{N}, +) \times \mathbf{U}_2(\mathbb{Z})$ tracking path cost alongside integer shear labels. We prove that all full bracket patterns of a fixed labelled chain give the same arrow and the same valuation. As an application, in universe-stratified abelian categories ($\mathcal{A} : \mathrm{Type}(u+1)$ with $\mathrm{Type}(u)$ morphisms, avoiding Freyd's size collapse), we build fine transfinite cellular filtrations for semi-Artinian objects attaching single simple cells via short exact sequences $0 \to C_\alpha \to C_{\alpha+1} \to a \to 0$. We prove ordinal stabilization at length $\Omega$, top reconstruction $C_\Omega = \top$, and vanishing residual cokernel colimits over $\mathrm{OrdinalInterval}(\Omega)$.
+  On covering quivers, we define functorial path valuations into the monoid $(\mathbb{N}, +) \times \mathbf{U}_2(\mathbb{Z})$ tracking path cost alongside integer shear labels. We prove that all full bracket patterns of a fixed labelled chain give the same arrow and the same valuation. As an application, in universe-stratified abelian categories ($\mathcal{A} : \mathrm{Type}(u+1)$ with $\mathrm{Type}(u)$ morphisms, avoiding Freyd's size collapse), we build the ascending Loewy filtration for each semi-Artinian object. Every simple inclusion in a residual quotient gives a covering edge by pullback. We prove top reconstruction $L_\Omega=\top$ at the first stabilizing ordinal and vanishing of residual cokernel colimits over $\mathrm{OrdinalInterval}(\Omega)$.
 
 The formal results listed in §8 are checked in Lean 4 without `sorry` placeholders. The bracket, polygon, and convex supporting-face models are connected by proved order isomorphisms. The signed face-lattice formulas, geometric rank identification, and directed rotation-path results are formalized in three additional modules listed in §8.
 
@@ -314,7 +314,7 @@ Under the form $\langle \cdot, \cdot \rangle_{A_3}$, the roots satisfy exact geo
 
 This part studies the data carried by a chain. Section 6 assigns costs and integer labels to its steps. It proves that every full bracket pattern gives the same composite arrow and the same path valuation. The partial bracket patterns have the associahedral face order from Part II.
 
-Section 7 gives an application to subobjects. A finite segment $C_0 \le \cdots \le C_n$ of a filtration is a monotone chain, so the theorem in §6.3 applies to its $n$ arrows. The costs and integer labels are assigned data. The transfinite reconstruction proof uses the subobject order from Part I and the abelian-category assumptions in §7.1. The path-valuation theorem does not require a filtration.
+Section 7 applies this valuation to finite paths of covering inclusions between subobjects. Fixing the cost and integer label of each edge lets us compare different paths with common endpoints. Each path is a monotone chain, so the bracketing result of §6.3 applies to it.
 
 ## 6. Path Valuations on Step Sequences and Covering Quivers
 
@@ -404,7 +404,7 @@ The defect is symmetric in its arguments; path sign reverses under reversal of t
 
 ## 7. Application: Transfinite Cellular Filtrations and Generator Selection
 
-### 7.1 Universe Plumbing, Transfinite Cellular Filtrations, and Stabilization
+### 7.1 Canonical Loewy Depth and Single-Cell Paths
 
 To avoid the collapse of abelian categories with small colimits into trivial preorders (dictated by Freyd's Theorem when objects and morphisms inhabit the same universe), we formulate the ambient abelian category with universe stratification:
 $$\mathcal{A} : \mathrm{Type}(u+1), \qquad \mathrm{Hom}_{\mathcal{A}}(X, Y) : \mathrm{Type}(u)$$
@@ -412,32 +412,32 @@ equipped with `[Abelian A]`, `[HasLimitsOfSize.{u, u} A]`, `[HasColimitsOfSize.{
 
 An object $U_0 \in \mathcal{A}$ is *semi-Artinian* if for every proper subobject $C < U_0$, the residual quotient $\mathrm{coker}(C \hookrightarrow U_0)$ contains a simple subobject.
 
-#### Cellular Filtrations vs. Classical Loewy Filtrations
+**Definition 7.1 (Ascending Loewy sequence).** Write $C\lessdot D$ when $C<D$ and there is no subobject strictly between them. In an abelian category the quotient $D/C$ of such a cover is simple. Conversely, pulling back a simple inclusion $a\hookrightarrow U_0/C$ along the quotient map gives a cover of $C$ and a short exact sequence $0\to C\to D\to a\to 0$.
 
-In standard module theory, the classical ascending Loewy series attaches the entire socle (the sum of all simple submodules) simultaneously at each step (see Nicholson and Yousif, Reference 5, p. 158): $S_{\alpha+1} / S_\alpha = \mathrm{Soc}(U_0 / S_\alpha)$.
-In our formal development, we construct a **fine transfinite cellular filtration** where each non-trivial successor step attaches a **single simple cell** $a \hookrightarrow \mathrm{coker}(C_\alpha\hookrightarrow U_0)$ via categorical pullback. Continuity means taking joins in $\mathrm{Sub}(U_0)$ at limit ordinals. Truncating at the first stage reaching the top gives an **order-theoretic transfinite composition series**: every successor before its endpoint is strict and has a simple quotient. To identify its limit stages with colimits of the underlying objects in $\mathcal{A}$ requires an additional comparison theorem under suitable assumptions, such as exact filtered colimits.
+For any $U_0$, define its ascending Loewy sequence in $\mathrm{Sub}(U_0)$ by
+$$
+L_0=\bot,\qquad
+L_{\alpha+1}=L_\alpha\vee\bigvee_{L_\alpha\lessdot D}D,\qquad
+L_\lambda=\bigvee_{\beta<\lambda}L_\beta\quad(\lambda\text{ a limit}).
+$$
+The successor collects the whole socle of $U_0/L_\alpha$, as in the classical ascending Loewy series (Nicholson and Yousif, Reference 5, p. 158). Including $L_\alpha$ in the join handles the empty family of covers. Continuity here refers to joins of subobjects. Identifying a limit stage with a colimit of underlying objects requires a separate comparison theorem.
 
-**Definition 7.1 (Transfinite Cellular Sequence).** The cellular sequence is constructed transfinitely for ordinals $o \in \mathrm{Ordinal}.\{u\}$:
+**Theorem 7.2 (Loewy length, reconstruction, and single-cell paths).** Let $U_0$ be semi-Artinian.
 
-- **Base Case:** $C_0 = \bot$.
-- **Successor Step:** Write $q_\alpha:U_0\to U_0/C_\alpha$ for the cokernel of $C_\alpha\hookrightarrow U_0$. If this cokernel is a zero object, set $C_{\alpha+1}=C_\alpha$. Otherwise choose a simple inclusion $i_\alpha:a\hookrightarrow U_0/C_\alpha$. Define $C_{\alpha+1}$ to be the subobject represented by the pullback projection $U_0\times_{U_0/C_\alpha}a\hookrightarrow U_0$, using both $q_\alpha$ and $i_\alpha$.
-- **Limit Ordinal:** $C_\lambda = \sup_{\beta < \lambda} C_\beta$.
+1. The sequence is monotone. Well-poweredness makes $\mathrm{Sub}(U_0)$ small in universe $u$, so the sequence is eventually constant. At any proper stage the semi-Artinian hypothesis supplies a simple inclusion in the residual. Its pullback strictly contains the stage and lies in the successor join. Thus stabilization occurs at $\top$.
+2. The Loewy length $\Omega=\min\{\alpha\mid L_\alpha=\top\}$ satisfies $L_\alpha=\top$ exactly when $\Omega\le\alpha$. In particular, $L_\Omega\hookrightarrow U_0$ is an isomorphism. For the zero object, $\Omega=0$.
+3. All covers $C\lessdot D$ are edges of the single-cell quiver. If $C\le L_\alpha$, then $D\le L_{\alpha+1}$. Indeed, the composite $D\to U_0/L_\alpha$ factors through the simple quotient $D/C$. A zero induced map puts $D$ inside $L_\alpha$. A nonzero induced map embeds $D/C$ in the residual, and its pullback is one of the covers joined at the next stage.
 
-**Theorem 7.2 (Cellular Length Existence, Reconstruction, and Colimit Vanishing).**
-*Let $U_0$ be semi-Artinian. Because the subobject lattice $\mathrm{Sub}(U_0)$ is small (`Small.{u} (Subobject U₀)`), the monotone transfinite sequence $C_\alpha$ must stabilize. Consequently:*
+The whole successor can contain several different simple extensions of its source. For example, in a direct sum of two distinct simple summands the Loewy sequence reaches the top in one step, while either summand gives a two-edge route from bottom to top. Assigning a common weight function to the edges lets §6 compare these routes in $(\mathbb N,+)\times\mathbf U_2(\mathbb Z)$. Concatenating two finite routes multiplies their valuations. The ordinal $\Omega$ records the depth of the Loewy sequence independently of these weights.
 
-1. *Cellular Length Existence and Minimality:* There exists an ordinal reaching the top (`cellular_length_exists`). Define $\Omega=\min\{\alpha:C_\alpha=\top\}$ (`cellularLength`). Then $C_\Omega=\top$ (`reconstruction`), and $C_\alpha=\top$ if and only if $\Omega\le\alpha$ (`cellularSequence_eq_top_iff`). Thus $\Omega$ is the first stage reaching the top.
-2. *Top Reconstruction:* The canonical inclusion morphism $C_\Omega \hookrightarrow U_0$ is an isomorphism (`reconstruction_iso`).
-3. *Cellular Short Exact Sequence:* For every $\alpha<\Omega$, the successor step is strict (`cellularSequence_strict_before_length`). Its chosen simple cell gives a short exact sequence $0 \longrightarrow C_\alpha \longrightarrow C_{\alpha+1} \longrightarrow a \longrightarrow 0$ (`cellularSequence_step_exists`, `cellular_shortExact`), presenting a length-1 extension.
-
-**Corollary 7.3 (Vanishing Residual Colimit).** Restrict the residual diagram to the small filtered category $\mathrm{OrdinalInterval}(\Omega) := \mathrm{Shrink}.\{u\}(\{b \le \Omega\})$. Its terminal object is $\Omega$, where $\mathrm{coker}(C_\Omega \hookrightarrow U_0) \cong 0$. Thus the colimit of the residual diagram is zero (`cellular_residual_colimit_vanishes`):
-   $$\varinjlim_{j \in \mathrm{OrdinalInterval}(\Omega)} \mathrm{coker}(C_j \hookrightarrow U_0) \cong 0$$
+**Corollary 7.3 (Vanishing residual colimit).** Restrict the cokernel diagram to the small interval $\mathrm{OrdinalInterval}(\Omega)=\mathrm{Shrink}(\{\beta\mid\beta\le\Omega\})$. Its top element is terminal, so the colimit map from the value at $\Omega$ is an isomorphism. Reconstruction makes that terminal cokernel zero, giving
+$$\varinjlim_{j\in\mathrm{OrdinalInterval}(\Omega)}\mathrm{coker}(L_j\hookrightarrow U_0)\cong 0.$$
 
 ### 7.2 Well-Founded Generator Selection
 
-Let $L$ be a complete lattice and $e:J\to L$ a join-dense family, meaning $x=\bigvee_{j:\,e(j)\le x}e(j)$ for every $x\in L$ (`IsGenerated`). Equip $J$ with a well-founded linear priority order (`LinearOrder J`, `WellFoundedLT J`). The greedy choice function:
+Let $L$ be a complete lattice and $e:J\to L$ a join-dense family, meaning $x=\bigvee_{j:\,e(j)\le x}e(j)$ for every $x\in L$ (`IsGenerated`). Equip $J$ with a well-founded linear priority order (`LinearOrder J`, `WellFoundedLT J`). The supplied priority order determines a unique least uncovered index. Lean defines it with `WellFounded.min`. The function
 $$\phi(x) = \min_{<} \{j \in J \mid e(j) \not\le x\}$$
-is well-defined for all $x < \top$. It satisfies the **novelty property**: $e(\phi(x)) \not\le x$. Start with $x(0)=\bot$, set $x(\alpha+1)=x(\alpha)\vee e(\phi(x(\alpha)))$ while $x(\alpha)<\top$, retain $\top$ once reached, and take joins at limit ordinals. Novelty guarantees strict progress at every successor before reaching $\top=\bigvee_j e(j)$. The transfinite supremum $\mathrm{sieveOutput}=\sup_o x(o)$ satisfies $x(o)\le\mathrm{sieveOutput}$ (`xSeq_le_sieveOutput`) and $\mathrm{sieveOutput}\le x\iff\forall o,\,x(o)\le x$ (`sieveOutput_is_lub`). The theorem `sieveOutput_eq_top` proves that this output is $\top$.
+is defined for every $x < \top$. It satisfies the **novelty property**: $e(\phi(x)) \not\le x$. Start with $x(0)=\bot$, set $x(\alpha+1)=x(\alpha)\vee e(\phi(x(\alpha)))$ while $x(\alpha)<\top$, retain $\top$ once reached, and take joins at limit ordinals. Novelty guarantees strict progress at every successor before reaching $\top=\bigvee_j e(j)$. The transfinite supremum $\mathrm{sieveOutput}=\sup_o x(o)$ satisfies $x(o)\le\mathrm{sieveOutput}$ (`xSeq_le_sieveOutput`) and $\mathrm{sieveOutput}\le x\iff\forall o,\,x(o)\le x$ (`sieveOutput_is_lub`). The theorem `sieveOutput_eq_top` proves that this output is $\top$.
 
 This constructs a generating family; novelty only says that each chosen generator lies outside the join of its predecessors. It does not imply independence or irredundancy of the final family. For example, in the powerset lattice of $\{1,2\}$, the join-dense family ordered as $\{1\},\{1,2\},\{2\}$ makes the procedure select $\{1\}$ and then $\{1,2\}$. The first selected generator is redundant in their final join.
 
@@ -464,7 +464,7 @@ The signed extensions use three additional modules:
 
 [`CheckAssociahedra.lean`](math_project/MathProject/CheckAssociahedra.lean) checks the axiom dependencies and the small geometric cases. [`CheckPathValuations.lean`](math_project/MathProject/CheckPathValuations.lean) audits the path-valuation theorems and checks labelled examples and the empty path. [`CheckFacetProducts.lean`](math_project/MathProject/CheckFacetProducts.lean) audits the facet product proofs and checks the root-to-shape conclusions.
 
-[`CheckCellularFiltrations.lean`](math_project/MathProject/CheckCellularFiltrations.lean) audits order continuity, endpoint minimality, strict successors, short exact sequences, residual-colimit vanishing, and greedy selection. It checks the zero-length boundary case, retention of the top at later stages, and existence of simple cells before the endpoint.
+[`CheckCellularFiltrations.lean`](math_project/MathProject/CheckCellularFiltrations.lean) audits Loewy continuity, stabilization and reconstruction, the terminal residual and its colimit, simple quotients and pullback covers, path composition, and generator selection. Its examples check the zero object, top retention, and two routes through a diamond with a common edge labelling.
 
 ### 8.1 Design Principles and Axiomatic Foundations
 
@@ -472,8 +472,8 @@ The formal development follows four structural principles:
 
 1. **Categorical Integration with Mathlib:** Rather than using ad-hoc posetal order structures, thin categories and subobject lattices are expressed directly through Mathlib's native category theory library (`CategoryTheory.Subobject`, `CategoryTheory.Abelian`, `CategoryTheory.Monad`, and `CategoryTheory.Limits`).
 2. **Constructive Computational Core:** Discrete and algebraic structures—including the travel monoid $(\mathbb{N}, +) \times \mathbf{U}_2(\mathbb{Z})$, the Tamari poset $\mathcal{T}_4$, the general $A_n \leftrightarrow K_{n+2}$ equivalence, the polygon diagonal mapping $\mathrm{Diagonal}(n)$, the $A_3 \leftrightarrow K_5$ root-facet bijection, and the Cartan quadratic forms—are defined constructively with `DecidableEq` instances and verified by computation (`rfl`, `decide`, `ring`, `omega`).
-3. **Classical Homological Framework:** Abstract abelian categories and transfinite ordinals use standard classical logic (`Classical.choice`, `open Classical`) for subobject selection and non-constructive colimits (Theorem 7.2).
-4. **Cellular Sequence Nomenclature:** In the Lean formalization, `cellularSequence` is the one-simple-at-a-time sequence continuous by joins in the subobject lattice, and `cellularLength` is its first stage reaching the top. Truncation at this length gives an order-theoretic transfinite composition series.
+3. **Classical foundations.** The Loewy successor joins all covers through a lattice operation. Lean’s axiom audit also follows constants in a theorem’s statement. In the pinned Mathlib version, even a theorem with hypothesis `[Abelian C]` and conclusion `True` reports `Classical.choice` when proved by `True.intro`. The type `Abelian C` already carries that dependency. The harness checks `WellPowered`, `IsSemiArtinian`, `Subobject.arrow`, and `colimit` independently. Eliminating choice from the audit would require changing the interfaces in the statement as well as the filtration proof.
+4. **Filtration names.** `loewySequence` is defined for every object. The semi-Artinian specialization `cellularSequence` has first top stage `cellularLength`. `SingleCellPath` records the intermediate vertices of a finite covering route.
 
 The `#print axioms` command confirms that all declarations compile without `sorry` placeholders and depend exclusively on Lean's standard foundational axioms (`propext`, `Classical.choice`, `Quot.sound`).
 
@@ -508,10 +508,12 @@ The `#print axioms` command confirms that all declarations compile without `sorr
 | **Theorem 6.3** | Travel monoid laws, path concatenation, strict growth | [`Unipotent2`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L248), [`TravelExperience`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L279), [`pathExperience_append`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L349), [`action_strictly_increases`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L357) | Additive group model $(\mathbb{Z}, +)$, `omega`, list-fold identities, `Nat.lt_add_of_pos_right` |
 | **Theorem 6.4** | Fixed-chain arrow and valuation invariance on every full bracket pattern | `evalBracketPath_eq`, `evalChainPathBracketing_eq`, `chainSteps_valuation`, `all_Kn_chain_path_valuations` | Binary-tree induction, list splitting, concatenation, thinness |
 | **Corollary 6.5** | Unit step costs count the arrows | `evalChainPathBracketing_unit_cost` | Finite sum of ones |
-| **Theorem 7.2 (1–2)** | First top stage $\Omega$, endpoint minimality, and top reconstruction | `cellular_length_exists`, `cellularLength`, `cellularLength_le_of_eq_top`, `cellularSequence_eq_top_iff`, `reconstruction`, `reconstruction_iso` in `FunctorialGeometry.lean` | Ordinal stabilization, well-founded minimum, monotonicity, `Subobject.top_arrow_isIso` |
-| **Theorem 7.2 (3)** | Strict successors and simple short exact extensions before $\Omega$ | `cellularSequence_strict_before_length`, `cellularSequence_step_exists`, `cellularShortComplex`, `cellular_shortExact` in `FunctorialGeometry.lean` | Endpoint minimality, semi-Artinian selection, pullback, kernel universal property |
-| **Corollary 7.3** | Vanishing residual colimit over $\mathrm{OrdinalInterval}$ | [`cellularIntervalFunctor`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L764), [`cellular_residual_colimit_vanishes`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L771) | Filtered colimit absorption, `isZero_cokernel_of_epi` |
-| **Section 7.2** | Well-founded generator selection, novelty property, and sieve supremum | [`candidates_nonempty`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L912), [`fixedPriorityPhi`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L924), [`novelty_of_fixedPriorityPhi`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L929), [`sieveOutput`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L941), [`xSeq_le_sieveOutput`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L1024), [`sieveOutput_is_lub`](https://raw.githubusercontent.com/sh7vansh/universe/refs/heads/main/math_project/MathProject/FunctorialGeometry.lean#L1028) | `WellFounded.min_mem`, `le_iSup`, `iSup_le_iff` |
+| **Definition 7.1** | Join of all covers, base, successor, and limit equations | `loewySuccessor`, `loewySequence_zero`, `loewySequence_add_one`, `cellularSequence_limit` | Transfinite recursion and joins in the subobject lattice |
+| **Theorem 7.2 (1–2)** | First top stage $\Omega$, minimality, and reconstruction | `cellularSequence_stabilizes`, `cellular_length_exists`, `cellularLength`, `cellularSequence_eq_top_iff`, `reconstruction`, `reconstruction_iso` | Smallness, strict progress, well-founded minimum |
+| **Theorem 7.2 (3)** | Simple quotients, pullback covers, and their Loewy-layer bound | `SingleCellStep.simple_quotient`, `singleCellStep_of_simple`, `cellular_shortExact`, `singleCellStep_le_next_stage` | Subobject/quotient duality, pullback and kernel universal properties |
+| **§§6–7** | Valuations of finite single-cell routes with common endpoints | `SingleCellPath`, `singleCellPathExperience`, `singleCellPathExperience_comp` | Covering quiver, path concatenation, Section 6 valuation |
+| **Corollary 7.3** | Vanishing residual colimit on the closed ordinal interval | `cellularIntervalFunctor`, `cellular_residual_at_top`, `cellular_residual_colimit_vanishes` | Terminal index and zero endpoint cokernel |
+| **Section 7.2** | Least uncovered generator, novelty, and sieve supremum | `candidates_nonempty`, `fixedPriorityPhi`, `novelty_of_fixedPriorityPhi`, `sieveOutput`, `xSeq_le_sieveOutput`, `sieveOutput_is_lub`, `sieveOutput_eq_top` | Well-founded linear priority order and joins |
 
 ### 8.3 Compilation and Machine Verification
 
@@ -529,6 +531,9 @@ The axiomatic dependency commands:
 #print axioms cellularLength_le_of_eq_top
 #print axioms cellularSequence_eq_top_iff
 #print axioms cellularSequence_strict_before_length
+#print axioms SingleCellStep.simple_quotient
+#print axioms singleCellStep_le_next_stage
+#print axioms singleCellPathExperience_comp
 #print axioms modularityDefect_comm
 #print axioms modularityDefect_zero_iff
 #print axioms modularityDefect_nonneg_iff

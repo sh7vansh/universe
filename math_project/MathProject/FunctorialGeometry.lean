@@ -3,7 +3,8 @@ Copyright (c) 2026 Shivansh Singh. All rights reserved.
 Released under the license described in the file LICENSE.
 Authors: Shivansh Singh
 -/
-import Mathlib.CategoryTheory.Abelian.Basic
+import Mathlib.CategoryTheory.Simple
+import Mathlib.CategoryTheory.Abelian.Subobject
 import Mathlib.CategoryTheory.Category.Preorder
 import Mathlib.CategoryTheory.Monad.Basic
 import Mathlib.CategoryTheory.Subobject.Basic
@@ -66,9 +67,9 @@ Part and section labels below refer to the paper.
 5. **The Travel Experience Monoid:** 2×2 unipotent shear group, travel state (action, transport),
    monoid associativity/unitality, path valuation, strict action growth, coordinate sums,
    and equal arrow and valuation evaluations for all full bracket patterns of a fixed chain.
-6. **Transfinite Cellular Filtrations & Basis Discovery:** Transfinite Cellular sequence on
-   semi-Artinian objects, stabilization at Cellular length Ω, reconstruction, SES presentation,
-   vanishing residual colimits on restricted ordinal intervals, and well-founded novelty selection.
+6. **Loewy Filtrations & Basis Discovery:** Canonical Loewy depth of semi-Artinian objects,
+   single-cell covering paths and their valuations, short exact extensions, residual colimit
+   vanishing at the first top stage, and well-founded generator selection.
 -/
 
 namespace FunctorialGeometry
@@ -481,9 +482,63 @@ end TravelMonoid
     SECTION 7: TRANSFINITE CELLULAR FILTRATIONS AND BASIS DISCOVERY
     ============================================================================== -/
 
-section CellularFiltration
+/-- A single cell is a strict extension with no intermediate subobject. -/
+abbrev SingleCellStep {L : Type*} [PartialOrder L] (C D : L) : Prop := C ⋖ D
 
-open Classical
+/-- The upward covering quiver, with a single arrow for each covering pair. -/
+abbrev singleCellQuiver (L : Type*) [PartialOrder L] : Quiver.{0} L :=
+  ⟨fun C D => PLift (SingleCellStep C D)⟩
+
+/-- Finite composable paths in the covering quiver, indexed by both endpoints. -/
+abbrev SingleCellPath {L : Type*} [PartialOrder L] (C D : L) :=
+  @Quiver.Path L (singleCellQuiver L) C D
+
+section SingleCellPaths
+
+variable {L : Type*} [PartialOrder L] {C D E : L}
+  (weight : ∀ {X Y : L}, SingleCellStep X Y → TravelExperience)
+
+local instance : Quiver.{0} L := singleCellQuiver L
+
+/-- An explicit cover gives a path with one edge. -/
+def SingleCellStep.toPath (h : SingleCellStep C D) : SingleCellPath C D :=
+  Quiver.Path.nil.cons ⟨h⟩
+
+/-- Concatenate two covering paths using the covering quiver on the underlying poset. -/
+abbrev SingleCellPath.append (p : SingleCellPath C D) (q : SingleCellPath D E) :
+    SingleCellPath C E := p.comp q
+
+/-- Read a covering path as the labelled lattice steps of Section 6. -/
+def singleCellSteps (weight : ∀ {X Y : L}, SingleCellStep X Y → TravelExperience)
+    {C D : L} (p : SingleCellPath C D) : List (LatticeStep L) :=
+  match p with
+  | .nil => []
+  | .cons q e =>
+    let w := weight e.down
+    singleCellSteps weight q ++ [⟨_, _, e.down.le, w.action, w.transport.e⟩]
+
+theorem singleCellSteps_comp (p : SingleCellPath C D) (q : SingleCellPath D E) :
+    singleCellSteps weight (p.append q) = singleCellSteps weight p ++ singleCellSteps weight q := by
+  induction q with
+  | nil => simp [singleCellSteps]
+  | cons q e ih => simp only [Quiver.Path.comp_cons, singleCellSteps, ih, List.append_assoc]
+
+def singleCellPathExperience (p : SingleCellPath C D) : TravelExperience :=
+  pathExperience (singleCellSteps weight p)
+
+@[simp] theorem singleCellPathExperience_edge (h : SingleCellStep C D) :
+    singleCellPathExperience weight h.toPath = weight h := by
+  change 1 * weight h = weight h
+  exact TravelExperience.one_mul _
+
+theorem singleCellPathExperience_comp (p : SingleCellPath C D) (q : SingleCellPath D E) :
+    singleCellPathExperience weight (p.append q) =
+      singleCellPathExperience weight p * singleCellPathExperience weight q := by
+  simp only [singleCellPathExperience, singleCellSteps_comp, pathExperience_append]
+
+end SingleCellPaths
+
+section CellularFiltration
 
 universe u
 variable {A : Type (u+1)} [Category.{u} A] [Abelian A] [HasLimitsOfSize.{u, u} A] [HasColimitsOfSize.{u, u} A] [WellPowered.{u} A]
@@ -552,31 +607,109 @@ lemma lt_cellular (C : Subobject U₀) (a : A) (i : a ⟶ cokernel C.arrow) (hi 
   have h_zero : IsZero a := IsZero.of_epi_zero (pullback i (cokernel.π C.arrow)) a
   exact ha.1 h_zero
 
-noncomputable def nextCellular (C : Subobject U₀) (h_semi : IsSemiArtinian U₀) : Subobject U₀ :=
-  if h : IsZero (residual U₀ C) then C
-  else
-    let a := (h_semi C h).choose
-    let i := (h_semi C h).choose_spec.choose
-    haveI : Mono i := (h_semi C h).choose_spec.choose_spec.2
-    haveI : Mono (pullback.snd i (cokernel.π C.arrow)) := pullback.snd_of_mono
-    Subobject.mk (pullback.snd i (cokernel.π C.arrow))
+/-- Pulling a simple inclusion back along the quotient gives a cover of its kernel. -/
+theorem singleCellStep_of_simple (C : Subobject U₀) (a : A)
+    (i : a ⟶ cokernel C.arrow) [hi : Mono i] (ha : IsSimple a) :
+    SingleCellStep C (Subobject.mk (pullback.snd i (cokernel.π C.arrow))) := by
+  letI : Nontrivial (Subobject a) := Subobject.nontrivial_of_not_isZero ha.1
+  letI : IsSimpleOrder (Subobject a) := ⟨ha.2⟩
+  letI : Simple a := simple_of_isSimpleOrder_subobject a
+  refine ⟨lt_cellular U₀ C a i inferInstance ha, ?_⟩
+  intro D hCD hDP
+  let q := cokernel.π C.arrow
+  let r := cokernel.π D.arrow
+  have hCr : C.arrow ≫ r = 0 := by
+    rw [← Subobject.ofLE_arrow hCD.le, Category.assoc, cokernel.condition, comp_zero]
+  let d := cokernel.desc C.arrow r hCr
+  have hqd : q ≫ d = r := cokernel.π_desc _ _ _
+  let j := Subobject.ofLEMk D (pullback.snd i q) hDP.le
+  have hj : j ≫ pullback.snd i q = D.arrow := Subobject.ofLEMk_comp _
+  by_cases h : i ≫ d = 0
+  · -- The full pullback already lies in D.
+    have hz : pullback.snd i q ≫ r = 0 := by
+      rw [← hqd, ← Category.assoc, ← pullback.condition, Category.assoc, h, comp_zero]
+    exact hDP.not_ge (Subobject.mk_le_of_comm (Abelian.monoLift D.arrow _ hz)
+      (Abelian.monoLift_comp _ _ _))
+  · -- The induced map out of a is monic, so D maps to zero in a.
+    haveI := Preadditive.mono_of_kernel_zero (kernel_zero_of_nonzero_from_simple h)
+    have hz : j ≫ pullback.fst i q = 0 := by
+      apply (cancel_mono (i ≫ d)).mp
+      rw [zero_comp, Category.assoc, ← Category.assoc (pullback.fst i q), pullback.condition,
+        Category.assoc, hqd, ← Category.assoc, hj, cokernel.condition]
+    have hDq : D.arrow ≫ q = 0 := by
+      rw [← hj, Category.assoc, ← pullback.condition, ← Category.assoc, hz, zero_comp]
+    exact hCD.not_ge (Subobject.le_of_comm (Abelian.monoLift C.arrow _ hDq)
+      (Abelian.monoLift_comp _ _ _))
+
+/-- The quotient of the target of a cover by its source is simple. -/
+theorem SingleCellStep.simple_quotient {C D : Subobject U₀} (h : SingleCellStep C D) :
+    Simple (cokernel (Subobject.ofLE C D h.le)) := by
+  let f := Subobject.ofLE C D h.le
+  have hmax : IsCoatom (Subobject.mk f) :=
+    ((Subobject.subobjectOrderIso D).symm.isCoatom_iff ⟨C, h.le⟩).2 (Set.Iic.isCoatom_iff.mpr h)
+  -- Under subobject/quotient duality this coatom becomes a simple subobject.
+  let e := Abelian.subobjectIsoSubobjectOp (D : A)
+  have hdual := (e.isCoatom_iff (Subobject.mk f)).2 hmax
+  have hatom : IsAtom (Subobject.mk (cokernel.π f).op) := hdual
+  haveI := (subobject_simple_iff_isAtom _).2 hatom
+  haveI : Simple (Opposite.op (cokernel f)) :=
+    Simple.of_iso (Subobject.underlyingIso (cokernel.π f).op).symm
+  apply simple_of_cosimple
+  intro Y g hg
+  rw [← isIso_op_iff, Simple.mono_isIso_iff_nonzero]
+  exact not_congr ⟨fun he => Quiver.Hom.op_inj (by simpa using he), fun he => by simp [he]⟩
+
+/-- The ascending Loewy successor joins all single-cell extensions. Including C
+also gives the correct value when C has no covers (in particular at top). -/
+noncomputable def loewySuccessor (C : Subobject U₀) : Subobject U₀ :=
+  C ⊔ sSup {D | SingleCellStep C D}
+
+theorem le_loewySuccessor (C : Subobject U₀) : C ≤ loewySuccessor U₀ C := le_sup_left
+
+/-- The cellular successor on a semi-Artinian object is its Loewy successor. -/
+noncomputable abbrev nextCellular (C : Subobject U₀) (_ : IsSemiArtinian U₀) := loewySuccessor U₀ C
 
 lemma le_nextCellular (C : Subobject U₀) (h_semi : IsSemiArtinian U₀) :
-    C ≤ nextCellular U₀ C h_semi := by
-  dsimp [nextCellular]
-  split_ifs with h
-  · exact le_rfl
-  · let a := (h_semi C h).choose
-    let i := (h_semi C h).choose_spec.choose
-    have ha_simple := (h_semi C h).choose_spec.choose_spec.1
-    have hi : Mono i := (h_semi C h).choose_spec.choose_spec.2
-    exact (lt_cellular U₀ C a i hi ha_simple).le
+    C ≤ nextCellular U₀ C h_semi := le_loewySuccessor U₀ C
 
-noncomputable def cellularSequence (h_semi : IsSemiArtinian U₀) (o : Ordinal.{u}) : Subobject U₀ :=
-  Ordinal.limitRecOn o
-    (⊥ : Subobject U₀)
-    (fun _ C => nextCellular U₀ C h_semi)
+theorem singleCellStep_le_loewySuccessor {C D : Subobject U₀} (h : SingleCellStep C D) :
+    D ≤ loewySuccessor U₀ C :=
+  (le_sSup (s := {B | SingleCellStep C B}) h).trans le_sup_right
+
+/-- A cover whose source is contained in B lands inside the next Loewy layer above B. -/
+theorem SingleCellStep.le_loewySuccessor_of_le {C D B : Subobject U₀}
+    (h : SingleCellStep C D) (hCB : C ≤ B) : D ≤ loewySuccessor U₀ B := by
+  let f := Subobject.ofLE C D h.le
+  let q := cokernel.π B.arrow
+  have hz : f ≫ D.arrow ≫ q = 0 := by
+    rw [← Category.assoc, Subobject.ofLE_arrow, ← Subobject.ofLE_arrow hCB, Category.assoc,
+      cokernel.condition, comp_zero]
+  let i := cokernel.desc f (D.arrow ≫ q) hz
+  have hi : cokernel.π f ≫ i = D.arrow ≫ q := cokernel.π_desc _ _ _
+  by_cases hzero : i = 0
+  · have hD : D.arrow ≫ q = 0 := by rw [← hi, hzero, comp_zero]
+    exact (Subobject.le_of_comm (Abelian.monoLift B.arrow _ hD)
+      (Abelian.monoLift_comp _ _ _)).trans (le_loewySuccessor U₀ B)
+  · letI : Simple (cokernel f) := SingleCellStep.simple_quotient U₀ h
+    haveI := Preadditive.mono_of_kernel_zero (kernel_zero_of_nonzero_from_simple hzero)
+    have hs := singleCellStep_of_simple U₀ B _ i ⟨Simple.not_isZero _, IsSimpleOrder.eq_bot_or_eq_top⟩
+    exact (Subobject.le_mk_of_comm (pullback.lift (cokernel.π f) D.arrow hi)
+      (pullback.lift_snd _ _ _)).trans (singleCellStep_le_loewySuccessor U₀ hs)
+
+/-- The ascending Loewy sequence is defined for every object. -/
+noncomputable def loewySequence (o : Ordinal.{u}) : Subobject U₀ :=
+  Ordinal.limitRecOn o ⊥ (fun _ C => loewySuccessor U₀ C)
     (fun a _ f => ⨆ (b : Ordinal.{u}) (hb : b < a), f b hb)
+
+theorem loewySequence_zero : loewySequence U₀ 0 = ⊥ :=
+  Ordinal.limitRecOn_zero _ _ _
+
+theorem loewySequence_add_one (o : Ordinal.{u}) :
+    loewySequence U₀ (o + 1) = loewySuccessor U₀ (loewySequence U₀ o) :=
+  Ordinal.limitRecOn_add_one _ _ _ _
+
+/-- Section 7's filtration of a semi-Artinian object is its ascending Loewy sequence. -/
+noncomputable abbrev cellularSequence (_ : IsSemiArtinian U₀) := loewySequence U₀
 
 lemma le_iSup_subobject {ι : Sort*} (f : ι → Subobject U₀) (i : ι) :
     f i ≤ ⨆ j, f j :=
@@ -591,13 +724,13 @@ lemma le_biSup_subobject (o : Ordinal.{u}) (o₁ : Ordinal.{u}) (h : o₁ < o)
     le_iSup_subobject U₀ (fun b => ⨆ (hb : b < o), f b hb) o₁
   exact h1.trans h2
 
-lemma cellularSequence_limit (h_semi : IsSemiArtinian U₀) (o : Ordinal.{u}) (ho : Order.IsSuccLimit o) :
-    cellularSequence U₀ h_semi o = ⨆ (b : Ordinal.{u}) (_hb : b < o), cellularSequence U₀ h_semi b := by
-  dsimp [cellularSequence]
+lemma loewySequence_limit (o : Ordinal.{u}) (ho : Order.IsSuccLimit o) :
+    loewySequence U₀ o = ⨆ (b : Ordinal.{u}) (_hb : b < o), loewySequence U₀ b := by
+  dsimp [loewySequence]
   exact Ordinal.limitRecOn_limit o _ _ _ ho
 
-lemma cellularSequence_le (h_semi : IsSemiArtinian U₀) (o₁ o₂ : Ordinal.{u}) (h_le : o₁ ≤ o₂) :
-    cellularSequence U₀ h_semi o₁ ≤ cellularSequence U₀ h_semi o₂ := by
+lemma loewySequence_le (o₁ o₂ : Ordinal.{u}) (h_le : o₁ ≤ o₂) :
+    loewySequence U₀ o₁ ≤ loewySequence U₀ o₂ := by
   revert o₁
   induction o₂ using Ordinal.limitRecOn with
   | zero =>
@@ -612,57 +745,48 @@ lemma cellularSequence_le (h_semi : IsSemiArtinian U₀) (o₁ o₂ : Ordinal.{u
     · have h_le_o₂ : o₁ ≤ o₂ := by
         rwa [← Order.succ_eq_add_one, Order.lt_succ_iff] at hlt
       have ih_le := ih o₁ h_le_o₂
-      have step_le : cellularSequence U₀ h_semi o₂ ≤ cellularSequence U₀ h_semi (o₂ + 1) := by
-        dsimp [cellularSequence]
-        rw [Ordinal.limitRecOn_add_one]
-        exact le_nextCellular U₀ (cellularSequence U₀ h_semi o₂) h_semi
+      have step_le : loewySequence U₀ o₂ ≤ loewySequence U₀ (o₂ + 1) := by
+        rw [loewySequence_add_one]
+        exact le_loewySuccessor U₀ _
       exact ih_le.trans step_le
   | limit o₂ ho ih =>
     intro o₁ h₁
     rcases eq_or_lt_of_le h₁ with rfl | hlt
     · exact le_rfl
-    · rw [cellularSequence_limit U₀ h_semi o₂ ho]
-      exact le_biSup_subobject U₀ o₂ o₁ hlt (fun b _ => cellularSequence U₀ h_semi b)
+    · rw [loewySequence_limit U₀ o₂ ho]
+      exact le_biSup_subobject U₀ o₂ o₁ hlt (fun b _ => loewySequence U₀ b)
+
+lemma cellularSequence_limit (h_semi : IsSemiArtinian U₀) (o : Ordinal.{u})
+    (ho : Order.IsSuccLimit o) :
+    cellularSequence U₀ h_semi o = ⨆ (b : Ordinal.{u}) (_ : b < o), cellularSequence U₀ h_semi b :=
+  loewySequence_limit U₀ o ho
+
+lemma cellularSequence_le (h_semi : IsSemiArtinian U₀) (o₁ o₂ : Ordinal.{u}) (h : o₁ ≤ o₂) :
+    cellularSequence U₀ h_semi o₁ ≤ cellularSequence U₀ h_semi o₂ :=
+  loewySequence_le U₀ o₁ o₂ h
 
 lemma cellularSequence_mono (h_semi : IsSemiArtinian U₀) :
     Monotone (cellularSequence U₀ h_semi) :=
   fun _ _ h => cellularSequence_le U₀ h_semi _ _ h
+
+/-- A step starting anywhere inside a Loewy stage ends by the next stage. -/
+theorem singleCellStep_le_next_stage (o : Ordinal.{u}) {C D : Subobject U₀}
+    (h : SingleCellStep C D) (hC : C ≤ loewySequence U₀ o) : D ≤ loewySequence U₀ (o + 1) := by
+  rw [loewySequence_add_one]
+  exact SingleCellStep.le_loewySuccessor_of_le U₀ h hC
+
 lemma cellularSequence_step_exists (h_semi : IsSemiArtinian U₀) (o : Ordinal.{u})
     (h_ne : cellularSequence U₀ h_semi o ≠ ⊤) :
-    ∃ (a : A) (i : a ⟶ residual U₀ (cellularSequence U₀ h_semi o)) (hi : Mono i),
-      IsSimple a ∧
-      cellularSequence U₀ h_semi (o + 1) = (
-        haveI : Mono i := hi
-        haveI : Mono (pullback.snd i (cokernel.π (cellularSequence U₀ h_semi o).arrow)) := pullback.snd_of_mono
-        Subobject.mk (pullback.snd i (cokernel.π (cellularSequence U₀ h_semi o).arrow))) := by
-  have h_succ : cellularSequence U₀ h_semi (o + 1) = nextCellular U₀ (cellularSequence U₀ h_semi o) h_semi := by
-    dsimp [cellularSequence]; rw [Ordinal.limitRecOn_add_one]
-  have hz : ¬ IsZero (residual U₀ (cellularSequence U₀ h_semi o)) :=
-    not_isZero_residual_of_ne_top U₀ _ h_ne
-  let a := (h_semi (cellularSequence U₀ h_semi o) hz).choose
-  let i := (h_semi (cellularSequence U₀ h_semi o) hz).choose_spec.choose
-  have ha_simple := (h_semi (cellularSequence U₀ h_semi o) hz).choose_spec.choose_spec.1
-  have hi : Mono i := (h_semi (cellularSequence U₀ h_semi o) hz).choose_spec.choose_spec.2
-  refine ⟨a, i, hi, ha_simple, ?_⟩
-  rw [h_succ]
-  dsimp [nextCellular]
-  rw [dif_neg hz]
+    ∃ D, SingleCellStep (cellularSequence U₀ h_semi o) D := by
+  obtain ⟨a, i, ha, hi⟩ := h_semi _ (not_isZero_residual_of_ne_top U₀ _ h_ne)
+  exact ⟨_, singleCellStep_of_simple U₀ _ a i (hi := hi) ha⟩
 
-lemma cellularSequence_strict_mono (h_semi : IsSemiArtinian U₀) (o : Ordinal.{u}) :
-    cellularSequence U₀ h_semi o ≠ ⊤ → 
+lemma cellularSequence_strict_mono (h_semi : IsSemiArtinian U₀) (o : Ordinal.{u})
+    (h_ne : cellularSequence U₀ h_semi o ≠ ⊤) :
     cellularSequence U₀ h_semi o < cellularSequence U₀ h_semi (o + 1) := by
-  intro h_ne
-  have h_succ : cellularSequence U₀ h_semi (o + 1) = nextCellular U₀ (cellularSequence U₀ h_semi o) h_semi := by
-    dsimp [cellularSequence]; rw [Ordinal.limitRecOn_add_one]
-  rw [h_succ]
-  have hz : ¬ IsZero (residual U₀ (cellularSequence U₀ h_semi o)) :=
-    not_isZero_residual_of_ne_top U₀ _ h_ne
-  dsimp [nextCellular]; rw [dif_neg hz]
-  let a := (h_semi (cellularSequence U₀ h_semi o) hz).choose
-  let i := (h_semi (cellularSequence U₀ h_semi o) hz).choose_spec.choose
-  have ha_simple := (h_semi (cellularSequence U₀ h_semi o) hz).choose_spec.choose_spec.1
-  have hi : Mono i := (h_semi (cellularSequence U₀ h_semi o) hz).choose_spec.choose_spec.2
-  exact lt_cellular U₀ _ a i hi ha_simple
+  obtain ⟨D, hD⟩ := cellularSequence_step_exists U₀ h_semi o h_ne
+  rw [cellularSequence, loewySequence_add_one]
+  exact hD.lt.trans_le (singleCellStep_le_loewySuccessor U₀ hD)
 
 theorem cellular_eventuallyConst (f : Ordinal.{u} → Subobject U₀) (hf : Monotone f) :
     Filter.EventuallyConst f Filter.atTop := by
@@ -715,7 +839,7 @@ theorem reconstruction (h_semi : IsSemiArtinian U₀) :
 /-- Every stage reaching top is bounded below by the cellular length. -/
 theorem cellularLength_le_of_eq_top (h_semi : IsSemiArtinian U₀) (o : Ordinal.{u})
     (ho : cellularSequence U₀ h_semi o = ⊤) : cellularLength U₀ h_semi ≤ o :=
-  wellFounded_lt.min_le (s := {o : Ordinal.{u} | cellularSequence U₀ h_semi o = ⊤}) ho
+  WellFoundedLT.min_le (s := {o : Ordinal.{u} | cellularSequence U₀ h_semi o = ⊤}) ho
 
 /-- No stage strictly before the cellular length has reached top. -/
 theorem cellularSequence_ne_top_of_lt_length (h_semi : IsSemiArtinian U₀)
@@ -760,6 +884,15 @@ noncomputable def ofIic (x : Set.Iic Ω) : OrdinalInterval Ω :=
 
 noncomputable instance : PartialOrder (OrdinalInterval Ω) :=
   PartialOrder.lift (toIic Ω) (Equiv.injective _)
+
+noncomputable instance : OrderTop (OrdinalInterval Ω) where
+  top := ofIic Ω ⟨Ω, Set.mem_Iic.mpr le_rfl⟩
+  le_top x := by
+    change (toIic Ω x).1 ≤ (toIic Ω (ofIic Ω ⟨Ω, Set.mem_Iic.mpr le_rfl⟩)).1
+    simpa only [toIic, ofIic, Equiv.symm_apply_apply] using Set.mem_Iic.mp (toIic Ω x).2
+
+@[simp] theorem toIic_top : toIic Ω ⊤ = ⟨Ω, Set.mem_Iic.mpr le_rfl⟩ :=
+  (equivShrink (Set.Iic Ω)).symm_apply_apply _
 
 noncomputable instance : Category (OrdinalInterval Ω) := inferInstance
 
@@ -821,13 +954,17 @@ noncomputable def cellularIntervalFunctor (h_semi : IsSemiArtinian U₀) (Ω : O
     have : x ≤ y := leOfHom f
     exact cellularSequence_le U₀ h_semi _ _ this)
 
+theorem cellular_residual_at_top (h_semi : IsSemiArtinian U₀) :
+    IsZero ((residualDiagram U₀ (cellularIntervalFunctor U₀ h_semi (cellularLength U₀ h_semi))).obj ⊤) := by
+  change IsZero (cokernel (cellularSequence U₀ h_semi (OrdinalInterval.toIic _ ⊤).1).arrow)
+  rw [OrdinalInterval.toIic_top, reconstruction]
+  exact isZero_cokernel_of_epi _
+
 theorem cellular_residual_colimit_vanishes (h_semi : IsSemiArtinian U₀) :
     IsZero (colimit (residualDiagram U₀ (cellularIntervalFunctor U₀ h_semi (cellularLength U₀ h_semi)))) := by
-  apply residual_colimit_vanishes
-  refine ⟨OrdinalInterval.ofIic _ ⟨cellularLength U₀ h_semi, Set.mem_Iic.mpr le_rfl⟩, ?_⟩
-  dsimp [cellularIntervalFunctor, OrdinalInterval.toIic, OrdinalInterval.ofIic]
-  simp only [Equiv.symm_apply_apply]
-  exact reconstruction U₀ h_semi
+  let F := residualDiagram U₀ (cellularIntervalFunctor U₀ h_semi (cellularLength U₀ h_semi))
+  haveI : IsIso (colimit.ι F ⊤) := isIso_ι_of_isTerminal isTerminalTop F
+  exact (cellular_residual_at_top U₀ h_semi).of_iso (asIso (colimit.ι F ⊤)).symm
 
 section CellularSES
 
@@ -975,7 +1112,8 @@ lemma candidates_nonempty (x : L) (h : x < ⊤) : { j : J | ¬ (embed j ≤ x) }
     rw [h_top]; apply iSup_le; intro j; apply iSup_le; intro _; exact h_all j
   exact h.ne (top_le_iff.mp h_top_le_x)
 
-/-- Greedy choice function selecting the minimal uncovered generator. -/
+/-- The supplied well-founded linear priority order determines the unique least uncovered
+generator via `WellFounded.min`. -/
 noncomputable def fixedPriorityPhi (x : L) (h : x < ⊤) : J :=
   let candidates := { j : J | ¬ (embed j ≤ x) }
   have h_nonempty : candidates.Nonempty := candidates_nonempty embed x h
